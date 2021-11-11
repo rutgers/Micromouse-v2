@@ -17,49 +17,49 @@
 moving forward. They can be changed with the setupMotorDriver method. */
 
 // Motor A
-Encoder ENCA(12, 11);
+extern Encoder ENCA;
 #define AIN1 6
 #define AIN2 7
 #define PWMA 8
-uint8_t AIN1_VAL = HIGH;
-uint8_t AIN2_VAL = LOW;
+extern uint8_t AIN1_VAL;
+extern uint8_t AIN2_VAL;
 
 // Motor B
-Encoder ENCB(10, 9);
+extern Encoder ENCB;
 #define BIN1 4
 #define BIN2 3
 #define PWMB 2
-uint8_t BIN1_VAL = HIGH;
-uint8_t BIN2_VAL = LOW;
+extern uint8_t BIN1_VAL;
+extern uint8_t BIN2_VAL;
 
 // General Params
-double WHEEL_CIRC = (80 * PI); // This is in millimeters
-double gear_num = 31 * 33 * 35 * 34;
-double gear_den = 16 * 14 * 13 * 14;
-double WHEEL_TICKS = 12 * (gear_num / gear_den);
-double TicksPerMM = WHEEL_TICKS / WHEEL_CIRC;
-int xConst = 300 * TicksPerMM;
-int wConst = 0;
-IntervalTimer MotorTimer;
-elapsedMillis TimeCheck;
-bool stopRecording = false;
-long PWMA_Value, PWMB_Value;
-double KpX = 0.1, KdX = 0.05, KpW = 5, KdW = 0.12;
-long errorX = 0, oldErrorX = 0, errorW = 0, oldErrorW = 0;
-long currA = 0, currB = 0, lastA = 0, lastB = 0;
+extern const float WHEEL_CIRC; // This is in millimeters
+extern const float MOUSE_RADIUS; // This is in millimeters
+extern const float gear_num;
+extern const float gear_den;
+extern const float WHEEL_TICKSgear_num;
+extern const float MM_PER_TICK;
+extern const float DEG_PER_MM_DIFF;
+extern const float xConst;
+extern const float wConst;
+extern IntervalTimer MotorTimer;
+extern elapsedMillis TimeCheck;
+extern bool stopRecording;
+extern const float KpX, KdX, KpW, KdW;
+extern long errorX, oldErrorX, errorW, oldErrorW;
 
 // Bluetooth
-SoftwareSerial bt(0, 1);
+extern SoftwareSerial bt;
 
 // Time-of-Flight Sensors
-VL53L1X F_ToF;
-VL6180X R_ToF;
-VL6180X L_ToF;
+extern VL53L1X F_ToF;
+extern VL6180X R_ToF;
+extern VL6180X L_ToF;
 
 // Accel + Gyro IMU
-Adafruit_ICM20649 IMU;
-Adafruit_Sensor *accel, *gyro;
-sensors_event_t a, g;
+extern Adafruit_ICM20649 IMU;
+extern Adafruit_Sensor *accel, *gyro;
+extern sensors_event_t a, g;
 
 void setupMotorDriver(uint8_t ain1_val = AIN1_VAL, uint8_t ain2_val = AIN2_VAL,
                       uint8_t bin1_val = BIN1_VAL, uint8_t bin2_val = BIN2_VAL);

@@ -1,5 +1,46 @@
 #include "bot_config.h"
 
+/* The values listed for the IN pins are defaults for when the bot is
+moving forward. They can be changed with the setupMotorDriver method. */
+
+// Motor A
+Encoder ENCA(12, 11);
+uint8_t AIN1_VAL = HIGH;
+uint8_t AIN2_VAL = LOW;
+// Motor B
+Encoder ENCB(10, 9);
+uint8_t BIN1_VAL = HIGH;
+uint8_t BIN2_VAL = LOW;
+
+// General Params
+const float WHEEL_CIRC = 80 * PI; // This is in millimeters
+const float MOUSE_RADIUS = 39.5; // This is in millimeters
+const float gear_num = 31 * 33 * 35 * 34;
+const float gear_den = 16 * 14 * 13 * 14;
+const float WHEEL_TICKS = 12 * (gear_num / gear_den);
+const float MM_PER_TICK = WHEEL_CIRC / WHEEL_TICKS;
+const float DEG_PER_MM_DIFF = 180 / (2 * MOUSE_RADIUS * PI);
+const float xConst = 300;
+const float wConst = 0;
+IntervalTimer MotorTimer;
+elapsedMillis TimeCheck;
+bool stopRecording = false;
+const float KpX = 2, KdX = 1, KpW = 2, KdW = 1;
+long errorX = 0, oldErrorX = 0, errorW = 0, oldErrorW = 0;
+
+// Bluetooth
+SoftwareSerial bt(0, 1);
+
+// Time-of-Flight Sensors
+VL53L1X F_ToF;
+VL6180X R_ToF;
+VL6180X L_ToF;
+
+// Accel + Gyro IMU
+Adafruit_ICM20649 IMU;
+Adafruit_Sensor *accel, *gyro;
+sensors_event_t a, g;
+
 void setupMotorDriver(uint8_t ain1_val, uint8_t ain2_val, uint8_t bin1_val, uint8_t bin2_val)
 {
     pinMode(STBY, OUTPUT);

@@ -30,11 +30,11 @@ void loop()
 
 void PDFunc()
 {
+    float currA = ENCA.readAndReset() * MM_PER_TICK;
+    float currB = ENCB.readAndReset() * MM_PER_TICK;
     oldErrorW = errorW;
-    currA = ENCA.read();
-    currB = ENCB.read();
-    errorW = wConst + (currA - currB);
-    int PWMW = (KpW * errorW) + (KdW * (errorW - oldErrorW));
-    setPWMA(150 + PWMW);
-    setPWMB(150 - PWMW);
+    errorW = wConst - ((currA - currB) * DEG_PER_MM_DIFF);
+    float outputW = (KpW * errorW) + (KdW * (errorW - oldErrorW));
+    setPWMA(constrain(200 + outputW, -1023, 1023));
+    setPWMB(constrain(200 - outputW, -1023, 1023));
 }
