@@ -37,11 +37,11 @@ void setup()
 
 void loop()
 {
-    Serial.println(L_ToF.readRangeContinuousMillimeters());
-    Serial.print(",");
-    Serial.print(F_ToF.read());
-    Serial.print(",");
-    Serial.print(R_ToF.readRangeContinuous());
+    bt.print(L_ToF.readRangeContinuousMillimeters());
+    bt.print(",");
+    bt.print(F_ToF.read());
+    bt.print(",");
+    bt.println(R_ToF.readRangeContinuousMillimeters());
     delay(1);
 }
 

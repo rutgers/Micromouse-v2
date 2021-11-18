@@ -69,18 +69,18 @@ void setupToF()
     L_ToF.writeReg(VL6180X::SYSRANGE__MAX_CONVERGENCE_TIME, 20);
     L_ToF.setAddress(0x28);
 
-    pinMode(15, INPUT);
-    delay(50);
-    F_ToF.init();
-    F_ToF.setDistanceMode(VL53L1X::Long);
-    F_ToF.setMeasurementTimingBudget(33000);
-
-    pinMode(14, INPUT);
+    digitalWrite(14, HIGH);
     delay(50);
     R_ToF.init();
     R_ToF.configureDefault();
     R_ToF.writeReg(VL6180X::SYSRANGE__MAX_CONVERGENCE_TIME, 20);
     R_ToF.setAddress(0x2A);
+
+    digitalWrite(15, HIGH);
+    delay(50);
+    F_ToF.init();
+    F_ToF.setDistanceMode(VL53L1X::Long);
+    F_ToF.setMeasurementTimingBudget(33000);
 
     L_ToF.startRangeContinuous(35);
     F_ToF.startContinuous(33);
