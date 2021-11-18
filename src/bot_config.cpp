@@ -4,11 +4,11 @@
 moving forward. They can be changed with the setupMotorDriver method. */
 
 // Motor A
-Encoder ENCA(12, 11);
+Encoder ENCA(11, 12);
 uint8_t AIN1_VAL = HIGH;
 uint8_t AIN2_VAL = LOW;
 // Motor B
-Encoder ENCB(10, 9);
+Encoder ENCB(9, 10);
 uint8_t BIN1_VAL = HIGH;
 uint8_t BIN2_VAL = LOW;
 
@@ -23,9 +23,9 @@ const float DEG_PER_MM_DIFF = 180 / (2 * MOUSE_RADIUS * PI);
 const float xConst = 300;
 const float wConst = 0;
 IntervalTimer MotorTimer;
-elapsedMillis TimeCheck;
-bool stopRecording = false;
-const float KpX = 2, KdX = 1, KpW = 2, KdW = 1;
+elapsedMillis TimeCheck = 0;
+bool recording = true;
+const float KpX = 2, KdX = 1, KpW = 8, KdW = 4;
 long errorX = 0, oldErrorX = 0, errorW = 0, oldErrorW = 0;
 
 // Bluetooth
@@ -64,43 +64,31 @@ void setupMotorDriver(uint8_t ain1_val, uint8_t ain2_val, uint8_t bin1_val, uint
 
 void setupToF()
 {
-    pinMode(20, OUTPUT);
-    pinMode(22, OUTPUT);
-    digitalWrite(20, LOW);
-    digitalWrite(22, LOW);
-
-    Wire.begin();
-    Wire.setClock(400000);
-
     L_ToF.init();
     L_ToF.configureDefault();
-    L_ToF.setAddress(0x31);
-    L_ToF.writeReg(VL6180X::SYSRANGE__MAX_CONVERGENCE_TIME, 1);
-    L_ToF.stopContinuous();
+    L_ToF.writeReg(VL6180X::SYSRANGE__MAX_CONVERGENCE_TIME, 20);
+    L_ToF.setAddress(0x28);
 
-    digitalWrite(22, HIGH);
+    pinMode(15, INPUT);
+    delay(50);
     F_ToF.init();
     F_ToF.setDistanceMode(VL53L1X::Long);
     F_ToF.setMeasurementTimingBudget(33000);
-    F_ToF.setAddress(0x30);
-    F_ToF.stopContinuous();
 
-    digitalWrite(20, HIGH);
+    pinMode(14, INPUT);
+    delay(50);
     R_ToF.init();
     R_ToF.configureDefault();
-    R_ToF.writeReg(VL6180X::SYSRANGE__MAX_CONVERGENCE_TIME, 1);
-    R_ToF.stopContinuous();
+    R_ToF.writeReg(VL6180X::SYSRANGE__MAX_CONVERGENCE_TIME, 20);
+    R_ToF.setAddress(0x2A);
 
-    delay(300);
-
-    L_ToF.startRangeContinuous(0);
+    L_ToF.startRangeContinuous(35);
     F_ToF.startContinuous(33);
-    R_ToF.startRangeContinuous(0);
+    R_ToF.startRangeContinuous(35);
 }
 
 void setupIMU()
 {
-    setupToF();
     if (!IMU.begin_I2C())
     {
         Serial.println("Failed to find ICM20649 chip");
@@ -109,7 +97,7 @@ void setupIMU()
             delay(10);
         }
     }
-    IMU.enableAccelDLPF(true, ICM20X_ACCEL_FREQ_473_HZ);
+    // IMU.enableAccelDLPF(true, ICM20X_ACCEL_FREQ_473_HZ);
     IMU.enableGyrolDLPF(true, ICM20X_GYRO_FREQ_361_4_HZ);
     IMU.setAccelRateDivisor(0);
     IMU.setGyroRateDivisor(0);

@@ -2,39 +2,54 @@
 
 void PDFunc();
 
+bool speedset = false;
+
 void setup()
 {
-    Serial.begin(115200);
+    pinMode(14, OUTPUT);
+    pinMode(15, OUTPUT);
+    digitalWrite(14, LOW);
+    digitalWrite(15, LOW);
+    Wire.begin();
+    Wire.setClock(400000);
+    bt.begin(115200);
     setupMotorDriver();
-    // setupToF();
-    // setupIMU();
+    setupToF();
+    setupIMU();
+
+    bt.println("Send ready cmd");
+    bool check = true;
+    while(check) {
+        if (bt.available()) if (bt.read() == 'a') check = false;
+        delay(1);
+    }
+    delay(10);
+    pinMode(LED_BUILTIN, OUTPUT);
+    digitalWrite(LED_BUILTIN, HIGH);
+    delay(2000);
 
     digitalWrite(STBY, HIGH);
-    MotorTimer.begin(PDFunc, 1000);
-    TimeCheck = 0;
+    ENCA.write(0);
+    ENCB.write(0);
+    // MotorTimer.begin(PDFunc, 1000);
+    // TimeCheck = 0;
 }
 
 void loop()
 {
-    if (!stopRecording)
-    {
-        if (TimeCheck > 1000)
-        {
-            MotorTimer.end();
-            setPWMA(0);
-            setPWMB(0);
-            stopRecording = true;
-        }
-    }
+    Serial.println(L_ToF.readRangeContinuousMillimeters());
+    Serial.print(",");
+    Serial.print(F_ToF.read());
+    Serial.print(",");
+    Serial.print(R_ToF.readRangeContinuous());
+    delay(1);
 }
 
 void PDFunc()
 {
-    float currA = ENCA.readAndReset() * MM_PER_TICK;
-    float currB = ENCB.readAndReset() * MM_PER_TICK;
     oldErrorW = errorW;
-    errorW = wConst - ((currA - currB) * DEG_PER_MM_DIFF);
+    errorW = wConst - (R_ToF.readRangeSingleMillimeters() - L_ToF.readRangeSingleMillimeters());
     float outputW = (KpW * errorW) + (KdW * (errorW - oldErrorW));
-    setPWMA(constrain(200 + outputW, -1023, 1023));
-    setPWMB(constrain(200 - outputW, -1023, 1023));
+    setPWMA(constrain(300 + outputW, -1023, 1023));
+    setPWMB(constrain(300 - outputW, -1023, 1023));
 }

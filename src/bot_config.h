@@ -44,7 +44,7 @@ extern const float xConst;
 extern const float wConst;
 extern IntervalTimer MotorTimer;
 extern elapsedMillis TimeCheck;
-extern bool stopRecording;
+extern bool recording;
 extern const float KpX, KdX, KpW, KdW;
 extern long errorX, oldErrorX, errorW, oldErrorW;
 
