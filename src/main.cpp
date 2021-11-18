@@ -48,7 +48,7 @@ void loop()
 void PDFunc()
 {
     oldErrorW = errorW;
-    errorW = wConst - (R_ToF.readRangeSingleMillimeters() - L_ToF.readRangeSingleMillimeters());
+    errorW = wConst - (R_ToF.readRangeContinuousMillimeters() - L_ToF.readRangeContinuousMillimeters());
     float outputW = (KpW * errorW) + (KdW * (errorW - oldErrorW));
     setPWMA(constrain(300 + outputW, -1023, 1023));
     setPWMB(constrain(300 - outputW, -1023, 1023));
