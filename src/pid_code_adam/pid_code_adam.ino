@@ -7,7 +7,7 @@
 //#include <Adafruit_ICM20649.h>
 //#include <Adafruit_Sensor.h>
 #include <math.h>
-
+#include <list>
 // Motor Driver Standby Pin (Drive to HIGH to make motor driver function)
 #define STBY 5
 
@@ -34,8 +34,10 @@ Encoder ENCB(10, 9);
 // Accel + Gyro IMU
 //Adafruit_ICM20649 IMU;
 
+std::list<int> queue = {};
+
 void setup() {
-  delay(7500);
+    delay(7500);
     pinMode(PWMA, OUTPUT);
     pinMode(AIN2, OUTPUT);
     pinMode(AIN1, OUTPUT);
@@ -58,25 +60,34 @@ void loop() {
   //analogWrite(PWMA,255);
  //delay(10000);
   double ticks_per_inch = (360/(1.57*PI));
-  double inch_goal = -12*ticks_per_inch;
-  double pid_A = pidA(inch_goal,1.8,.00000000,.0);
+  double inch_goal = -26*ticks_per_inch;
+  double pid_A = pid(1, inch_goal,1.8,.00000000,.0);
+  double pid_B = pid(2, -inch_goal,1.8,.00000000,.0);
  
   
   if (pid_A >0) {
-  digitalWrite(AIN1, HIGH);
-  digitalWrite(AIN2, LOW);
-   digitalWrite(BIN1, HIGH);
-  digitalWrite(BIN2, LOW);
+    digitalWrite(AIN1, HIGH);
+    digitalWrite(AIN2, LOW);
   } else {
-  digitalWrite(AIN1, LOW);
-  digitalWrite(AIN2, HIGH);
-   digitalWrite(BIN1, LOW);
-  digitalWrite(BIN2, HIGH);
+    digitalWrite(AIN1, LOW);
+    digitalWrite(AIN2, HIGH);
   }
+
+  if (pid_B >0) {
+    digitalWrite(BIN1, LOW);
+    digitalWrite(BIN2, HIGH);
+  } else {
+    digitalWrite(BIN1, HIGH);
+    digitalWrite(BIN2, LOW);
+  }
+  
   analogWrite(PWMA,pid_A);
-  analogWrite(PWMB,pid_A);
+  analogWrite(PWMB,pid_B);
   //analogWrite(PWMB,pidB(10000,1.8,.00000000,.0));
+  Serial.print("pid a: ");
   Serial.println(pid_A);
+  Serial.print("pid b: ");
+  Serial.println(pid_B);
   
 }
 
@@ -85,37 +96,42 @@ double last_errorA = 0.0;
 double errorA = 0.0;
 double total_errorA = 0.0;
 
-double start_timeA = 0.0;
-double last_start_timeA = 0.0;
+double start_time = 0.0;
+double last_start_time = 0.0;
 
-double end_timeA = 0.0;
-double last_end_timeA = 0.0;
+double end_time = 0.0;
+double last_end_time = 0.0;
 
 double last_errorB = 0.0;
 double errorB = 0.0;
 double total_errorB = 0.0;
 
-double start_timeB = 0.0;
-double last_start_timeB = 0.0;
-
-double end_timeB = 0.0;
-double last_end_timeB = 0.0;
-
-double pidA(double target, double kP, double kI, double kD) {
-
-    last_start_timeA = start_timeA;
-    last_end_timeA = end_timeA;
+double pid(int controller, double target, double kP, double kI, double kD) {
+ // CONTROLLER: 1 == LEFT 2 == RIGHT
+ 
+    last_start_time = start_time;
+    last_end_time = end_time;
     
-    start_timeA = micros();
+    start_time = micros();
+    double return_value = 0;
+    if(controller == 1) {
+      last_errorA = errorA;
+      errorA = target - ENCA.read();
+      total_errorA += errorA;
     
-    last_errorA = errorA;
-    errorA = target - ENCA.read();
-    total_errorA += errorA;
+      return_value = 255*tanh((kP * errorA + kD * (errorA - last_errorA)/(last_end_time-last_start_time) + kI * total_errorA)/100);
+      Serial.print("errorA: ");
+      Serial.println(errorA);
+    } else {
+      last_errorB = errorB;
+      errorB = target - ENCB.read();
+      total_errorB += errorB;
     
-    double return_value = 255*tanh((kP * errorA + kD * (errorA - last_errorA)/(last_end_timeA-last_start_timeA) + kI * total_errorA)/100);
-
-    Serial.print("error: ");
-    Serial.println(errorA);
+      return_value = 255*tanh((kP * errorB + kD * (errorB - last_errorB)/(last_end_time-last_start_time) + kI * total_errorB)/100);
+      Serial.print("errorB: ");
+      Serial.println(errorB);
+    }
+    
   /*  Serial.print("p:");
     Serial.println(kP * errorA);
     Serial.print("i:");
@@ -127,10 +143,14 @@ double pidA(double target, double kP, double kI, double kD) {
     Serial.print("tanh return: ");
     Serial.println(255*tanh((1/100) * return_value)); */
     
-    end_timeA = micros();
+    end_time = micros();
     
     return return_value;
 }
+
+
+
+
 
 void reset_pid() {
   total_errorA = 0.0;
@@ -138,22 +158,4 @@ void reset_pid() {
 
   ENCA.write(0);
   ENCB.write(0);
-}
-
-double pidB(double target, double kP, double kI, double kD) {
-
-    last_start_timeB = start_timeB;
-    last_end_timeB = end_timeB;
-    
-    start_timeB = micros();
-      
-    last_errorB = errorB;
-    errorB = target - ENCB.read();
-    total_errorB += errorB;
-
-    double return_value = kP * errorB - kD * (errorB - last_errorB)/(last_end_timeB-last_start_timeB) + kI * total_errorB;
-
-    end_timeB = micros();
-    
-    return return_value;
 }
