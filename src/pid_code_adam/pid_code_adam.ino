@@ -7,10 +7,30 @@
 //#include <Adafruit_ICM20649.h>
 //#include <Adafruit_Sensor.h>
 #include <math.h>
-#include <list>
+#include <queue>
+
+
 // Motor Driver Standby Pin (Drive to HIGH to make motor driver function)
 #define STBY 5
 
+std::queue<char*> q;
+
+double leftTimer = 0;
+double rightTimer = 0;
+
+double goal_threshold = 45;
+double time_threshold = 30;
+
+struct pid_return {
+  double motor_output;
+  bool within_goal;
+};
+
+struct pid_return pid_retA;
+struct pid_return pid_retB;
+
+IntervalTimer MotorTimer;
+double timeStep = 10000;
 // Motor A
 Encoder ENCA(12, 11);
 #define PWMA 8
@@ -34,10 +54,17 @@ Encoder ENCB(10, 9);
 // Accel + Gyro IMU
 //Adafruit_ICM20649 IMU;
 
-std::list<int> queue = {};
 
 void setup() {
-    delay(7500);
+
+    delay(6500);
+
+    q.push("24");
+    q.push("-24");
+        
+    MotorTimer.begin(setMotorsPID, timeStep);
+
+      
     pinMode(PWMA, OUTPUT);
     pinMode(AIN2, OUTPUT);
     pinMode(AIN1, OUTPUT);
@@ -59,77 +86,155 @@ void loop() {
   //digitalWrite(AIN2, LOW);
   //analogWrite(PWMA,255);
  //delay(10000);
-  double ticks_per_inch = (360/(1.57*PI));
-  double inch_goal = -26*ticks_per_inch;
-  double pid_A = pid(1, inch_goal,1.8,.00000000,.0);
-  double pid_B = pid(2, -inch_goal,1.8,.00000000,.0);
- 
   
-  if (pid_A >0) {
-    digitalWrite(AIN1, HIGH);
-    digitalWrite(AIN2, LOW);
-  } else {
-    digitalWrite(AIN1, LOW);
-    digitalWrite(AIN2, HIGH);
-  }
-
-  if (pid_B >0) {
-    digitalWrite(BIN1, LOW);
-    digitalWrite(BIN2, HIGH);
-  } else {
-    digitalWrite(BIN1, HIGH);
-    digitalWrite(BIN2, LOW);
-  }
   
-  analogWrite(PWMA,pid_A);
-  analogWrite(PWMB,pid_B);
+  
   //analogWrite(PWMB,pidB(10000,1.8,.00000000,.0));
-  Serial.print("pid a: ");
-  Serial.println(pid_A);
-  Serial.print("pid b: ");
-  Serial.println(pid_B);
+  //Serial.print("pid a: ");
+  //Serial.println(pid_A);
+  //Serial.print("pid b: ");
+  //Serial.println(pid_B);
   
 }
+
+
+
+
+
+
+void setMotorsPID() {
+  Serial.println("t");
+  if(q.empty()) {
+    Serial.println("END");
+    
+    analogWrite(PWMA,0);
+    analogWrite(PWMB,0);
+    MotorTimer.end();
+    return;
+  }
+
+  //Serial.println("enter setMotorsPID()");
+  
+  double ticks_per_inch = (360/(1.57*PI));
+  double inch_goal = atof(q.front())*ticks_per_inch;
+
+  //Serial.println("1");
+
+  
+  struct pid_return* a = pid(0, -inch_goal,1.8,.00000000,.0);
+  struct pid_return* b = pid(1, inch_goal,1.8,.00000000,.0);
+
+  //Serial.println("2");
+
+  //Serial.println(reinterpret_cast<int>(a));
+  
+  if (a->motor_output > 0) {
+    digitalWrite(AIN1, LOW);
+    digitalWrite(AIN2, HIGH);
+  } else {
+    digitalWrite(AIN1, HIGH);
+    digitalWrite(AIN2, LOW);
+  }
+
+   //Serial.println("3");
+
+  if (b->motor_output >0) {
+    digitalWrite(BIN1, HIGH);
+    digitalWrite(BIN2, LOW);
+  } else {
+    digitalWrite(BIN1, LOW);
+    digitalWrite(BIN2, HIGH);
+  }
+
+  //Serial.println("4");
+  
+  analogWrite(PWMA,a->motor_output);
+  analogWrite(PWMB,b->motor_output);
+
+  //Serial.println("5");
+
+  if(a->within_goal == 1 && b->within_goal == 1) {
+    q.pop();
+    reset_pid();
+  }
+
+  //Serial.println("exit setMotorsPid()");
+
+  
+}
+
+
+
+
+
 
 
 double last_errorA = 0.0;
 double errorA = 0.0;
 double total_errorA = 0.0;
 
-double start_time = 0.0;
-double last_start_time = 0.0;
-
-double end_time = 0.0;
-double last_end_time = 0.0;
+//double start_time = 0.0;
+//double last_start_time = 0.0;
+//
+//double end_time = 0.0;
+//double last_end_time = 0.0;
 
 double last_errorB = 0.0;
 double errorB = 0.0;
 double total_errorB = 0.0;
 
-double pid(int controller, double target, double kP, double kI, double kD) {
+
+struct pid_return* pid(int controller, double target, double kP, double kI, double kD) {
  // CONTROLLER: 1 == LEFT 2 == RIGHT
- 
-    last_start_time = start_time;
-    last_end_time = end_time;
-    
-    start_time = micros();
+// 
+//    last_start_time = start_time;
+//    last_end_time = end_time;
+//    
+//    start_time = micros();
+
+    bool within_goal = 0;
     double return_value = 0;
-    if(controller == 1) {
+    
+    if(controller == 0) {
       last_errorA = errorA;
-      errorA = target - ENCA.read();
+      errorA = -(target - ENCA.read());
       total_errorA += errorA;
     
-      return_value = 255*tanh((kP * errorA + kD * (errorA - last_errorA)/(last_end_time-last_start_time) + kI * total_errorA)/100);
-      Serial.print("errorA: ");
-      Serial.println(errorA);
+      return_value = 255*tanh((kP * errorA + kD * (errorA - last_errorA)/(timeStep) + kI * total_errorA)/100);
+      //Serial.print("errorA: ");
+      //Serial.println(errorA);
+  
+      if (abs(errorA) < goal_threshold) {
+        leftTimer++;
+      } else {
+        leftTimer = 0;
+      }
+   
+      if(leftTimer > time_threshold) {
+        within_goal = 1;
+      }
+
+      
     } else {
       last_errorB = errorB;
-      errorB = target - ENCB.read();
+      errorB = -(target - ENCB.read());
+      Serial.println(errorB);
       total_errorB += errorB;
     
-      return_value = 255*tanh((kP * errorB + kD * (errorB - last_errorB)/(last_end_time-last_start_time) + kI * total_errorB)/100);
-      Serial.print("errorB: ");
-      Serial.println(errorB);
+      return_value = 255*tanh((kP * errorB + kD * (errorB - last_errorB)/(timeStep) + kI * total_errorB)/100);
+      //Serial.print("errorB: ");
+      //Serial.println(errorB);
+
+
+      if (abs(errorB) < goal_threshold) {
+        rightTimer++;
+      } else {
+        rightTimer = 0;
+      }
+   
+      if(rightTimer > time_threshold) {
+        within_goal = 1;
+      }
     }
     
   /*  Serial.print("p:");
@@ -143,9 +248,22 @@ double pid(int controller, double target, double kP, double kI, double kD) {
     Serial.print("tanh return: ");
     Serial.println(255*tanh((1/100) * return_value)); */
     
-    end_time = micros();
-    
-    return return_value;
+    //end_time = micros();
+
+
+
+    //Serial.println(reinterpret_cast<int>(pid_ret));
+
+    //Serial.println(pid_ret.motor_output);
+    if (controller == 0) {
+      pid_retA.motor_output = return_value;
+      pid_retA.within_goal = within_goal;
+      return &pid_retA;
+    } else {
+      pid_retB.motor_output = return_value;
+      pid_retB.within_goal = within_goal;
+      return &pid_retB;
+    }
 }
 
 
