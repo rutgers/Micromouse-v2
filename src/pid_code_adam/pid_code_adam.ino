@@ -13,7 +13,7 @@
 // Motor Driver Standby Pin (Drive to HIGH to make motor driver function)
 #define STBY 5
 
-std::queue<char*> q;
+std::queue<double> q;
 
 double leftTimer = 0;
 double rightTimer = 0;
@@ -59,8 +59,10 @@ void setup() {
 
     delay(6500);
 
-    q.push("24");
-    q.push("-24");
+    q.push(18);
+    //q.push(-12);
+    
+    //q.push("-24");
         
     MotorTimer.begin(setMotorsPID, timeStep);
 
@@ -78,7 +80,7 @@ void setup() {
 
     Serial.begin(9600);
     
-    reset_pid();
+    //reset_pid();
 }
 
 void loop() {
@@ -103,12 +105,16 @@ void loop() {
 
 
 void setMotorsPID() {
-  Serial.println("t");
+
+  
+  
+  //Serial.println("t");
   if(q.empty()) {
-    Serial.println("END");
+    //Serial.println("END");
     
     analogWrite(PWMA,0);
     analogWrite(PWMB,0);
+    reset_pid();
     MotorTimer.end();
     return;
   }
@@ -116,13 +122,14 @@ void setMotorsPID() {
   //Serial.println("enter setMotorsPID()");
   
   double ticks_per_inch = (360/(1.57*PI));
-  double inch_goal = atof(q.front())*ticks_per_inch;
+  double inch_goal = q.front()*ticks_per_inch;
+  Serial.println(q.front());
 
   //Serial.println("1");
 
   
-  struct pid_return* a = pid(0, -inch_goal,1.8,.00000000,.0);
-  struct pid_return* b = pid(1, inch_goal,1.8,.00000000,.0);
+  struct pid_return* a = pid(0, -inch_goal,.6,.00000000,.0);//pid(0, -inch_goal,1.8,.00000000,.0);
+  struct pid_return* b = pid(1, inch_goal,.6,.00000000,.0);//pid(1, inch_goal,1.8,.00000000,.0);
 
   //Serial.println("2");
 
@@ -218,7 +225,7 @@ struct pid_return* pid(int controller, double target, double kP, double kI, doub
     } else {
       last_errorB = errorB;
       errorB = -(target - ENCB.read());
-      Serial.println(errorB);
+      //Serial.println(errorB);
       total_errorB += errorB;
     
       return_value = 255*tanh((kP * errorB + kD * (errorB - last_errorB)/(timeStep) + kI * total_errorB)/100);
