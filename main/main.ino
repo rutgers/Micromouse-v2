@@ -1,77 +1,10 @@
 #include "bot_config.h"
 
-/* This file is for the ino version of the code.*/
-
 #if defined(ADAFRUIT_SENSOR_CALIBRATION_USE_EEPROM)
   Adafruit_Sensor_Calibration_EEPROM cal;
 #else
   Adafruit_Sensor_Calibration_SDFat cal;
 #endif
-
-void setup()
-{
-    pinMode(14, OUTPUT);
-    pinMode(15, OUTPUT);
-    digitalWrite(14, LOW);
-    digitalWrite(15, LOW);
-    Wire.begin();
-    Wire.setClock(400000);
-    setupMotorDriver();
-    setupToF();
-    setupIMU();
-
-    xSet = 30;
-    wSet = 0;
-
-    /* Use only when outputting with bluetooth, otherwise leave commented */
-    // bt.begin(115200);
-    // delay(100);
-    // bt.println("Send ready cmd");
-    // bool check = true;
-    // while(check) {
-    //     if (bt.available()) if (bt.read() == 'a') check = false;
-    //     delay(1);
-    // }
-    // delay(10);
-
-    pinMode(LED_BUILTIN, OUTPUT);
-    digitalWrite(LED_BUILTIN, HIGH);  // This provides physical indication setup is complete
-    delay(2000);
-
-    digitalWrite(STBY, HIGH);
-    ENCA.write(0);
-    ENCB.write(0);
-    PDTimer.begin(PDFunc, 25000);
-
-    /* IMU Orienation Algo Setup */
-    // if (!cal.begin()) {
-    //     Serial.println("Failed to initialize calibration helper");
-    // } else if (! cal.loadCalibration()) {
-    //     Serial.println("No calibration loaded/found");
-    // }
-
-    // imu_filter.begin(FILTER_UPDATE_RATE_HZ);
-    // imu_filter_timestamp = 0;
-}
-
-
-bool stopRecording = false;
-
-void loop()
-{
-    // Sample loop code for the mouse to go straight until less than 80mm from an obstacle
-    if (stopRecording) return;
-    if (F_ToF.read() < 80) {
-        noInterrupts();
-        xSet = 0;
-        interrupts();
-        delay(250);
-        PDTimer.end();
-        setPWMA(0);
-        setPWMB(0);
-        stopRecording = true;
-    }
-}
 
 /* Example PD Function */
 void PDFunc()
@@ -157,4 +90,68 @@ void get_orientation()
     Serial.print(", ");
     Serial.println(qz, 4);
     */
+}
+
+void setup()
+{
+    pinMode(14, OUTPUT);
+    pinMode(15, OUTPUT);
+    digitalWrite(14, LOW);
+    digitalWrite(15, LOW);
+    Wire.begin();
+    Wire.setClock(400000);
+    setupMotorDriver();
+    setupToF();
+    setupIMU();
+
+    xSet = 30;
+    wSet = 0;
+
+    /* Use only when outputting with bluetooth, otherwise leave commented */
+    // bt.begin(115200);
+    // delay(100);
+    // bt.println("Send ready cmd");
+    // bool check = true;
+    // while(check) {
+    //     if (bt.available()) if (bt.read() == 'a') check = false;
+    //     delay(1);
+    // }
+    // delay(10);
+
+    pinMode(LED_BUILTIN, OUTPUT);
+    digitalWrite(LED_BUILTIN, HIGH);  // This provides physical indication setup is complete
+    delay(2000);
+
+    digitalWrite(STBY, HIGH);
+    ENCA.write(0);
+    ENCB.write(0);
+    PDTimer.begin(PDFunc, 25000);
+
+    /* IMU Orienation Algo Setup */
+    // if (!cal.begin()) {
+    //     Serial.println("Failed to initialize calibration helper");
+    // } else if (! cal.loadCalibration()) {
+    //     Serial.println("No calibration loaded/found");
+    // }
+
+    // imu_filter.begin(FILTER_UPDATE_RATE_HZ);
+    // imu_filter_timestamp = 0;
+}
+
+bool stopRecording = false;
+
+void loop()
+{
+    // Sample loop code for the mouse to go straight until less than 80mm from an obstacle
+    if (stopRecording) return;
+    if (F_ToF.read() < 80) {
+        noInterrupts();
+        xSet = 0;
+        interrupts();
+        delay(250);
+        PDTimer.end();
+        setPWMA(0);
+        setPWMB(0);
+        stopRecording = true;
+    }
 }
