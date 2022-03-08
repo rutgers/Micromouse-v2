@@ -9,6 +9,8 @@
 #include <Adafruit_ICM20X.h>
 #include <Adafruit_ICM20649.h>
 #include <Adafruit_Sensor.h>
+#include <Adafruit_Sensor_Calibration.h>
+#include <Adafruit_AHRS.h>
 
 // Motor Driver Standby Pin (Drive to HIGH to make motor driver function)
 #define STBY 5
@@ -32,20 +34,26 @@ extern Encoder ENCB;
 extern uint8_t BIN1_VAL;
 extern uint8_t BIN2_VAL;
 
-// General Params
+/* General Parameters */
+// Wheel Measurements
 extern const float WHEEL_CIRC; // This is in millimeters
 extern const float MOUSE_RADIUS; // This is in millimeters
-extern const float gear_num;
-extern const float gear_den;
-extern const float WHEEL_TICKSgear_num;
-extern const float MM_PER_TICK;
-extern const float DEG_PER_MM_DIFF;
-extern const float xConst;
-extern const float wConst;
-extern IntervalTimer MotorTimer;
-extern elapsedMillis TimeCheck;
-extern bool recording;
-extern const float KpX, KdX, KpW, KdW;
+// Gearbox Ratio
+extern const float gear_num;  // Numerator
+extern const float gear_den;  // Denominator
+// Wheel-to-Distance Traveled Relations
+extern const float TICKS;  // Ticks per rotation of gearbox shaft
+extern const float MM_PER_TICK;  // Millimeters traveled by wheel per tick
+
+/* PD Function Variables */
+// Rotational and Translation PD setpoints
+extern int xSet;
+extern int wSet;
+// Timer (calls PD Func based on input interval; e.g.: PDTimer.begin(PDFunc, 25000))
+extern IntervalTimer PDTimer;
+// PD Constants (tune these as you see fit)
+extern const int KpX, KdX, KpW, KdW;
+// PD Error Value Holders
 extern long errorX, oldErrorX, errorW, oldErrorW;
 
 // Bluetooth
@@ -61,10 +69,20 @@ extern Adafruit_ICM20649 IMU;
 extern Adafruit_Sensor *accel, *gyro;
 extern sensors_event_t a, g;
 
+// IMU Orientation Algos
+//extern Adafruit_NXPSensorFusion filter; // slowest
+extern Adafruit_Mahony imu_filter;  // fastest/smalleset
+#define FILTER_UPDATE_RATE_HZ 100
+#define PRINT_EVERY_N_UPDATES 10
+extern elapsedMillis imu_filter_timestamp;
+
+/* Device Setup Functions */
 void setupMotorDriver(uint8_t ain1_val = AIN1_VAL, uint8_t ain2_val = AIN2_VAL,
                       uint8_t bin1_val = BIN1_VAL, uint8_t bin2_val = BIN2_VAL);
 void setupToF();
 void setupIMU();
+
+/* Motor Speed Control */
 void setPWMA(int);
 void setPWMB(int);
 

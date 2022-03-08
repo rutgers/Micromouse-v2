@@ -1,12 +1,12 @@
 #include "bot_config.h"
 
+/* This file is for the ino version of the code.*/
+
 #if defined(ADAFRUIT_SENSOR_CALIBRATION_USE_EEPROM)
   Adafruit_Sensor_Calibration_EEPROM cal;
 #else
   Adafruit_Sensor_Calibration_SDFat cal;
 #endif
-
-void PDFunc();
 
 void setup()
 {

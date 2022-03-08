@@ -7,40 +7,54 @@ moving forward. They can be changed with the setupMotorDriver method. */
 Encoder ENCA(11, 12);
 uint8_t AIN1_VAL = HIGH;
 uint8_t AIN2_VAL = LOW;
+
 // Motor B
 Encoder ENCB(9, 10);
 uint8_t BIN1_VAL = HIGH;
 uint8_t BIN2_VAL = LOW;
 
-// General Params
+
+/* General Parameters */
+// Wheel Measurements
 const float WHEEL_CIRC = 80 * PI; // This is in millimeters
 const float MOUSE_RADIUS = 39.5; // This is in millimeters
-const float gear_num = 31 * 33 * 35 * 34;
-const float gear_den = 16 * 14 * 13 * 14;
-const float WHEEL_TICKS = 12 * (gear_num / gear_den);
-const float MM_PER_TICK = WHEEL_CIRC / WHEEL_TICKS;
-const float DEG_PER_MM_DIFF = 180 / (2 * MOUSE_RADIUS * PI);
-const float xConst = 300;
-const float wConst = 0;
-IntervalTimer MotorTimer;
-elapsedMillis TimeCheck = 0;
-bool recording = true;
-const float KpX = 2, KdX = 1, KpW = 8, KdW = 4;
+// Gearbox Ratio
+const float gear_num = 31 * 33 * 35 * 34;  // Numerator
+const float gear_den = 16 * 14 * 13 * 14;  // Denominator
+// Wheel-to-Distance Traveled Relations
+const float TICKS = 12 * (gear_num / gear_den);  // Ticks per rotation of gearbox shaft
+const float MM_PER_TICK = WHEEL_CIRC / TICKS;  // Millimeters traveled by wheel per tick
+
+/* PD Function Variables */
+// Rotational and Translation PD setpoints
+int xSet = 30;
+int wSet = 0;
+// Timer (calls PD Func based on input interval; e.g.: PDTimer.begin(PDFunc, 25000))
+IntervalTimer PDTimer;
+// PD Constants (tune these as you see fit)
+const int KpX = 2, KdX = 1, KpW = 5, KdW = 1;
+// PD Error Value Holders
 long errorX = 0, oldErrorX = 0, errorW = 0, oldErrorW = 0;
 
 // Bluetooth
 SoftwareSerial bt(0, 1);
 
 // Time-of-Flight Sensors
-VL53L1X F_ToF;
-VL6180X R_ToF;
-VL6180X L_ToF;
+VL53L1X F_ToF;  // Front
+VL6180X R_ToF;  // Right
+VL6180X L_ToF;  // Left
 
 // Accel + Gyro IMU
 Adafruit_ICM20649 IMU;
 Adafruit_Sensor *accel, *gyro;
 sensors_event_t a, g;
 
+// IMU Orientation Algos
+//extern Adafruit_NXPSensorFusion filter; // slowest
+Adafruit_Mahony imu_filter;  // fastest/smalleset
+elapsedMillis imu_filter_timestamp = 0;
+
+/* Device Setup Functions */
 void setupMotorDriver(uint8_t ain1_val, uint8_t ain2_val, uint8_t bin1_val, uint8_t bin2_val)
 {
     pinMode(STBY, OUTPUT);
@@ -65,26 +79,27 @@ void setupMotorDriver(uint8_t ain1_val, uint8_t ain2_val, uint8_t bin1_val, uint
 void setupToF()
 {
     L_ToF.init();
-    L_ToF.configureDefault();
-    L_ToF.writeReg(VL6180X::SYSRANGE__MAX_CONVERGENCE_TIME, 20);
     L_ToF.setAddress(0x28);
+    L_ToF.configureDefault();
+    L_ToF.writeReg(VL6180X::SYSRANGE__MAX_CONVERGENCE_TIME, 4);
 
     digitalWrite(14, HIGH);
     delay(50);
     R_ToF.init();
-    R_ToF.configureDefault();
-    R_ToF.writeReg(VL6180X::SYSRANGE__MAX_CONVERGENCE_TIME, 20);
     R_ToF.setAddress(0x2A);
+    R_ToF.configureDefault();
+    R_ToF.writeReg(VL6180X::SYSRANGE__MAX_CONVERGENCE_TIME, 4);
 
     digitalWrite(15, HIGH);
     delay(50);
     F_ToF.init();
-    F_ToF.setDistanceMode(VL53L1X::Long);
+    F_ToF.setDistanceMode(VL53L1X::Medium);
+    F_ToF.setROISize(4, 4);
     F_ToF.setMeasurementTimingBudget(33000);
 
-    L_ToF.startRangeContinuous(35);
+    L_ToF.startRangeContinuous(10);
     F_ToF.startContinuous(33);
-    R_ToF.startRangeContinuous(35);
+    R_ToF.startRangeContinuous(10);
 }
 
 void setupIMU()
@@ -97,7 +112,7 @@ void setupIMU()
             delay(10);
         }
     }
-    // IMU.enableAccelDLPF(true, ICM20X_ACCEL_FREQ_473_HZ);
+    IMU.enableAccelDLPF(true, ICM20X_ACCEL_FREQ_473_HZ);
     IMU.enableGyrolDLPF(true, ICM20X_GYRO_FREQ_361_4_HZ);
     IMU.setAccelRateDivisor(0);
     IMU.setGyroRateDivisor(0);
