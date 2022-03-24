@@ -3,9 +3,9 @@
 #include <Encoder.h>
 //#include <VL53L1X.h>
 //#include <VL6180X.h>
-//#include <Adafruit_ICM20X.h>
-//#include <Adafruit_ICM20649.h>
-//#include <Adafruit_Sensor.h>
+#include <Adafruit_ICM20X.h>
+#include <Adafruit_ICM20649.h>
+#include <Adafruit_Sensor.h>
 #include <math.h>
 #include <queue>
 
@@ -52,7 +52,12 @@ Encoder ENCB(10, 9);
 //VL6180X L_ToF;
 
 // Accel + Gyro IMU
-//Adafruit_ICM20649 IMU;
+Adafruit_ICM20649 IMU;
+Adafruit_Sensor *accel, *gyro, *magn;
+sensors_event_t g, a, t, m;
+
+double zanglegyro = 0;
+double zangleaccel = 0;
 
 
 void setup() {
@@ -63,7 +68,14 @@ void setup() {
     //q.push(-12);
     
     //q.push("-24");
-        
+    Serial.println(0);
+    IMU.begin_I2C();
+    IMU.enableGyrolDLPF(true, ICM20X_GYRO_FREQ_361_4_HZ);
+    IMU.setAccelRateDivisor(0);
+    IMU.setGyroRateDivisor(0);
+    accel = IMU.getAccelerometerSensor();
+    gyro = IMU.getGyroSensor();
+    magn = IMU.getMagnetometerSensor();
     MotorTimer.begin(setMotorsPID, timeStep);
 
       
@@ -81,6 +93,13 @@ void setup() {
     Serial.begin(9600);
     
     //reset_pid();
+   
+    /*if (!IMU.begin_I2C()) {
+        Serial.println("Failed to find ICM20649 chip");
+        while (true) {
+            delay(10);
+        }
+    }*/
 }
 
 void loop() {
@@ -90,6 +109,33 @@ void loop() {
  //delay(10000);
   
   
+    IMU.getEvent(&a, &g, &t, &m);
+    //magn->getEvent(&m);
+    //Serial.println("MONKEY BUSINESS 2!");
+    Serial.print("acc x: ");
+    Serial.println(a.acceleration.x);
+    Serial.print("acc y: ");
+    Serial.println(a.acceleration.y);
+    Serial.print("acc z: ");
+    Serial.println(a.acceleration.z);
+    Serial.print("gyro x: ");
+    Serial.println(g.gyro.x);
+    Serial.print("gyro y: ");
+    Serial.println(g.gyro.y);
+    Serial.print("gyro z: ");
+    Serial.println(g.gyro.z);
+
+    if (abs(g.gyro.z) > 0.05) {
+      zanglegyro += (g.gyro.z)/1850 * 360;
+    }
+
+    Serial.print("Z ANGLE GYRO: ");
+    Serial.println(zanglegyro);
+
+    zangleaccel = atan2(a.acceleration.x, a.acceleration.y);
+
+    Serial.print("Z ANGLE ACCEL: ");
+    Serial.println(zangleaccel);
   
   //analogWrite(PWMB,pidB(10000,1.8,.00000000,.0));
   //Serial.print("pid a: ");
@@ -98,10 +144,6 @@ void loop() {
   //Serial.println(pid_B);
   
 }
-
-
-
-
 
 
 void setMotorsPID() {
@@ -243,13 +285,15 @@ struct pid_return* pid(int controller, double target, double kP, double kI, doub
         within_goal = 1;
       }
     }
+    //Serial.println("MONKEY BUSINESS 1!");
     
-  /*  Serial.print("p:");
+    
+    /*Serial.print("p:");
     Serial.println(kP * errorA);
     Serial.print("i:");
     Serial.println(kI * total_errorA);
     Serial.print("d:");
-    Serial.println(kD * (errorA - last_errorA)/(last_end_timeA-last_start_timeA));
+    //Serial.println(kD * (errorA - last_errorA)/(last_end_timeA-last_start_timeA));
     Serial.print("return: ");
     Serial.println(return_value);
     Serial.print("tanh return: ");
