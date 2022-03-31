@@ -59,6 +59,10 @@ sensors_event_t g, a, t, m;
 double zanglegyro = 0;
 double zangleaccel = 0;
 
+double old_time = micros();
+double new_time = 0;
+double delta_time = 0;
+
 
 void setup() {
 
@@ -110,32 +114,43 @@ void loop() {
   
   
     IMU.getEvent(&a, &g, &t, &m);
-    //magn->getEvent(&m);
+    magn->getEvent(&m);
     //Serial.println("MONKEY BUSINESS 2!");
-    Serial.print("acc x: ");
-    Serial.println(a.acceleration.x);
-    Serial.print("acc y: ");
-    Serial.println(a.acceleration.y);
-    Serial.print("acc z: ");
-    Serial.println(a.acceleration.z);
-    Serial.print("gyro x: ");
-    Serial.println(g.gyro.x);
-    Serial.print("gyro y: ");
-    Serial.println(g.gyro.y);
+   // Serial.print("acc x: ");
+    //Serial.println(a.acceleration.x);
+    //Serial.print("acc y: ");
+    //Serial.println(a.acceleration.y);
+    //Serial.print("acc z: ");
+    //Serial.println(a.acceleration.z);
+    //Serial.print("gyro x: ");
+    //Serial.println(g.gyro.x);
+    //Serial.print("gyro y: ");
+    //Serial.println(g.gyro.y);
     Serial.print("gyro z: ");
     Serial.println(g.gyro.z);
 
+    Serial.print("mag z:");
+    Serial.println(m.magnetic.z, 10);
+
+
+    old_time = new_time;
+    new_time = micros();
+    delta_time = (new_time - old_time)/1000000;
+    Serial.print("delta time: ");
+    Serial.println(delta_time, 8);    
+
     if (abs(g.gyro.z) > 0.05) {
-      zanglegyro += (g.gyro.z)/1850 * 360;
+      //zanglegyro += (g.gyro.z)/1850 * 360;
+      zanglegyro += (g.gyro.z)*(delta_time);
     }
 
     Serial.print("Z ANGLE GYRO: ");
-    Serial.println(zanglegyro);
+    Serial.println(zanglegyro, 8);
 
-    zangleaccel = atan2(a.acceleration.x, a.acceleration.y);
+    //zangleaccel = atan2(a.acceleration.x, a.acceleration.y);
 
-    Serial.print("Z ANGLE ACCEL: ");
-    Serial.println(zangleaccel);
+    //Serial.print("Z ANGLE ACCEL: ");
+    //Serial.println(zangleaccel);
   
   //analogWrite(PWMB,pidB(10000,1.8,.00000000,.0));
   //Serial.print("pid a: ");
