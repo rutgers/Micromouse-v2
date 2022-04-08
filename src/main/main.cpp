@@ -1,10 +1,15 @@
 #include "bot_config.h"
 
+
 #if defined(ADAFRUIT_SENSOR_CALIBRATION_USE_EEPROM)
   Adafruit_Sensor_Calibration_EEPROM cal;
 #else
   Adafruit_Sensor_Calibration_SDFat cal;
 #endif
+
+int surround[3] = {0,0,0};
+void checkWalls();
+
 
 /* Example PD Function */
 void PDFunc()
@@ -92,6 +97,12 @@ void get_orientation()
     */
 }
 
+void checkWalls() {
+    surround[0] = (L_ToF.readRangeContinuousMillimeters() < 90) ? 1 : 0;
+    surround[1] = (F_ToF.read() < 90) ? 1 : 0;
+    surround[2] = (R_ToF.readRangeContinuousMillimeters() < 90) ? 1 : 0;
+}
+
 void setup()
 {
     pinMode(14, OUTPUT);
@@ -139,6 +150,12 @@ void setup()
 }
 
 bool stopRecording = false;
+
+void checkWalls() {
+    surround[0] = (L_ToF.readRangeContinuousMillimeters() < 90) ? 1 : 0;
+    surround[1] = (F_ToF.read() < 90) ? 1 : 0;
+    surround[2] = (R_ToF.readRangeContinuousMillimeters() < 90) ? 1 : 0;
+}
 
 void loop()
 {
