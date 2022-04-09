@@ -6,8 +6,6 @@
 #include <Adafruit_ICM20X.h>
 #include <Adafruit_ICM20649.h>
 #include <Adafruit_Sensor.h>
-<<<<<<< Updated upstream:src/bot_config.h
-=======
 #include <math.h>
 #include <queue>
 #include <Adafruit_AHRS.h>
@@ -20,7 +18,6 @@
 #include <SoftwareSerial.h>
 #include <VL53L1X.h>
 #include <VL6180X.h>
->>>>>>> Stashed changes:src/main/bot_config.h
 
 // Motor Driver Standby Pin (Drive to HIGH to make motor driver function)
 #define STBY 5

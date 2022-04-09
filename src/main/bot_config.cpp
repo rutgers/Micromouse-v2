@@ -82,15 +82,9 @@ void setupToF()
     F_ToF.setDistanceMode(VL53L1X::Long);
     F_ToF.setMeasurementTimingBudget(33000);
 
-<<<<<<< Updated upstream:src/bot_config.cpp
-    L_ToF.startRangeContinuous(35);
-    F_ToF.startContinuous(33);
-    R_ToF.startRangeContinuous(35);
-=======
     L_ToF.startRangeContinuous(50);
     F_ToF.startContinuous(33);
     R_ToF.startRangeContinuous(50);
->>>>>>> Stashed changes:src/main/bot_config.cpp
 }
 
 void setupIMU()
