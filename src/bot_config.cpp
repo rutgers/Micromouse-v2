@@ -39,7 +39,7 @@ VL6180X L_ToF;
 // Accel + Gyro IMU
 Adafruit_ICM20649 IMU;
 Adafruit_Sensor *accel, *gyro;
-sensors_event_t a, g;
+//sensors_event_t a, g;
 
 void setupMotorDriver(uint8_t ain1_val, uint8_t ain2_val, uint8_t bin1_val, uint8_t bin2_val)
 {
@@ -82,9 +82,15 @@ void setupToF()
     F_ToF.setDistanceMode(VL53L1X::Long);
     F_ToF.setMeasurementTimingBudget(33000);
 
+<<<<<<< Updated upstream:src/bot_config.cpp
     L_ToF.startRangeContinuous(35);
     F_ToF.startContinuous(33);
     R_ToF.startRangeContinuous(35);
+=======
+    L_ToF.startRangeContinuous(50);
+    F_ToF.startContinuous(33);
+    R_ToF.startRangeContinuous(50);
+>>>>>>> Stashed changes:src/main/bot_config.cpp
 }
 
 void setupIMU()

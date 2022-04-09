@@ -2,13 +2,25 @@
 #define BOT_CONFIG_H
 
 #include <Arduino.h>
-#include <SoftwareSerial.h>
 #include <Encoder.h>
-#include <VL53L1X.h>
-#include <VL6180X.h>
 #include <Adafruit_ICM20X.h>
 #include <Adafruit_ICM20649.h>
 #include <Adafruit_Sensor.h>
+<<<<<<< Updated upstream:src/bot_config.h
+=======
+#include <math.h>
+#include <queue>
+#include <Adafruit_AHRS.h>
+#include <iostream>
+#include <algorithm>
+#include <utility>
+#include <tuple>
+#include <vector>
+#include <cmath>
+#include <SoftwareSerial.h>
+#include <VL53L1X.h>
+#include <VL6180X.h>
+>>>>>>> Stashed changes:src/main/bot_config.h
 
 // Motor Driver Standby Pin (Drive to HIGH to make motor driver function)
 #define STBY 5
@@ -58,8 +70,8 @@ extern VL6180X L_ToF;
 
 // Accel + Gyro IMU
 extern Adafruit_ICM20649 IMU;
-extern Adafruit_Sensor *accel, *gyro;
-extern sensors_event_t a, g;
+extern Adafruit_Sensor *accel, *gyro, *magn;
+// extern sensors_event_t a, g, t, m;
 
 void setupMotorDriver(uint8_t ain1_val = AIN1_VAL, uint8_t ain2_val = AIN2_VAL,
                       uint8_t bin1_val = BIN1_VAL, uint8_t bin2_val = BIN2_VAL);
