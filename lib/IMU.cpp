@@ -1,9 +1,9 @@
-#include "Arduino.h"
+#include <Arduino.h>
 #include "IMU.h"
 
 IMU::IMU() {
     
-    Serial.begin(115200);
+    //Serial.begin(115200);
 
     // Check I2C device address and correct line below (by default address is 0x29 or 0x28)
     //                                   id, address
@@ -17,7 +17,7 @@ IMU::IMU() {
     }
 
 
-    delay(1000);
+    //delay(1000);
 }
 
 double IMU::getHeading() {
