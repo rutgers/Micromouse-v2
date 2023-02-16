@@ -1,6 +1,10 @@
 #include <Arduino.h>
 #include "IMU.h"
 
+
+/**
+ *  Constructs IMU class
+ */
 IMU::IMU() {
     
     //Serial.begin(115200);
@@ -20,6 +24,11 @@ IMU::IMU() {
     //delay(1000);
 }
 
+
+/**
+ *  Returns the heading of the IMU
+ *  returns a value between ?? actually not sure //TODO: document this
+ */
 double IMU::getHeading() {
     sensors_event_t orientationData , linearAccelData;
     bno.getEvent(&orientationData, Adafruit_BNO055::VECTOR_EULER);
