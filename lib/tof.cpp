@@ -6,32 +6,36 @@
 
 //constructor
 tof::tof() {
-  //doublecheck which type of sensor is where 
+  //sensor positions are as follows
   VL53L1X L; 
   VL6180X FL;
   VL53L1X F; 
   VL6180X FR;
   VL53L1X R;
 
-  //basically what would be in the setup function run when the object is created
+  //basically what would be in the setup function run when the object is created, presumably
+  
+  //TODO?
+  //we need to give arguments to the following functions?
+  //probably not since the constructor already has all the objects it needs?
   setAddresses();
-  init();
+  setup();
 }
 
 struct tof::readDistance() {
   
   //TODO
   // vl53l1x
-  vl53l1x.read();
+  //vl53l1x.read();
 
   // vl6180x
-  vl53l1x.readRangeContinuous();
+  //vl6180.readRangeContinuousMillimeters();
 
-  sensorReadings.left = L.
-  sensorReadings.frontLeft = 
-  sensorReadings.front = 
-  sensorReadings.frontRight = 
-  sensorReadings.right = 
+  sensorReadings.left = L.read();
+  sensorReadings.frontLeft = FL.readRangeContinuousMillimeters();
+  sensorReadings.front = F.read();
+  sensorReadings.frontRight = FR.readRangeContinuousMillimeters();
+  sensorReadings.right = R.read();
 
   return sensorReadings;
 }
@@ -46,8 +50,7 @@ void tof::setAddresses()
     digitalWrite(xshutNE, LOW);
     digitalWrite(xshutE, LOW);
 
-    
-    //un-standby
+        //un-standby
     digitalWrite(xshutW, HIGH);
     delay(50);
     L.init();
@@ -126,20 +129,30 @@ void tof::setAddresses()
 }
 
 
-void tof::init() {
+void tof::setup() {
   // put your setup code here, to run once:
 
   // TODO
   //repeat this for each sensor object  
-  vl6180x.writeReg(VL6180X::SYSRANGE__MAX_CONVERGENCE_TIME, 20);
-  vl6180x.startRangeContinuous(50);
+  //the fl and fr vl6180x sensors
+  FL.writeReg(VL6180X::SYSRANGE__MAX_CONVERGENCE_TIME, 20);
+  FL.startRangeContinuous(50);
 
-  vl531x.setDistanceMode(VL53L1X::Long);
-  vl531x.setMeasurementTimingBudget(33000);
-  vl531x.startContinuous(33);
+  FR.writeReg(VL6180X::SYSRANGE__MAX_CONVERGENCE_TIME, 20);
+  FR.startRangeContinuous(50);
+  
+  //the front, left, and right vl531x sensors
+  F.setDistanceMode(VL53L1X::Long);
+  F.setMeasurementTimingBudget(33000);
+  F.startContinuous(33);
 
+  L.setDistanceMode(VL53L1X::Long);
+  L.setMeasurementTimingBudget(33000);
+  L.startContinuous(33);
 
-
+  R.setDistanceMode(VL53L1X::Long);
+  R.setMeasurementTimingBudget(33000);
+  R.startContinuous(33);
 }
 
 
