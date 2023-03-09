@@ -2,14 +2,14 @@
 #include "Motors.h"
 
 
-void enableMotors() {
+void Motors::enableMotors() {
 
     digitalWrite(pin_STBY, HIGH);
 
 }
 
 
-void disableMotors() {
+void Motors::disableMotors() {
 
     digitalWrite(pin_STBY, LOW);
     
@@ -19,7 +19,7 @@ void disableMotors() {
  *  Sets speed of left motor
  *  speed takes integer from 0 to 255
  */
-void setLeftMotorSpeed(int speed) {
+void Motors::setLeftMotorSpeed(int speed) {
     digitalWrite(pin_PWMA, speed);
 }
 
@@ -28,7 +28,7 @@ void setLeftMotorSpeed(int speed) {
  *  Sets speed of right motor
  *  speed takes integer from 0 to 255
  */
-void setRightMotorSpeed(int speed) {
+void Motors::setRightMotorSpeed(int speed) {
     digitalWrite(pin_PWMB, speed);
 }
 
@@ -37,7 +37,7 @@ void setRightMotorSpeed(int speed) {
  *  Sets speed of both motors
  *  speed takes integer from 0 to 255
  */
-void setMotorsSpeed(int speed) {
+void Motors::setMotorsSpeed(int speed) {
     setLeftMotorSpeed(speed);
     setRightMotorSpeed(speed);
 }
@@ -49,7 +49,7 @@ void setMotorsSpeed(int speed) {
  *  Sets direction of left motor
  *  forward takes boolean: true is foward, false is backwards
  */
-void setLeftMotorDirection(bool forward) {
+void Motors::setLeftMotorDirection(bool forward) {
     if (forward) {
         digitalWrite(pin_AIN1, HIGH);
         digitalWrite(pin_AIN2, LOW);
@@ -61,7 +61,7 @@ void setLeftMotorDirection(bool forward) {
  *  Sets direction of right motor
  *  forward takes boolean: true is foward, false is backwards
  */
-void setRightMotorDirection(bool forward) {
+void Motors::setRightMotorDirection(bool forward) {
     if (forward) {
         digitalWrite(pin_AIN1, LOW);
         digitalWrite(pin_AIN2, HIGH);
@@ -73,7 +73,7 @@ void setRightMotorDirection(bool forward) {
  *  Sets direction of both motors
  *  forward takes boolean: true is foward, false is backwards
  */
-void setMotorsDirection(bool forward) {
+void Motors::setMotorsDirection(bool forward) {
     setLeftMotorDirection(forward);
     setRightMotorDirection(forward);
 }
