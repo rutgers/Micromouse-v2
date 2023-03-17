@@ -4,17 +4,24 @@
 #include <Arduino.h>
 #include <VL53L1X.h>
 #include <VL6180X.h>
-#include <Adafruit_NeoPixel.h>
-
 
 //this will be returned with sensor readings
-struct {
-  uint16_t left;
-  uint16_t frontLeft;
-  uint16_t front;
-  uint16_t frontRight;
-  uint16_t right;
-} sensorReadings;
+struct sensorReadings {
+  int left;
+  int frontLeft;
+  int front;
+  int frontRight;
+  int right;
+};
+
+//returns booleans whether the addresses were set correctly
+struct addressCheck {
+  bool left;
+  bool frontLeft;
+  bool front;
+  bool frontRight;
+  bool right;
+};
 
 //pins lined 23-19 left to right on teensy
 #define xshutW 23 // S1
@@ -22,12 +29,6 @@ struct {
 #define xshutN 19 // S5
 #define xshutNE 21 // S3
 #define xshutE 22 // S4
-
-// TODO: neopixel???
-//probably will be a separate library for this that we'll have to pass values to?
-#define LED_PIN 69
-#define LED_COUNT 69
-
 
 class tof {
   
@@ -40,15 +41,17 @@ class tof {
   VL53L1X R;
 
   public:
-      tof(); // constructor
+    tof(); // constructor
 
-      //put declarations here
-      struct readDistance();
-      struct checkAddresses();
+    //put declarations here
+    sensorReadings readDistance();
+    addressCheck checkAddresses();
         
-    private:
-      //put declarations here
+  private:
+    //put declarations here
 
 };
+
+
 
 #endif

@@ -18,32 +18,8 @@ tof::tof() {
   //TODO?
   //we need to give arguments to the following functions?
   //probably not since the constructor already has all the objects it needs?
-  setAddresses();
-  setup();
-}
-
-struct tof::readDistance() {
-  
-  //TODO
-  // vl53l1x
-  //vl53l1x.read();
-
-  // vl6180x
-  //vl6180.readRangeContinuousMillimeters();
-
-  sensorReadings.left = L.read();
-  sensorReadings.frontLeft = FL.readRangeContinuousMillimeters();
-  sensorReadings.front = F.read();
-  sensorReadings.frontRight = FR.readRangeContinuousMillimeters();
-  sensorReadings.right = R.read();
-
-  return sensorReadings;
-}
-
-
-void tof::setAddresses()
-{
-    //standby all
+  // setAddresses(); // this is actually a thing lol?
+//standby all
     digitalWrite(xshutW, LOW);
     digitalWrite(xshutNW, LOW);
     digitalWrite(xshutN, LOW);
@@ -54,7 +30,6 @@ void tof::setAddresses()
     digitalWrite(xshutW, HIGH);
     delay(50);
     L.init();
-    L.configureDefault();
     L.setAddress(0x2A);
     digitalWrite(xshutW, LOW);
 
@@ -102,7 +77,6 @@ void tof::setAddresses()
     digitalWrite(xshutN, HIGH);
     delay(50);
     F.init();
-    F.configureDefault();
     F.setAddress(0x2C); 
     digitalWrite(xshutN, LOW);
 
@@ -116,7 +90,6 @@ void tof::setAddresses()
     digitalWrite(xshutE, HIGH);
     delay(50);
     R.init();
-    R.configureDefault();
     R.setAddress(0x2E);
     digitalWrite(xshutE, LOW);
 
@@ -126,66 +99,89 @@ void tof::setAddresses()
     digitalWrite(xshutN, HIGH);
     digitalWrite(xshutNE, HIGH);
     digitalWrite(xshutE, HIGH);
+
+  // setup();
+
+    FL.writeReg(VL6180X::SYSRANGE__MAX_CONVERGENCE_TIME, 20);
+    FL.startRangeContinuous(50);
+
+    FR.writeReg(VL6180X::SYSRANGE__MAX_CONVERGENCE_TIME, 20);
+    FR.startRangeContinuous(50);
+    
+    //the front, left, and right vl531x sensors
+    F.setDistanceMode(VL53L1X::Long);
+    F.setMeasurementTimingBudget(33000);
+    F.startContinuous(33);
+
+    L.setDistanceMode(VL53L1X::Long);
+    L.setMeasurementTimingBudget(33000);
+    L.startContinuous(33);
+
+    R.setDistanceMode(VL53L1X::Long);
+    R.setMeasurementTimingBudget(33000);
+    R.startContinuous(33);
 }
 
-
-void tof::setup() {
-  // put your setup code here, to run once:
-
-  // TODO
-  //repeat this for each sensor object  
-  //the fl and fr vl6180x sensors
-  FL.writeReg(VL6180X::SYSRANGE__MAX_CONVERGENCE_TIME, 20);
-  FL.startRangeContinuous(50);
-
-  FR.writeReg(VL6180X::SYSRANGE__MAX_CONVERGENCE_TIME, 20);
-  FR.startRangeContinuous(50);
+sensorReadings tof::readDistance() {
   
-  //the front, left, and right vl531x sensors
-  F.setDistanceMode(VL53L1X::Long);
-  F.setMeasurementTimingBudget(33000);
-  F.startContinuous(33);
+  //TODO
+  // vl53l1x
+  //vl53l1x.read();
 
-  L.setDistanceMode(VL53L1X::Long);
-  L.setMeasurementTimingBudget(33000);
-  L.startContinuous(33);
+  // vl6180x
+  //vl6180.readRangeContinuousMillimeters();
+  sensorReadings returnStruct;
 
-  R.setDistanceMode(VL53L1X::Long);
-  R.setMeasurementTimingBudget(33000);
-  R.startContinuous(33);
+  returnStruct.left = L.read();
+  returnStruct.frontLeft = FL.readRangeContinuousMillimeters();
+  returnStruct.front = F.read();
+  returnStruct.frontRight = FR.readRangeContinuousMillimeters();
+  returnStruct.right = R.read();
+
+  return returnStruct;
 }
+
+// void setAddresses()
+// {
+    
+// }
+
+
+// void tof::setup() {
+//   // put your setup code here, to run once:
+
+//   // TODO
+//   //repeat this for each sensor object  
+//   //the fl and fr vl6180x sensors
+  
+// }
 
 
 // TODO, led response for addressing
 //     strip.setPixelColor(numberPixel, red, green, blue);
 //or //strip.setPixelColor(numberPixel, red, green, blue, white);
 
-struct {
-  bool left;
-  bool frontLeft;
-  bool front;
-  bool frontRight;
-  bool right;
-} addressCheck;
 
-struct tof::checkAddresses() {
+addressCheck tof::checkAddresses() {
   Serial.println(L.getAddress());
   Serial.println(FL.getAddress());
   Serial.println(F.getAddress());
   Serial.println(FR.getAddress());
   Serial.println(R.getAddress());
 
-  addressCheck.left = false;
-  addressCheck.frontLeft = false;
-  addressCheck.front = false;
-  addressCheck.frontRight = false;
-  addressCheck.right = false;
+  addressCheck returnAddresses;
 
-  if(L.getAddress == 0x2A) addressCheck.left = true;
-  if(FL.getAddress == 0x2B) addressCheck.frontLeft = true;
-  if(F.getAddress == 0x2C) addressCheck.front = true;
-  if(FR.getAddress == 0x2D) addressCheck.frontRight = true;
-  if(R.getAddress == 0x2E) addressCheck.right = true;
+  returnAddresses.left = false;
+  returnAddresses.frontLeft = false;
+  returnAddresses.front = false;
+  returnAddresses.frontRight = false;
+  returnAddresses.right = false;
 
-  return addressCheck;
+  if(L.getAddress() == 0x2A) returnAddresses.left = true;
+  if(FL.getAddress() == 0x2B) returnAddresses.frontLeft = true;
+  if(F.getAddress() == 0x2C) returnAddresses.front = true;
+  if(FR.getAddress() == 0x2D) returnAddresses.frontRight = true;
+  if(R.getAddress() == 0x2E) returnAddresses.right = true;
+
+  return returnAddresses;
 }
