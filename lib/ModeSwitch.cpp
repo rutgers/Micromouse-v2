@@ -23,7 +23,7 @@ void ModeSwitch::ModeState() {
             delay(60);
         } else {
 
-            Serial.prinln("off");
+            Serial.println("off");
             modeState = false;
             delay(60);
         }

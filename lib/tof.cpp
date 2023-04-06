@@ -6,41 +6,113 @@
 
 //constructor
 tof::tof() {
-  //sensor positions are as follows
-  VL53L1X L; 
-  VL6180X FL;
-  VL53L1X F; 
-  VL6180X FR;
-  VL53L1X R;
+    //led test code
+    // digitalWrite(13, HIGH);
+    // delay(2000);
 
-  //basically what would be in the setup function run when the object is created, presumably
+    // digitalWrite(13, LOW);
+
+  while (!Serial) {}
+  Serial.begin(9600);
+  Wire.begin();
+  Wire.setClock(400000); // use 400 kHz I2C
+
+  // Disable/reset all vl53l1xtof by driving their XSHUT pins low.
+  for (uint8_t i = 0; i < vl53l1xCount; i++)
+  {
+    pinMode(xshutPins[i], OUTPUT);
+    digitalWrite(xshutPins[i], LOW);
+  }
+
+   for (uint8_t i = 0; i < vl6180xCount; i++)
+  {
+    pinMode(gpioPins[i], OUTPUT);
+    digitalWrite(gpioPins[i], LOW);
+  }
+
+  // Enable, initialize, and start each sensor, one by one.
+  for (uint8_t i = 0; i < vl53l1xCount; i++)
+  {
+    // Stop driving this sensor's XSHUT low. This should allow the carrier
+    // board to pull it high. (We do NOT want to drive XSHUT high since it is
+    // not level shifted.) Then wait a bit for the sensor to start up.
+    pinMode(xshutPins[i], INPUT);
+    delay(10);
+
+    vl53l1xtof[i].setTimeout(1000);
+    if (!vl53l1xtof[i].init())
+    {
+      Serial.print("Failed to detect and initialize sensor ");
+      Serial.println(i);
+      // while (1);
+    }
+
+    // Each sensor must have its address changed to a unique value other than
+    // the default of 0x29 (except for the last one, which could be left at
+    // the default). To make it simple, we'll just count up from 0x2A.
+    vl53l1xtof[i].setAddress(0x2A + i);
+
+    vl53l1xtof[i].startContinuous(50);
+  }
   
-  //TODO?
-  //we need to give arguments to the following functions?
-  //probably not since the constructor already has all the objects it needs?
-  // setAddresses(); // this is actually a thing lol?
-//standby all
-    digitalWrite(xshutW, LOW);
-    digitalWrite(xshutNW, LOW);
-    digitalWrite(xshutN, LOW);
-    digitalWrite(xshutNE, LOW);
-    digitalWrite(xshutE, LOW);
+  for(uint8_t i = 0; i < vl6180xCount; i++) {
 
-        //un-standby
-    digitalWrite(xshutW, HIGH);
-    delay(50);
-    L.init();
-    L.setAddress(0x2A);
-    digitalWrite(xshutW, LOW);
+  pinMode(gpioPins[i], INPUT);
+  delay(10);
 
-    //un-standby second tof
-    digitalWrite(xshutNW, HIGH);
-    delay(50);
-    FL.init();
-    FL.configureDefault();
-    FL.setAddress(0x2B);
-    digitalWrite(xshutNW, LOW); // re-standby
+  //VL6180X specific code
+    vl6180xtof[i].init();
+    vl6180xtof[i].configureDefault();
 
+    vl6180xtof[i].writeReg(VL6180X::SYSRANGE__MAX_CONVERGENCE_TIME, 30);
+    vl6180xtof[i].writeReg16Bit(VL6180X::SYSALS__INTEGRATION_PERIOD, 50);
+
+    vl6180xtof[i].setTimeout(500);
+
+    vl6180xtof[i].stopContinuous();
+    delay(300);
+    vl6180xtof[i].setAddress(0x3D+i);
+
+    vl6180xtof[i].startInterleavedContinuous(100);
+  }
+}
+
+sensorReadings tof::readDistance() {
+  
+  sensorReadings returnStruct;
+
+  returnStruct.left = vl53l1xtof[0].read();
+  returnStruct.frontLeft = vl6180xtof[0].readRangeContinuousMillimeters();
+  returnStruct.front = vl53l1xtof[1].read();
+  returnStruct.frontRight = vl6180xtof[1].readRangeContinuousMillimeters();
+  returnStruct.right = vl53l1xtof[2].read();
+
+if (vl53l1xtof[0].timeoutOccurred()) { Serial.print(" TIMEOUT"); }
+if (vl53l1xtof[1].timeoutOccurred()) { Serial.print(" TIMEOUT"); }
+if (vl53l1xtof[2].timeoutOccurred()) { Serial.print(" TIMEOUT"); }
+if (vl6180xtof[0].timeoutOccurred()) { Serial.print(" TIMEOUT"); }
+if (vl6180xtof[1].timeoutOccurred()) { Serial.print(" TIMEOUT"); }
+
+  return returnStruct;
+}
+
+addressCheck tof::checkAddresses() {
+  Serial.println(vl53l1xtof[0].getAddress());
+  Serial.println(vl6180xtof[0].getAddress());
+  Serial.println(vl53l1xtof[1].getAddress());
+  Serial.println(vl6180xtof[1].getAddress());
+  Serial.println(vl53l1xtof[2].getAddress());
+
+  addressCheck returnAddresses;
+
+  returnAddresses.left = false;
+  returnAddresses.frontLeft = false;
+  returnAddresses.front = false;
+  returnAddresses.frontRight = false;
+  returnAddresses.right = false;
+
+  if(vl53l1xtof[0].getAddress() == 0x2A) returnAddresses.left = true;
+  if(vl6180xtof[0].getAddress() == 0x2B) returnAddresses.frontLeft = true;
 // @@@@@@@@@@@@@@@@@@@@@ &&%%%%%%&&...&&   .,#%%%%%%%%%%%@     .....%@@@@@@@@@@@@@@
 // @@@@@@@@@@@@@@@@@@&&@&(,**..,     /....  ....(%%%%%%%%%%, ........@@@@@@@@@@@@@@
 // @@@@@@@@@@@@@@@@@@&,,,,(.../       %   . , ..... &%%%%%%%%# .......*@@@@@@@@@@@@
@@ -74,114 +146,9 @@ tof::tof() {
 // /*###########%&&&&&&&&&&&%&#&&&%&&&%%%&&&&&%%%%%%%%%%%%%%%%####(/&###%%%%%%%%%&&
 // */##%%%%%%%%##%%%%%%%%%@&&&&&##&&&&&%%%%&&&&&%%&%%%%&%%%%%%%%%##&//##%%%%%%%%&&&
 
-    digitalWrite(xshutN, HIGH);
-    delay(50);
-    F.init();
-    F.setAddress(0x2C); 
-    digitalWrite(xshutN, LOW);
-
-    digitalWrite(xshutNE, HIGH);
-    delay(50);
-    FR.init();
-    FR.configureDefault();
-    FR.setAddress(0x2D);
-    digitalWrite(xshutNE, LOW);
-
-    digitalWrite(xshutE, HIGH);
-    delay(50);
-    R.init();
-    R.setAddress(0x2E);
-    digitalWrite(xshutE, LOW);
-
-    //re-unstandby all sensors
-    digitalWrite(xshutW, HIGH);
-    digitalWrite(xshutNW, HIGH);
-    digitalWrite(xshutN, HIGH);
-    digitalWrite(xshutNE, HIGH);
-    digitalWrite(xshutE, HIGH);
-
-  // setup();
-
-    FL.writeReg(VL6180X::SYSRANGE__MAX_CONVERGENCE_TIME, 20);
-    FL.startRangeContinuous(50);
-
-    FR.writeReg(VL6180X::SYSRANGE__MAX_CONVERGENCE_TIME, 20);
-    FR.startRangeContinuous(50);
-    
-    //the front, left, and right vl531x sensors
-    F.setDistanceMode(VL53L1X::Long);
-    F.setMeasurementTimingBudget(33000);
-    F.startContinuous(33);
-
-    L.setDistanceMode(VL53L1X::Long);
-    L.setMeasurementTimingBudget(33000);
-    L.startContinuous(33);
-
-    R.setDistanceMode(VL53L1X::Long);
-    R.setMeasurementTimingBudget(33000);
-    R.startContinuous(33);
-}
-
-sensorReadings tof::readDistance() {
-  
-  //TODO
-  // vl53l1x
-  //vl53l1x.read();
-
-  // vl6180x
-  //vl6180.readRangeContinuousMillimeters();
-  sensorReadings returnStruct;
-
-  returnStruct.left = L.read();
-  returnStruct.frontLeft = FL.readRangeContinuousMillimeters();
-  returnStruct.front = F.read();
-  returnStruct.frontRight = FR.readRangeContinuousMillimeters();
-  returnStruct.right = R.read();
-
-  return returnStruct;
-}
-
-// void setAddresses()
-// {
-    
-// }
-
-
-// void tof::setup() {
-//   // put your setup code here, to run once:
-
-//   // TODO
-//   //repeat this for each sensor object  
-//   //the fl and fr vl6180x sensors
-  
-// }
-
-
-// TODO, led response for addressing
-//     strip.setPixelColor(numberPixel, red, green, blue);
-//or //strip.setPixelColor(numberPixel, red, green, blue, white);
-
-
-addressCheck tof::checkAddresses() {
-  Serial.println(L.getAddress());
-  Serial.println(FL.getAddress());
-  Serial.println(F.getAddress());
-  Serial.println(FR.getAddress());
-  Serial.println(R.getAddress());
-
-  addressCheck returnAddresses;
-
-  returnAddresses.left = false;
-  returnAddresses.frontLeft = false;
-  returnAddresses.front = false;
-  returnAddresses.frontRight = false;
-  returnAddresses.right = false;
-
-  if(L.getAddress() == 0x2A) returnAddresses.left = true;
-  if(FL.getAddress() == 0x2B) returnAddresses.frontLeft = true;
-  if(F.getAddress() == 0x2C) returnAddresses.front = true;
-  if(FR.getAddress() == 0x2D) returnAddresses.frontRight = true;
-  if(R.getAddress() == 0x2E) returnAddresses.right = true;
+  if(vl53l1xtof[1].getAddress() == 0x2C) returnAddresses.front = true;
+  if(vl6180xtof[1].getAddress() == 0x3D) returnAddresses.frontRight = true;
+  if(vl53l1xtof[2].getAddress() == 0x3E) returnAddresses.right = true;
 
   return returnAddresses;
 }
