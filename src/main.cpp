@@ -1,30 +1,27 @@
 #include <Arduino.h>
 #include <SPI.h>
 #include "lib\Motors.h"
-#include "..\lib\tof.cpp"
+#include "lib\PIDRotate.h"
 
 Motors* motors;
-tof* timeofflight;
 
 void setup() {
   // put your setup code here, to run once:
-  // motors = new Motors();
-  // motors->enableMotors();
 
-
-  timeofflight = new tof();
-  timeofflight->checkAddresses();  
+  //timeofflight = new tof();
+  //timeofflight->checkAddresses();  
   // Serial.println(timeofflight->readDistance().left);
 
-  Serial.println("hello world");
+  //Serial.println("hello world");
+
+
+  motors_instance->enableMotors();
 }
 
 void loop() {
   // put your main code here, to run repeatedly:
-  // motors->setLeftMotorDirection(true);
-  // motors->setRightMotorDirection(true);
 
-  // motors->setLeftMotorSpeed(64);
-  // motors->setRightMotorSpeed(64);
+  motors_instance->setMotorsSpeed((int)floor(pidrotate_instance->rotate_to_angle(-90)));
 
+  
 }

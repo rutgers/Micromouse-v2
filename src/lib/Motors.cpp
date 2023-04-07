@@ -20,7 +20,7 @@ void Motors::disableMotors() {
  *  speed takes integer from 0 to 255
  */
 void Motors::setLeftMotorSpeed(int speed) {
-    digitalWrite(pin_PWMA, speed);
+    analogWrite(pin_PWMA, speed);
 }
 
 
@@ -29,7 +29,7 @@ void Motors::setLeftMotorSpeed(int speed) {
  *  speed takes integer from 0 to 255
  */
 void Motors::setRightMotorSpeed(int speed) {
-    digitalWrite(pin_PWMB, speed);
+    analogWrite(pin_PWMB, speed);
 }
 
 
@@ -50,9 +50,14 @@ void Motors::setMotorsSpeed(int speed) {
  *  forward takes boolean: true is foward, false is backwards
  */
 void Motors::setLeftMotorDirection(bool forward) {
-    if (forward) {
+    if (forward == true) {
         digitalWrite(pin_AIN1, HIGH);
+        Serial.println("AIN1 high and AIN2 low");
         digitalWrite(pin_AIN2, LOW);
+    } else {
+        digitalWrite(pin_AIN1, LOW);
+        Serial.println("AIN1 low and AIN2 high");
+        digitalWrite(pin_AIN2, HIGH);
     }
 }
 
@@ -62,10 +67,15 @@ void Motors::setLeftMotorDirection(bool forward) {
  *  forward takes boolean: true is foward, false is backwards
  */
 void Motors::setRightMotorDirection(bool forward) {
-    if (forward) {
-        digitalWrite(pin_AIN1, LOW);
-        digitalWrite(pin_AIN2, HIGH);
-    }   
+    if (forward == true) {
+        digitalWrite(pin_BIN1, HIGH);
+        Serial.println("BIN1 high and BIN2 low");
+        digitalWrite(pin_BIN2, LOW);
+    } else {
+        digitalWrite(pin_BIN1, LOW);
+        Serial.println("BIN1 low and BIN2 high");
+        digitalWrite(pin_BIN2, HIGH);
+    }
 }
 
 
@@ -77,3 +87,5 @@ void Motors::setMotorsDirection(bool forward) {
     setLeftMotorDirection(forward);
     setRightMotorDirection(forward);
 }
+
+Motors* motors_instance = new Motors();

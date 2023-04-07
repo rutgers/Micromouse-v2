@@ -35,3 +35,5 @@ double IMU::getHeading() {
 
     return orientationData.orientation.x;
 }
+
+IMU* imu_instance = new IMU();

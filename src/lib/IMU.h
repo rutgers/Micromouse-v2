@@ -17,4 +17,6 @@ class IMU {
         double getHeading();
 };
 
+extern IMU* imu_instance;
+
 #endif

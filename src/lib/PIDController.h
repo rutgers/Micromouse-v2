@@ -10,4 +10,6 @@ class PIDController {
     
 };
 
+extern PIDController* pidcontroller_instance;
+
 #endif

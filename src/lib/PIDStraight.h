@@ -8,4 +8,6 @@ class PIDStraight {
     //using the "black magic" straight drive trick using the IMU heading, and the outer scaling it by the encoder values.
 };
 
+extern PIDStraight* pidstraight_instance;
+
 #endif
