@@ -4,7 +4,7 @@
 #include <VL53L1X.h>
 #include <VL6180X.h>
 
-#define V1
+#define V3
 
 #ifndef V3
 //scuffed bot
@@ -17,11 +17,11 @@
 #endif
 #ifdef V3
 //smexy bot
-// #define xshutW 23 // S1
-// #define xshutNW 20 // S2
-// #define xshutN 19 // S5
-// #define xshutNE 21 // S3
-// #define xshutE 22 // S4
+#define xshutW 15 // S1
+#define xshutNW 21 // S2
+#define xshutN 20 // S5
+#define xshutNE 22 // S3
+#define xshutE 23 // S4
 
 #endif
 

@@ -3,8 +3,18 @@
 #include "lib\Motors.h"
 #include "..\lib\tof.cpp"
 
+// #include<Adafruit_NeoPixel.h>
+
 Motors* motors;
 tof* timeofflight;
+
+// Adafruit_NeoPixel strip = Adafruit_NeoPixel(60, 12, NEO_GRB + NEO_KHZ800);
+
+// #define red 0xff0000
+// #define green 0x00ff00
+// #define blue 0x0000ff
+
+
 
 void setup() {
   // put your setup code here, to run once:
@@ -17,6 +27,8 @@ void setup() {
   // Serial.println(timeofflight->readDistance().left);
 
   Serial.println("hello world");
+  // strip.begin();
+
 }
 
 void loop() {
@@ -24,7 +36,12 @@ void loop() {
   // motors->setLeftMotorDirection(true);
   // motors->setRightMotorDirection(true);
 
-  // motors->setLeftMotorSpeed(64);
+  // motors->setLeftMotorSpeed(64); 
   // motors->setRightMotorSpeed(64);
+  // strip.setPixelColor(5, red);
+  // strip.show();
+
+  timeofflight->readDistance();
+  delay(200);
 
 }

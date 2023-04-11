@@ -93,6 +93,13 @@ if (vl53l1xtof[2].timeoutOccurred()) { Serial.print(" TIMEOUT"); }
 if (vl6180xtof[0].timeoutOccurred()) { Serial.print(" TIMEOUT"); }
 if (vl6180xtof[1].timeoutOccurred()) { Serial.print(" TIMEOUT"); }
 
+Serial.println();
+Serial.println(returnStruct.left);
+Serial.println(returnStruct.frontLeft);
+Serial.println(returnStruct.front);
+Serial.println(returnStruct.frontRight);
+Serial.println(returnStruct.right);
+
   return returnStruct;
 }
 
