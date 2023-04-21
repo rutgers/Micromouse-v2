@@ -7,12 +7,12 @@ class PIDRotate {
     //this class will contain the relevant code for the PIDRotate command. This command will just use one PID loop based on the IMU heading
 
     public:
-        double kP = 0.1;
+        double kP = 0.05;
         double kI = 0.0;//0.00001;
-        double kD = 0.1;
+        double kD = 0.0;
 
 
-        int rotate_to_angle(int angle);
+        int rotate_to_angle(double target_angle);
 
     private:
         double current_angle = 0;

@@ -1,6 +1,18 @@
 #include <Arduino.h>
 #include "Motors.h"
 
+#ifdef V3
+
+Encoder ENCA(2,3);
+Encoder ENCB(10,11);
+
+#else
+
+//Encoder ENCA(8,7);
+//Encoder ENCB(9,10);
+
+#endif
+
 
 void Motors::enableMotors() {
 
@@ -12,7 +24,6 @@ void Motors::enableMotors() {
 void Motors::disableMotors() {
 
     digitalWrite(pin_STBY, LOW);
-    
 }
 
 /**
@@ -52,11 +63,11 @@ void Motors::setMotorsSpeed(int speed) {
 void Motors::setLeftMotorDirection(bool forward) {
     if (forward == true) {
         digitalWrite(pin_AIN1, HIGH);
-        Serial.println("AIN1 high and AIN2 low");
+        //Serial.println("AIN1 high and AIN2 low");
         digitalWrite(pin_AIN2, LOW);
     } else {
         digitalWrite(pin_AIN1, LOW);
-        Serial.println("AIN1 low and AIN2 high");
+       //Serial.println("AIN1 low and AIN2 high");
         digitalWrite(pin_AIN2, HIGH);
     }
 }
@@ -69,11 +80,11 @@ void Motors::setLeftMotorDirection(bool forward) {
 void Motors::setRightMotorDirection(bool forward) {
     if (forward == true) {
         digitalWrite(pin_BIN1, HIGH);
-        Serial.println("BIN1 high and BIN2 low");
+        //Serial.println("BIN1 high and BIN2 low");
         digitalWrite(pin_BIN2, LOW);
     } else {
         digitalWrite(pin_BIN1, LOW);
-        Serial.println("BIN1 low and BIN2 high");
+        //Serial.println("BIN1 low and BIN2 high");
         digitalWrite(pin_BIN2, HIGH);
     }
 }

@@ -1,7 +1,8 @@
-#ifndef Motors_h
-#define Motors_h
+#ifndef MOTORS_H
+#define MOTORS_H
 
 #include <Arduino.h>
+#include <Encoder.h>
 
 #define V3
 
@@ -11,9 +12,11 @@
 #define pin_PWMB 5
 #define pin_AIN1 8
 #define pin_AIN2 7
+extern Encoder ENCA;
 #define pin_BIN1 9
 #define pin_BIN2 10
 #define pin_STBY 11
+extern Encoder ENCB;
 
 #endif
 #ifdef V3
@@ -22,11 +25,14 @@
 #define pin_PWMB 9  /* this was originally 9      became 11*/
 #define pin_AIN1 6
 #define pin_AIN2 5
+extern Encoder ENCA;
 #define pin_BIN1 7
 #define pin_BIN2 8
+extern Encoder ENCB;
 #define pin_STBY 14
 
 #endif
+
 
 class Motors {
 

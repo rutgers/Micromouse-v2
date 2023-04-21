@@ -4,7 +4,7 @@
 #include "Motors.h"
 #include "IMU.h"
 
-int PIDRotate::rotate_to_angle(int target_angle) {
+int PIDRotate::rotate_to_angle(double target_angle) {
     current_angle = imu_instance->getHeading();
 
     // handle cases of numbers above 360
