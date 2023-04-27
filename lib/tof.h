@@ -78,7 +78,12 @@ class tof {
     //put declarations here
     sensorReadings readDistance();
     addressCheck checkAddresses();
-        
+    int readL();
+    int readFL();
+    int readF();
+    int readFR();
+    int readR();
+
   private:
     //put declarations here
 

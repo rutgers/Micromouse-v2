@@ -88,10 +88,10 @@ sensorReadings tof::readDistance() {
   returnStruct.right = vl53l1xtof[2].read();
 
 if (vl53l1xtof[0].timeoutOccurred()) { Serial.print(" TIMEOUT"); }
-if (vl53l1xtof[1].timeoutOccurred()) { Serial.print(" TIMEOUT"); }
-if (vl53l1xtof[2].timeoutOccurred()) { Serial.print(" TIMEOUT"); }
 if (vl6180xtof[0].timeoutOccurred()) { Serial.print(" TIMEOUT"); }
+if (vl53l1xtof[1].timeoutOccurred()) { Serial.print(" TIMEOUT"); }
 if (vl6180xtof[1].timeoutOccurred()) { Serial.print(" TIMEOUT"); }
+if (vl53l1xtof[2].timeoutOccurred()) { Serial.print(" TIMEOUT"); }
 
 Serial.println();
 Serial.println(returnStruct.left);
@@ -102,6 +102,34 @@ Serial.println(returnStruct.right);
 
   return returnStruct;
 }
+
+int tof::readL() {
+  return vl53l1xtof[0].read();
+  if (vl53l1xtof[0].timeoutOccurred()) { Serial.print(" TIMEOUT"); }
+}
+
+
+int tof::readFL() {
+  return vl6180xtof[0].readRangeContinuousMillimeters();
+  if (vl6180xtof[0].timeoutOccurred()) { Serial.print(" TIMEOUT"); }
+}
+
+int tof::readF() {
+  return vl53l1xtof[1].read();
+  if (vl53l1xtof[1].timeoutOccurred()) { Serial.print(" TIMEOUT"); }
+}
+
+int tof::readFR() {
+  return vl53l1xtof[0].read();
+  if (vl6180xtof[1].timeoutOccurred()) { Serial.print(" TIMEOUT"); }
+}
+
+int tof::readR() {
+  return vl53l1xtof[1].read();
+  if (vl53l1xtof[1].timeoutOccurred()) { Serial.print(" TIMEOUT"); }
+}
+
+
 
 addressCheck tof::checkAddresses() {
   Serial.println(vl53l1xtof[0].getAddress());
