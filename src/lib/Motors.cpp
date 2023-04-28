@@ -8,8 +8,8 @@ Encoder ENCB(10,11);
 
 #else
 
-//Encoder ENCA(8,7);
-//Encoder ENCB(9,10);
+Encoder ENCA(1,2);  // these may be reversed
+Encoder ENCB(3,4);
 
 #endif
 

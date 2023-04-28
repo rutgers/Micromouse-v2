@@ -30,7 +30,7 @@ IMU::IMU() {
  *  returns a value between ?? actually not sure //TODO: document this
  */
 double IMU::getHeading() {
-    sensors_event_t orientationData , linearAccelData;
+    sensors_event_t orientationData;// , linearAccelData;
     bno.getEvent(&orientationData, Adafruit_BNO055::VECTOR_EULER);
 
     return orientationData.orientation.x;

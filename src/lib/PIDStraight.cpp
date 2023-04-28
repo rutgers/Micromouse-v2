@@ -14,7 +14,7 @@ int PIDStraight::drive_to_position(double target_position) {
     
 
     prev_error = error;
-    error = (target_position * 72.74463) - current_position;
+    error = (target_position * 58.2124805) - current_position; //72.74463
 
     total_error += abs(error);
     prev_time = current_time;

@@ -14,22 +14,7 @@ class PIDMagicStraight {
 
         void drive_straight_with_magic(double target_position);
 
-    private:
-        double current_angle = 0;
-        int current_time = 0;
-        int prev_time = 0;
-        double error_l = 0.0;
-        double error_r = 0.0;
-        double prev_error_l = 0.0;
-        double prev_error_r = 0.0;
-        double total_error_l;
-        double total_error_r;
-
-        
-        double current_position = 0;
-        double error_pos = 0.0;
-        double prev_error_pos = 0.0;
-        double total_error_pos;
+        bool exited = false;
 
 };
 

@@ -11,16 +11,10 @@ class PIDRotate {
         double kI = 0.0;//0.00001;
         double kD = 0.0;
 
+        bool exited = false;
 
-        int rotate_to_angle(double target_angle);
 
-    private:
-        double current_angle = 0;
-        int current_time = 0;
-        int prev_time = 0;
-        double error = 0.0;
-        double prev_error = 0.0;
-        double total_error;
+        void rotate_to_angle(double target_angle);
 
 };
 
