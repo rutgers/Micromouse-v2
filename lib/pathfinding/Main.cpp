@@ -12,7 +12,8 @@ using namespace std;
 // for whatever reason
 
 // pass the pointer to currentCfg so that we can instantly update it after calling move
-static void move(configuration* currentCfg, char direction);
+
+// static void move(configuration* currentCfg, char direction);
 
 
 //the actual loop function for maze-solving
@@ -52,23 +53,7 @@ as the mouse explores, it updates the values along its path.
 after it reaches its destination, in order to find the
 */
 
-const int N = 16; 
-int maze[N][N]= {{14, 13, 12, 11, 10, 9, 8, 7, 7, 8, 9, 10, 11, 12, 13, 14},
-                {13, 12, 11, 10, 9, 8, 7, 6, 6, 7, 8, 9, 10, 11, 12, 13},
-                {12, 11, 10, 9, 8, 7, 6, 5, 5, 6, 7, 8, 9, 10, 11, 12},   
-                {11, 10, 9, 8, 7, 6, 5, 4, 4, 5, 6, 7, 8, 9, 10, 11},   
-                {10, 9, 8, 7, 6, 5, 4, 3, 3, 4, 5, 6, 7, 8, 9, 10},   
-                {9, 8, 7, 6, 5, 4, 3, 2, 2, 3, 4, 5, 6, 7, 8, 9},   
-                {8, 7, 6, 5, 4, 3, 2, 1, 1, 2, 3, 4, 5, 6, 7, 8},   
-                {7, 6, 5, 4, 3, 2, 1, 0, 0, 1, 2, 3, 4, 5, 6, 7},   
-                {7, 6, 5, 4, 3, 2, 1, 0, 0, 1, 2, 3, 4, 5, 6, 7},   
-                {8, 7, 6, 5, 4, 3, 2, 1, 1, 2, 3, 4, 5, 6, 7, 8},   
-                {9, 8, 7, 6, 5, 4, 3, 2, 2, 3, 4, 5, 6, 7, 8, 9},   
-                {10, 9, 8, 7, 6, 5, 4, 3, 3, 4, 5, 6, 7, 8, 9, 10},   
-                {11, 10, 9, 8, 7, 6, 5, 4, 4, 5, 6, 7, 8, 9, 10, 11},   
-                {12, 11, 10, 9, 8, 7, 6, 5, 5, 6, 7, 8, 9, 10, 11, 12},   
-                {13, 12, 11, 10, 9, 8, 7, 6, 6, 7, 8, 9, 10, 11, 12, 13},  
-                {14, 13, 12, 11, 10, 9, 8, 7, 7, 8, 9, 10, 11, 12, 13, 14}};
+
 /*
     bot starts at 0, 0, facing north
     pretend array is flipped ccw 90 degrees and bot is at bottom left of maze facing up
@@ -96,151 +81,44 @@ int main(int argc, char* argv[]) {
     currentCfg.y = 0;
     currentCfg.dir = 'N';
 
-    move(&currentCfg, 'N');
 
-    if(currentCfg.x==1) move(&currentCfg, 'E');
+    // move(&currentCfg, 'N');
 
+    // if(currentCfg.x==1) move(&currentCfg, 'E');
+    // if(currentCfg.dir=='E') move(&currentCfg, 'S');
 
 
     while(true) {
         // Micromouse moves from higher to lower elevations
         // If there are two open cells of equal elevation to go to,
         // prioritize the one in front that doesn't require a turn 
-
-
-        /*
-        Flood::flowElevation(&currentCfg, maze);
+        
+        flowElevation(&currentCfg, maze);
 
         //1) Push the current cell location onto the stack
-        std::stack<configuration> stack;
-        stack.push(currentCfg);
+        cellStack.push(currentCfg);
 
         //2) Repeat while stack is not empty
         
-        while(!stack.empty()) {
+        while(!cellStack.empty()) {
             //pull the cell location from the stack
-            poppedCfg = stack.top();
+            poppedCfg = cellStack.top();
+            checkNeigboringOpen(poppedCfg, maze);
 
-            stack.pop();
+            cellStack.pop();
         }
 
         if(maze[currentCfg.x][currentCfg.y] == 0) {
             break;
         }
-        */
-    }
-}
-
-
-
-
-
-
-
-
-
-static void move(configuration* currentCfg, char direction) {    
-
-    char facing = currentCfg->dir;    
-
-    // if facing and direction are the same, go straight
-    if(facing == direction) {
-        API::moveForward();
-    } else {
-    
-        if(facing == 'N') {
-            switch(direction) {
-            
-            case 'S': // turn around
-            API::turnRight(); API::turnRight(); API::moveForward();
-            break;
-
-            case 'W': // turnLeft
-            API::turnLeft(); API::moveForward();
-            break;
-
-            case 'E': // turnRight
-            API::turnRight(); API::moveForward();
-            break;
-            }
-        }
-
-        if(facing == 'S') {
-            switch(direction) {
-            
-            case 'N': // turn around
-            API::turnRight(); API::turnRight(); API::moveForward();
-            break;
-
-            case 'E': // turnLeft
-            API::turnLeft(); API::moveForward();
-            break;
-
-            case 'W': // turnRight
-            API::turnRight(); API::moveForward();
-            break;
-            }
-        }
-
-
-        if(facing == 'E') {
-            switch(direction) {
-            
-            case 'W': // turn around
-            API::turnRight(); API::turnRight(); API::moveForward();
-            break;
-
-            case 'N': // turnLeft
-            API::turnLeft(); API::moveForward();
-            break;
-
-            case 'S': // turnRight
-            API::turnRight(); API::moveForward();
-            break;
-            }
-        }
-
-        if(facing == 'W') {
-            switch(direction) {
-            
-            case 'E': // turn around
-            API::turnRight(); API::turnRight(); API::moveForward();
-            break;
-
-            case 'S': // turnLeft
-            API::turnLeft(); API::moveForward();
-            break;
-
-            case 'N': // turnRight
-            API::turnRight(); API::moveForward();
-            break;
-            }
-        }
-    }
-
-    //N = +x
-    //S = -x
-    //E = +y
-    //W = -y
-
-    switch(direction) {
         
-        case 'N':
-            currentCfg->x++; currentCfg->dir = 'N';
-        break;
-
-        case 'S':
-            currentCfg->x--; currentCfg->dir = 'S';
-        break;
-
-        case 'E':
-            currentCfg->y++; currentCfg->dir = 'E';
-        break;
-
-        case 'W':
-            currentCfg->y--; currentCfg->dir = 'W';
-        break;
     }
-    
-    return;
+
+   for(int i = 0; i < N; i++) {
+    for(int j = 0; j < N; j++) {
+        std::cerr << maze[i][j] << " ";
+    }
+    log("\n");
+   }
+   
 }
