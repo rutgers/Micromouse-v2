@@ -12,16 +12,7 @@ class PIDStraight {
         double kI = 0.0;//0.00001;
         double kD = 0.0;
 
-
-        int drive_to_position(double target_position);
-
-    private:
-        double current_position = 0;
-        int current_time = 0;
-        int prev_time = 0;
-        double error = 0.0;
-        double prev_error = 0.0;
-        double total_error;
+        void drive_to_position(double target_position);
 };
 
 extern PIDStraight* pidstraight_instance;

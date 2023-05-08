@@ -14,7 +14,7 @@ void PIDRotate::rotate_to_angle(double target_angle) {
     double total_error = 0.0;
     exited = false;
 
-    while (abs(error) > 5.0) {
+    while (abs(error) > 2.0) {
         current_angle = imu_instance->getHeading();
 
         // handle cases of numbers above 360
@@ -63,13 +63,13 @@ void PIDRotate::rotate_to_angle(double target_angle) {
         double motor_output = (kP * error  + kD * (error-prev_error)/(current_time-prev_time) + kI * total_error)*25;
         
         if (error > 0.0) {
-            motors_instance->setLeftMotorDirection(false);//false
+            motors_instance->setLeftMotorDirection(true);//false
             Serial.println("left false and right true");
-            motors_instance->setRightMotorDirection(true);//true
+            motors_instance->setRightMotorDirection(false);//true
         } else {
-            motors_instance->setLeftMotorDirection(true);//true
+            motors_instance->setLeftMotorDirection(false);//true
             Serial.println("left true and right false");
-            motors_instance->setRightMotorDirection(false);//false
+            motors_instance->setRightMotorDirection(true);//false
             motor_output *= -1;
         }
 

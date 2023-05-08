@@ -8,7 +8,7 @@ Encoder ENCB(10,11);
 
 #else
 
-Encoder ENCA(1,2);  // these may be reversed
+Encoder ENCA(2,1);  // these may be reversed
 Encoder ENCB(3,4);
 
 #endif
@@ -62,13 +62,13 @@ void Motors::setMotorsSpeed(int speed) {
  */
 void Motors::setLeftMotorDirection(bool forward) {
     if (forward == true) {
-        digitalWrite(pin_AIN1, HIGH);
-        //Serial.println("AIN1 high and AIN2 low");
-        digitalWrite(pin_AIN2, LOW);
-    } else {
         digitalWrite(pin_AIN1, LOW);
-       //Serial.println("AIN1 low and AIN2 high");
+        //Serial.println("AIN1 high and AIN2 low");
         digitalWrite(pin_AIN2, HIGH);
+    } else {
+        digitalWrite(pin_AIN1, HIGH);
+       //Serial.println("AIN1 low and AIN2 high");
+        digitalWrite(pin_AIN2, LOW);
     }
 }
 
@@ -79,13 +79,13 @@ void Motors::setLeftMotorDirection(bool forward) {
  */
 void Motors::setRightMotorDirection(bool forward) {
     if (forward == true) {
-        digitalWrite(pin_BIN1, HIGH);
-        //Serial.println("BIN1 high and BIN2 low");
-        digitalWrite(pin_BIN2, LOW);
-    } else {
         digitalWrite(pin_BIN1, LOW);
-        //Serial.println("BIN1 low and BIN2 high");
+        //Serial.println("BIN1 high and BIN2 low");
         digitalWrite(pin_BIN2, HIGH);
+    } else {
+        digitalWrite(pin_BIN1, HIGH);
+        //Serial.println("BIN1 low and BIN2 high");
+        digitalWrite(pin_BIN2, LOW);
     }
 }
 

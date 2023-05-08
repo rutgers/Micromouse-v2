@@ -4,7 +4,6 @@
 #include <Arduino.h>
 #include <Encoder.h>
 
-#define V3
 
 #ifndef V3
 

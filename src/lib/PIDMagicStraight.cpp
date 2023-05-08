@@ -22,17 +22,26 @@ void PIDMagicStraight::drive_straight_with_magic(double target_position) {
         double total_error_pos;
 
         exited = false;
+        
+        ENCA.write(0);
+        ENCB.write(0);
+
+        int count = 0;
+
+        int start_angle = imu_instance->getHeading();
 
     while (true) {
         current_angle = imu_instance->getHeading();
         current_position = (ENCA.read() + ENCB.read())/2;
 
+        count++;
+
         // handle cases of numbers above 360
 
         // for example, the number -718 will become 718, will become -358
 
-        double target_angle_l = -90;
-        double target_angle_r = 90;
+        double target_angle_l = -90+start_angle;
+        double target_angle_r = 90+start_angle;
         
 
         prev_error_l = error_l;
@@ -45,7 +54,8 @@ void PIDMagicStraight::drive_straight_with_magic(double target_position) {
         prev_error_pos = error_pos;
         error_pos = (target_position * 72.74463) - current_position;
 
-        if (abs(error_pos) < 25.0 ) {
+        if (abs(error_pos) < 10.0 ) {
+            Serial.println("breaking");
             break;
         }
 
@@ -97,8 +107,8 @@ void PIDMagicStraight::drive_straight_with_magic(double target_position) {
         Serial.print(error_r);
         Serial.println();*/
 
-        double motor_output_l = (kP * error_l  + kD * (error_l-prev_error_l)/(current_time-prev_time) + kI * total_error_l);
-        double motor_output_r = (kP * error_r  + kD * (error_r-prev_error_r)/(current_time-prev_time) + kI * total_error_r);
+        double motor_output_l = (kP * error_l);//  + kD * (error_l-prev_error_l)/(current_time-prev_time) + kI * total_error_l);
+        double motor_output_r = (kP * error_r);//  + kD * (error_r-prev_error_r)/(current_time-prev_time) + kI * total_error_r);
 
         double motor_output_pos = (kP * error_pos)*25;
 
@@ -132,6 +142,8 @@ void PIDMagicStraight::drive_straight_with_magic(double target_position) {
         Serial.print(ENCA.read());
         Serial.print("\nENCB: ");
         Serial.print(ENCB.read());
+        Serial.print("\ncount: ");
+        Serial.print(count);
         Serial.println();
 
         /*if (error_l > 0.0) { // l or r?
@@ -176,7 +188,6 @@ void PIDMagicStraight::drive_straight_with_magic(double target_position) {
         motors_instance->setLeftMotorSpeed((int)floor(motor_output_pos-l_diff));
         motors_instance->setRightMotorSpeed((int)floor(motor_output_pos-r_diff));
 
-        return;
     }
 
     exited = true;

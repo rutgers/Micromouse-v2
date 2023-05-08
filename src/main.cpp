@@ -5,6 +5,7 @@
 #include "lib\PIDStraight.h"
 #include "lib\PIDMagicStraight.h"
 #include "lib\tof.h"
+#include "lib\IMU.h"
 
 void setup() {
   // put your setup code here, to run once:
@@ -52,21 +53,49 @@ void loop() {
     pidmagicstraight_instance->drive_straight_with_magic(10);
   }*/
 
-  if (tof_instance->getFrontDistance() > 100) {
-    pidmagicstraight_instance->drive_straight_with_magic(10);
-  } else if (tof_instance->getLeftDistance() > 100) {
-    pidrotate_instance->rotate_to_angle(-90);
-  } else if (tof_instance->getRightDistance() > 100) {
-    pidrotate_instance->rotate_to_angle(90);
+while (true) {
+  
+  /*Serial.print("left dist: ");
+  Serial.println(tof_instance->readL());
+  Serial.print("front dist: ");
+  Serial.println(tof_instance->readF());
+  Serial.print("right dist: ");
+  Serial.println(tof_instance->readR());*/
+
+
+  if (tof_instance->readF() > 100) {
+    pidstraight_instance->drive_to_position(7);
+  } else if (tof_instance->readL() > 100) {
+    pidrotate_instance->rotate_to_angle(imu_instance->getHeading()-90);
+  } else if (tof_instance->readR() > 100) {
+    pidrotate_instance->rotate_to_angle(imu_instance->getHeading()+90);
   }
 
+  delay(500);
+  pidrotate_instance->rotate_to_angle(round(imu_instance->getHeading()/90.0)*90.0);
+  delay(500);
 
-  /*Serial.print("left dist: ");
-  Serial.println(tof_instance->getLeftDistance());
-  Serial.print("front dist: ");
-  Serial.println(tof_instance->getFrontDistance());
-  Serial.print("right dist: ");
-  Serial.println(tof_instance->getRightDistance());*/
+}
+
+
+
+
+  /*pidmagicstraight_instance->drive_straight_with_magic(10);
+  delay(500);
+  pidrotate_instance->rotate_to_angle(-45);
+  delay(500);
+  pidrotate_instance->rotate_to_angle(45);
+  delay(500);
+  pidrotate_instance->rotate_to_angle(-45);
+  delay(500);
+  pidrotate_instance->rotate_to_angle(45);
+  delay(500);
+  pidrotate_instance->rotate_to_angle(0);
+  delay(500);
+  pidmagicstraight_instance->drive_straight_with_magic(-10);
+  delay(5000);*/
+
+
 
 
 
