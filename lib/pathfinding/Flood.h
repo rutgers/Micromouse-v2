@@ -39,9 +39,9 @@ static std::stack<configuration> cellStack;
 static configuration poppedCfg;
 
 
-void flowElevation(configuration* currentCfg, int maze[16][16]);
+void flowElevation(configuration* currentCfg);
 openCells checkOpenCells(configuration poppedCfg);
-void checkNeigboringOpen(configuration poppedCfg, int maze[16][16]);
+void checkNeigboringOpen(configuration poppedCfg);
 void move(configuration* currentCfg, char direction);
 
 /*

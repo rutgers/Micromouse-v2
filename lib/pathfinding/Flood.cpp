@@ -1,4 +1,6 @@
 #include "Flood.h"
+#include <iostream>
+
 using namespace std;
 
 
@@ -12,40 +14,57 @@ using namespace std;
 
 openCells checkOpenCells(configuration currentCfg) {
     openCells temp;
+    temp.openN = false;
+    temp.openS = false;
+    temp.openE = false;
+    temp.openW = false;
 
     char dir = currentCfg.dir;
+
+    API::wallFront();
+    API::wallLeft();
+    API::wallRight();
 
     switch(dir) {
         case 'N':
             temp.openS = true;
-            if(API::wallFront()) temp.openN = true;
-            if(API::wallLeft()) temp.openW = true;
-            if(API::wallRight()) temp.openE = true;
+            if(!API::wallFront()) temp.openN = true;
+            if(!API::wallLeft()) temp.openW = true;
+            if(!API::wallRight()) temp.openE = true;
             break;
         case 'S':
             temp.openN = true;
-            if(API::wallFront()) temp.openS = true;
-            if(API::wallLeft()) temp.openE = true;
-            if(API::wallRight()) temp.openW = true;
+            if(!API::wallFront()) temp.openS = true;
+            if(!API::wallLeft()) temp.openE = true;
+            if(!API::wallRight()) temp.openW = true;
             break;
         case 'E':
             temp.openW = true;
-            if(API::wallFront()) temp.openE = true;
-            if(API::wallLeft()) temp.openN = true;
-            if(API::wallRight()) temp.openS = true;
+            if(!API::wallFront()) temp.openE = true;
+            if(!API::wallLeft()) temp.openN = true;
+            if(!API::wallRight()) temp.openS = true;
             break;
         case 'W':
             temp.openE = true;
-            if(API::wallFront()) temp.openW = true;
-            if(API::wallLeft()) temp.openS = true;
-            if(API::wallRight()) temp.openN = true;
+            if(!API::wallFront()) temp.openW = true;
+            if(!API::wallLeft()) temp.openS = true;
+            if(!API::wallRight()) temp.openN = true;
             break;
     }
+
+    // std::cerr << "\n";
+    // if(temp.openN) std::cerr << "openN";
+    // if(temp.openS) std::cerr << "openS";
+    // if(temp.openE) std::cerr << "openE";
+    // if(temp.openW) std::cerr << "openW";
+
+
+
 
     return temp;
 }
 
-void flowElevation(configuration* currentCfg, int maze[16][16]) {
+void flowElevation(configuration* currentCfg) {
     // given the maze, configuration, and wall checks, move to lower elevation until we hit 0
     // prioritize movements without turns if possible
 
@@ -92,22 +111,22 @@ void flowElevation(configuration* currentCfg, int maze[16][16]) {
     // if minimum distance of neighboring open cells is presentCellValue - 1
     // prefer to move forward without spinning
     // TODO
-    if(N == min) {
+    if(N == min && openN) {
         move(currentCfg, 'N');
         // currentCfg.x++;
         // currentCfg.dir = 'N';
     }
-    if(S == min) {
+    if(S == min && openS) {
         move(currentCfg, 'S');
         // currentCfg.x--;
         // currentCfg.dir = 'S';
     }
-    if(E == min) {
+    if(E == min && openE) {
         move(currentCfg, 'E');
         // currentCfg.y++;
         // currentCfg.dir = 'E';
     }
-    if(W == min) {
+    if(W == min && openW) {
         move(currentCfg, 'W');
         // currentCfg.y--;
         // currentCfg.dir = 'W';
@@ -117,7 +136,8 @@ void flowElevation(configuration* currentCfg, int maze[16][16]) {
 }
 
 
-void checkNeigboringOpen(configuration poppedCfg, int maze[16][16]) {
+void checkNeigboringOpen(configuration poppedCfg) {
+    
     openCells checkOpen = checkOpenCells(poppedCfg);
 
     bool openN = checkOpen.openN;
@@ -135,7 +155,6 @@ void checkNeigboringOpen(configuration poppedCfg, int maze[16][16]) {
     int E = 1337;
     int W = 1337;
 
-
     //N = +x
     //S = -x
     //E = +y
@@ -150,10 +169,13 @@ void checkNeigboringOpen(configuration poppedCfg, int maze[16][16]) {
     int arraySort[4] = {N, S, E, W};
     std::sort(arraySort, arraySort + 4);
     int min = arraySort[0];
+    std::cerr << maze[x][y] << std::endl;
+    std::cerr << arraySort[0] << " " <<  arraySort[1] << " " << arraySort[2] << " " <<arraySort[3] << std::endl;
 
     // if minimum distance of neighboring open cells is not presentCellValue - 1
 
     if(min != maze[x][y] - 1) {
+        std::cerr << "min check failed";
         // replace present cell's distance with minimum + 1
         maze[x][y] = min + 1;
 
@@ -290,22 +312,24 @@ void move(configuration* currentCfg, char direction) {
     //E = +y
     //W = -y
 
+    currentCfg->dir = direction;
+
     switch(direction) {
 
         case 'N':
-            currentCfg->x++; currentCfg->dir = 'N';
+            currentCfg->x++;
         break;
 
         case 'S':
-            currentCfg->x--; currentCfg->dir = 'S';
+            currentCfg->x--;
         break;
 
         case 'E':
-            currentCfg->y++; currentCfg->dir = 'E';
+            currentCfg->y++;
         break;
 
         case 'W':
-            currentCfg->y--; currentCfg->dir = 'W';
+            currentCfg->y--;
         break;
     }
 

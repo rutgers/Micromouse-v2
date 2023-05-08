@@ -46,6 +46,7 @@
         "iterator": "cpp",
         "memory_resource": "cpp",
         "random": "cpp",
-        "numbers": "cpp"
+        "numbers": "cpp",
+        "iostream": "cpp"
     }
 }

@@ -88,22 +88,41 @@ int main(int argc, char* argv[]) {
     // if(currentCfg.dir=='E') move(&currentCfg, 'S');
 
 
+    // std::cerr << currentCfg.x << " " << currentCfg.y << " " << currentCfg.dir << std::endl;
+
+    // move(&currentCfg, 'N');
+    
+    // std::cerr << currentCfg.x << " " << currentCfg.y << " " << currentCfg.dir << std::endl;
+    // checkOpenCells(currentCfg);
+
+
+
     while(true) {
+        // checkOpenCells(currentCfg);
+        // std::cerr << API::wallFront();
+
         // Micromouse moves from higher to lower elevations
         // If there are two open cells of equal elevation to go to,
         // prioritize the one in front that doesn't require a turn 
         
-        flowElevation(&currentCfg, maze);
+    
+        flowElevation(&currentCfg);
 
         //1) Push the current cell location onto the stack
         cellStack.push(currentCfg);
 
         //2) Repeat while stack is not empty
-        
+
+        // log("Hello");
+
         while(!cellStack.empty()) {
+            log("stack not empty");
             //pull the cell location from the stack
             poppedCfg = cellStack.top();
-            checkNeigboringOpen(poppedCfg, maze);
+            std::cerr << poppedCfg.x << " " << poppedCfg.y << " " << poppedCfg.dir << std::endl;
+
+            checkNeigboringOpen(poppedCfg);
+            
 
             cellStack.pop();
         }
@@ -112,13 +131,14 @@ int main(int argc, char* argv[]) {
             break;
         }
         
+        
     }
 
-   for(int i = 0; i < N; i++) {
-    for(int j = 0; j < N; j++) {
-        std::cerr << maze[i][j] << " ";
-    }
-    log("\n");
-   }
+//    for(int i = 0; i < N; i++) {
+//     for(int j = 0; j < N; j++) {
+//         std::cerr << maze[i][j] << " ";
+//     }
+//     log("\n");
+//    }
    
 }
