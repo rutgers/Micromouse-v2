@@ -11,14 +11,15 @@ using namespace std;
 
 // push all neighbor locations onto the stack except the goal locations (since these should stay 0)
 
-
-openCells checkOpenCells(configuration currentCfg) {
+openCells checkOpenCells(configuration currentCfg, openCells walls[16][16]) {
     openCells temp;
     temp.openN = false;
     temp.openS = false;
     temp.openE = false;
     temp.openW = false;
 
+    int x = currentCfg.x;
+    int y = currentCfg.y;
     char dir = currentCfg.dir;
 
     API::wallFront();
@@ -52,24 +53,22 @@ openCells checkOpenCells(configuration currentCfg) {
             break;
     }
 
-    // std::cerr << "\n";
-    // if(temp.openN) std::cerr << "openN";
-    // if(temp.openS) std::cerr << "openS";
-    // if(temp.openE) std::cerr << "openE";
-    // if(temp.openW) std::cerr << "openW";
 
-
-
+    //update walls array as we move
+    walls[x][y].openN = temp.openN;
+    walls[x][y].openS = temp.openS;
+    walls[x][y].openE = temp.openE;
+    walls[x][y].openW = temp.openW;
 
     return temp;
 }
 
-void flowElevation(configuration* currentCfg) {
+void flowElevation(configuration* currentCfg, openCells walls[16][16]) {
     // given the maze, configuration, and wall checks, move to lower elevation until we hit 0
     // prioritize movements without turns if possible
 
-    int x = currentCfg->x;
-    int y = currentCfg->y;
+    int x = currentCfg->x; // up and down on the array = EW, first term
+    int y = currentCfg->y; // left and right on the array = NS, second term
     char dir = currentCfg->dir;
 
 
@@ -81,7 +80,7 @@ void flowElevation(configuration* currentCfg) {
     // static bool wallLeft();
 
 
-    openCells checkOpen = checkOpenCells(*currentCfg);
+    openCells checkOpen = checkOpenCells(*currentCfg, walls);
     bool openN = checkOpen.openN;
     bool openS = checkOpen.openS;
     bool openE = checkOpen.openE;
@@ -93,51 +92,46 @@ void flowElevation(configuration* currentCfg) {
     int E = 1337;
     int W = 1337;
 
-    //N = +x
-    //S = -x
-    //E = +y
-    //W = -y
+    //N = +y
+    //S = -y
+    //E = +x
+    //W = -x
 
-    if(x+1 <= 15 && openN) N = maze[x+1][y];
-    if(x-1 >= 0 && openS) S = maze[x-1][y];
-    if(y+1 <= 15 && openE) E = maze[x][y+1];
-    if(y-1 >= 0 && openW) W = maze[x][y-1];
+    if(y+1 <= 15 && openN) N = maze[x][y+1];
+    if(y-1 >= 0 && openS) S = maze[x][y-1];
+    if(x+1 <= 15 && openE) E = maze[x+1][y];
+    if(x-1 >= 0 && openW) W = maze[x-1][y];
 
     // find the min using arraysort
     int arraySort[4] = {N, S, E, W};
     std::sort(arraySort, arraySort + 4);
     int min = arraySort[0];
+    std::cerr << "Min Cell Calculated: " << min << std::endl;
 
     // if minimum distance of neighboring open cells is presentCellValue - 1
     // prefer to move forward without spinning
     // TODO
-    if(N == min && openN) {
-        move(currentCfg, 'N');
-        // currentCfg.x++;
-        // currentCfg.dir = 'N';
-    }
-    if(S == min && openS) {
-        move(currentCfg, 'S');
-        // currentCfg.x--;
-        // currentCfg.dir = 'S';
-    }
-    if(E == min && openE) {
-        move(currentCfg, 'E');
-        // currentCfg.y++;
-        // currentCfg.dir = 'E';
-    }
-    if(W == min && openW) {
-        move(currentCfg, 'W');
-        // currentCfg.y--;
-        // currentCfg.dir = 'W';
-    }
+    /*
+    if(N == min && maze[x][y] == min + 1 && openN) move(currentCfg, 'N');
+    if(S == min && maze[x][y] == min + 1 && openS) move(currentCfg, 'S');
+    if(E == min && maze[x][y] == min + 1 && openE) move(currentCfg, 'E');
+    if(W == min && maze[x][y] == min + 1 && openW) move(currentCfg, 'W');
+    */
+    if(N == min && openN) move(currentCfg, 'N');
+    if(S == min && openS) move(currentCfg, 'S');
+    if(E == min && openE) move(currentCfg, 'E');
+    if(W == min && openW) move(currentCfg, 'W');
 
-    return ;
+    //update wall array after moving too
+    checkOpenCells(*currentCfg, walls);
+
+    return;
 }
 
 
-void checkNeigboringOpen(configuration poppedCfg) {
+void checkNeigboringOpen(configuration poppedCfg, int maze[16][16], openCells walls[16][16], std::stack<configuration> cellStack) {
     
+    /*
     openCells checkOpen = checkOpenCells(poppedCfg);
 
     bool openN = checkOpen.openN;
@@ -145,9 +139,19 @@ void checkNeigboringOpen(configuration poppedCfg) {
     bool openE = checkOpen.openE;
     bool openW = checkOpen.openW;
 
+    // For the popped configuration, refer to the global 
+    // walls array instead of checking from the API
+    */
+
+
     int x = poppedCfg.x;
     int y = poppedCfg.y;
     char dir = poppedCfg.dir;
+
+    bool openN = walls[x][y].openN;
+    bool openS = walls[x][y].openS;
+    bool openE = walls[x][y].openE;
+    bool openW = walls[x][y].openW;
 
     //min of the open cells
     int N = 1337;
@@ -155,15 +159,16 @@ void checkNeigboringOpen(configuration poppedCfg) {
     int E = 1337;
     int W = 1337;
 
-    //N = +x
-    //S = -x
-    //E = +y
-    //W = -y
+    //N = +y
+    //S = -y
+    //E = +x
+    //W = -x
 
-    if(x+1 <= 15 && openN) N = maze[x+1][y];
-    if(x-1 >= 0 && openS) S = maze[x-1][y];
-    if(y+1 <= 15 && openE) E = maze[x][y+1];
-    if(y-1 >= 0 && openW) W = maze[x][y-1];
+    if(y+1 <= 15 && openN) N = maze[x][y+1];
+    if(y-1 >= 0 && openS) S = maze[x][y-1];
+    if(x+1 <= 15 && openE) E = maze[x+1][y];
+    if(x-1 >= 0 && openW) W = maze[x-1][y];
+
 
     // find the min using arraysort
     int arraySort[4] = {N, S, E, W};
@@ -204,6 +209,8 @@ void checkNeigboringOpen(configuration poppedCfg) {
             pushCfg.y += 1;
         }
     }
+
+    std::cerr << "stack size: " << cellStack.size();
 
     return;
 }
@@ -307,29 +314,29 @@ void move(configuration* currentCfg, char direction) {
         }
     }
 
-    //N = +x
-    //S = -x
-    //E = +y
-    //W = -y
+    //N = +y
+    //S = -y
+    //E = +x
+    //W = -x
 
     currentCfg->dir = direction;
 
     switch(direction) {
 
         case 'N':
-            currentCfg->x++;
-        break;
-
-        case 'S':
-            currentCfg->x--;
-        break;
-
-        case 'E':
             currentCfg->y++;
         break;
 
-        case 'W':
+        case 'S':
             currentCfg->y--;
+        break;
+
+        case 'E':
+            currentCfg->x++;
+        break;
+
+        case 'W':
+            currentCfg->x--;
         break;
     }
 

@@ -49,19 +49,9 @@ using namespace std;
 Flood fill algorithm
 mouse tries to approach smaller values of the maze
 as the mouse explores, it updates the values along its path. 
-
-after it reaches its destination, in order to find the
 */
 
 
-/*
-    bot starts at 0, 0, facing north
-    pretend array is flipped ccw 90 degrees and bot is at bottom left of maze facing up
-    N = +x
-    S = -x
-    E = +y
-    W = -y
-*/
 
 void log(const std::string& text) {
     std::cerr << text << std::endl;
@@ -72,8 +62,8 @@ int main(int argc, char* argv[]) {
     API::setColor(0, 0, 'G');
     API::setText(0, 0, "abc");
     
-    //Modified Flood Fill
-    //https://marsuniversity.github.io/ece387/FloodFill.pdf
+    
+    
     configuration currentCfg;
     // global struct for keeping track of current pos/orientation
 
@@ -81,64 +71,74 @@ int main(int argc, char* argv[]) {
     currentCfg.y = 0;
     currentCfg.dir = 'N';
 
+    static openCells walls[N][N];
+    //global array for keeping track of walls
+    // borders
+    for(int i = 0; i < 16; i++) {
+        walls[i][0].openS = false; // move along south wall
+        walls[i][15].openN = false; // move along north wall
+        walls[0][i].openW = false; // move along west wall
+        walls[15][i].openE = false; // move along east wall
+        // std::cerr << "Hello";
+    }
 
-    // move(&currentCfg, 'N');
-
-    // if(currentCfg.x==1) move(&currentCfg, 'E');
-    // if(currentCfg.dir=='E') move(&currentCfg, 'S');
+    static std::stack<configuration> cellStack;
 
 
-    // std::cerr << currentCfg.x << " " << currentCfg.y << " " << currentCfg.dir << std::endl;
-
-    // move(&currentCfg, 'N');
+    //Modified Flood Fill
+    //https://marsuniversity.github.io/ece387/FloodFill.pdf
     
-    // std::cerr << currentCfg.x << " " << currentCfg.y << " " << currentCfg.dir << std::endl;
-    // checkOpenCells(currentCfg);
-
 
 
     while(true) {
         // checkOpenCells(currentCfg);
-        // std::cerr << API::wallFront();
 
         // Micromouse moves from higher to lower elevations
         // If there are two open cells of equal elevation to go to,
         // prioritize the one in front that doesn't require a turn 
         
-    
-        flowElevation(&currentCfg);
+        std::cerr << "[" << currentCfg.x << " " << currentCfg.y << " " << currentCfg.dir << "] -> " << maze[currentCfg.x][currentCfg.y] << std::endl;
+        flowElevation(&currentCfg, walls);
+        
+        std::cerr << "Walls Array "<< walls[currentCfg.x][currentCfg.y].openN << walls[currentCfg.x][currentCfg.y].openS << walls[currentCfg.x][currentCfg.y].openE << walls[currentCfg.x][currentCfg.y].openW << std::endl;
+
 
         //1) Push the current cell location onto the stack
         cellStack.push(currentCfg);
 
         //2) Repeat while stack is not empty
 
-        // log("Hello");
+        std::cerr << "Size of stack: " << cellStack.size() <<std::endl;
+
 
         while(!cellStack.empty()) {
-            log("stack not empty");
             //pull the cell location from the stack
             poppedCfg = cellStack.top();
-            std::cerr << poppedCfg.x << " " << poppedCfg.y << " " << poppedCfg.dir << std::endl;
-
-            checkNeigboringOpen(poppedCfg);
-            
-
             cellStack.pop();
+
+            // std::cerr << poppedCfg.x << " " << poppedCfg.y << " " << poppedCfg.dir << std::endl;
+
+            checkNeigboringOpen(poppedCfg, maze, walls, cellStack);
         }
 
         if(maze[currentCfg.x][currentCfg.y] == 0) {
             break;
         }
         
+        log("\n");
         
+        for(int i = 0; i < N; i++) {
+            for(int j = 0; j < N; j++) {
+                if(maze[i][j] < 10) std::cerr << " " << maze[i][j];
+                else std::cerr << maze[i][j];
+
+            }
+            log("");
+        }   
+        
+        log("\n");
     }
 
-//    for(int i = 0; i < N; i++) {
-//     for(int j = 0; j < N; j++) {
-//         std::cerr << maze[i][j] << " ";
-//     }
-//     log("\n");
-//    }
+   
    
 }
