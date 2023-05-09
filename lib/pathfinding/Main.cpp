@@ -75,6 +75,12 @@ int main(int argc, char* argv[]) {
         std::cerr << "[" << currentCfg.x << " " << currentCfg.y << " " << currentCfg.dir << "] -> " << maze[currentCfg.x][currentCfg.y] << std::endl;
         flowElevation();
         
+
+        //end condition
+        if(maze[currentCfg.x][currentCfg.y] == 0) {
+            break;
+        }
+
         std::cerr << "Walls Array "<< walls[currentCfg.x][currentCfg.y].openN << walls[currentCfg.x][currentCfg.y].openS << walls[currentCfg.x][currentCfg.y].openE << walls[currentCfg.x][currentCfg.y].openW << std::endl;
 
         //1) Push the current cell location onto the stack
@@ -91,10 +97,6 @@ int main(int argc, char* argv[]) {
             checkNeigboringOpen(poppedCfg);
         }
 
-        //end condition
-        if(maze[currentCfg.x][currentCfg.y] == 0) {
-            break;
-        }
         
         // printout maze
         log("\n");

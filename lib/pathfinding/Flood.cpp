@@ -151,10 +151,22 @@ void flowElevation() {
     if(E == min && maze[x][y] == min + 1 && openE) move(currentCfg, 'E');
     if(W == min && maze[x][y] == min + 1 && openW) move(currentCfg, 'W');
     */
-    if(N == min) move('N');
-    if(S == min) move('S');
-    if(E == min) move('E');
-    if(W == min) move('W');
+    if(N == min && openN) {
+        move('N');
+        return;
+    }
+    if(S == min && openS) {
+        move('S');
+        return;
+    }
+    if(E == min && openE) {
+        move('E');
+        return;
+    }
+    if(W == min && openW) {
+        move('W');
+        return;
+    }
 
     //update wall array after moving too
     checkOpenCells(currentCfg);
@@ -226,24 +238,29 @@ void checkNeigboringOpen(configuration poppedCfg) {
 
         configuration pushCfg = poppedCfg;
 
-        if(x+1 <= 15 && !(x+1 == 7 || x+1 == 8) && !(y == 7 || y == 8)) {
+
+        if(x+1 <= 15 && !((x+1==7 && y==7) || (x+1==7 && y==8) || (x+1==8 && y==7) || (x+1==8 && y==8))) {
             pushCfg.x += 1;
             cellStack.push(pushCfg);
+            std::cerr << "Pushed (" << pushCfg.x << ", " << pushCfg.y << ")";
             pushCfg.x -= 1;
         }
-        if(x-1 >= 0 && !(x-1 == 7 || x-1 == 8) && !(y == 7 || y == 8)) {
+        if(x-1 >= 0 && !((x-1==7 && y==7) || (x-1==7 && y==8) || (x-1==8 && y==7) || (x-1==8 && y==8))) {
             pushCfg.x -= 1;
             cellStack.push(pushCfg);
+            std::cerr << "Pushed (" << pushCfg.x << ", " << pushCfg.y << ")";
             pushCfg.x += 1;
         }
-        if(y+1 <= 15 && !(x == 7 || x == 8) && !(y+1 == 7 || y+1 == 8)) {
+        if(y+1 <= 15 && !((x==7 && y+1==7) || (x==7 && y+1==8) || (x==8 && y+1==7) || (x==8 && y+1==8))) {
             pushCfg.y += 1;
             cellStack.push(pushCfg);
+            std::cerr << "Pushed (" << pushCfg.x << ", " << pushCfg.y << ")";
             pushCfg.y -= 1;
         }
-        if(y-1 >= 0 && !(x == 7 || x == 8) && !(y-1 == 7 || y-1 == 8)) {
+        if(y-1 >= 0 && !((x==7 && y-1==7) || (x==7 && y-1==8) || (x==8 && y-1==7) || (x==8 && y-1==8))) {
             pushCfg.y -= 1;
             cellStack.push(pushCfg);
+            std::cerr << "Pushed (" << pushCfg.x << ", " << pushCfg.y << ")";
             pushCfg.y += 1;
         }
     }
