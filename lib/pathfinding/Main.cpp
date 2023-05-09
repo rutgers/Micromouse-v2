@@ -53,6 +53,7 @@ as the mouse explores, it updates the values along its path.
 
 
 
+
 void log(const std::string& text) {
     std::cerr << text << std::endl;
 }
@@ -61,17 +62,11 @@ int main(int argc, char* argv[]) {
     log("Running...");
     API::setColor(0, 0, 'G');
     API::setText(0, 0, "abc");
-    
-    
-    
-    configuration currentCfg;
-    // global struct for keeping track of current pos/orientation
 
     currentCfg.x = 0;
     currentCfg.y = 0;
     currentCfg.dir = 'N';
 
-    static openCells walls[N][N];
     //global array for keeping track of walls
     // borders
     for(int i = 0; i < 16; i++) {
@@ -82,7 +77,6 @@ int main(int argc, char* argv[]) {
         // std::cerr << "Hello";
     }
 
-    static std::stack<configuration> cellStack;
 
 
     //Modified Flood Fill
@@ -98,7 +92,7 @@ int main(int argc, char* argv[]) {
         // prioritize the one in front that doesn't require a turn 
         
         std::cerr << "[" << currentCfg.x << " " << currentCfg.y << " " << currentCfg.dir << "] -> " << maze[currentCfg.x][currentCfg.y] << std::endl;
-        flowElevation(&currentCfg, walls);
+        flowElevation(&currentCfg);
         
         std::cerr << "Walls Array "<< walls[currentCfg.x][currentCfg.y].openN << walls[currentCfg.x][currentCfg.y].openS << walls[currentCfg.x][currentCfg.y].openE << walls[currentCfg.x][currentCfg.y].openW << std::endl;
 
@@ -118,7 +112,7 @@ int main(int argc, char* argv[]) {
 
             // std::cerr << poppedCfg.x << " " << poppedCfg.y << " " << poppedCfg.dir << std::endl;
 
-            checkNeigboringOpen(poppedCfg, maze, walls, cellStack);
+            checkNeigboringOpen(poppedCfg);
         }
 
         if(maze[currentCfg.x][currentCfg.y] == 0) {

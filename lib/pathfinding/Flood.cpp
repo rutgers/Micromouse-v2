@@ -4,6 +4,32 @@
 using namespace std;
 
 
+int maze[N][N] = 
+{{14, 13, 12, 11, 10, 9, 8, 7, 7, 8, 9, 10, 11, 12, 13, 14},
+ {13, 12, 11, 10,  9, 8, 7, 6, 6, 7, 8,  9, 10, 11, 12, 13},
+ {12, 11, 10,  9,  8, 7, 6, 5, 5, 6, 7,  8,  9, 10, 11, 12},   
+ {11, 10,  9,  8,  7, 6, 5, 4, 4, 5, 6,  7,  8,  9, 10, 11},   
+ {10,  9,  8,  7,  6, 5, 4, 3, 3, 4, 5,  6,  7,  8,  9, 10},   
+ {9,   8,  7,  6,  5, 4, 3, 2, 2, 3, 4,  5,  6,  7,  8,  9},   
+ {8,   7,  6,  5,  4, 3, 2, 1, 1, 2, 3,  4,  5,  6,  7,  8},   
+ {7,   6,  5,  4,  3, 2, 1, 0, 0, 1, 2,  3,  4,  5,  6,  7},   
+ {7,   6,  5,  4,  3, 2, 1, 0, 0, 1, 2,  3,  4,  5,  6,  7},   
+ {8,   7,  6,  5,  4, 3, 2, 1, 1, 2, 3,  4,  5,  6,  7,  8},   
+ {9,   8,  7,  6,  5, 4, 3, 2, 2, 3, 4,  5,  6,  7,  8,  9},   
+ {10,  9,  8,  7,  6, 5, 4, 3, 3, 4, 5,  6,  7,  8,  9, 10},   
+ {11, 10,  9,  8,  7, 6, 5, 4, 4, 5, 6,  7,  8,  9, 10, 11},   
+ {12, 11, 10,  9,  8, 7, 6, 5, 5, 6, 7,  8,  9, 10, 11, 12},   
+ {13, 12, 11, 10,  9, 8, 7, 6, 6, 7, 8,  9, 10, 11, 12, 13},  
+ {14, 13, 12, 11, 10, 9, 8, 7, 7, 8, 9, 10, 11, 12, 13, 14}};
+ 
+
+std::stack<configuration> cellStack;
+openCells walls[N][N];
+configuration currentCfg;
+    // global struct for keeping track of current pos/orientation
+
+configuration poppedCfg;
+
 // if minimum distance of neighboring open cells is not presentCellValue - 1
 // replace present cell's distance with minimum + 1
 
@@ -11,7 +37,7 @@ using namespace std;
 
 // push all neighbor locations onto the stack except the goal locations (since these should stay 0)
 
-openCells checkOpenCells(configuration currentCfg, openCells walls[16][16]) {
+openCells checkOpenCells(configuration currentCfg) {
     openCells temp;
     temp.openN = false;
     temp.openS = false;
@@ -63,7 +89,7 @@ openCells checkOpenCells(configuration currentCfg, openCells walls[16][16]) {
     return temp;
 }
 
-void flowElevation(configuration* currentCfg, openCells walls[16][16]) {
+void flowElevation(configuration* currentCfg) {
     // given the maze, configuration, and wall checks, move to lower elevation until we hit 0
     // prioritize movements without turns if possible
 
@@ -80,7 +106,7 @@ void flowElevation(configuration* currentCfg, openCells walls[16][16]) {
     // static bool wallLeft();
 
 
-    openCells checkOpen = checkOpenCells(*currentCfg, walls);
+    openCells checkOpen = checkOpenCells(*currentCfg);
     bool openN = checkOpen.openN;
     bool openS = checkOpen.openS;
     bool openE = checkOpen.openE;
@@ -123,13 +149,13 @@ void flowElevation(configuration* currentCfg, openCells walls[16][16]) {
     if(W == min && openW) move(currentCfg, 'W');
 
     //update wall array after moving too
-    checkOpenCells(*currentCfg, walls);
+    checkOpenCells(*currentCfg);
 
     return;
 }
 
 
-void checkNeigboringOpen(configuration poppedCfg, int maze[16][16], openCells walls[16][16], std::stack<configuration> cellStack) {
+void checkNeigboringOpen(configuration poppedCfg) {
     
     /*
     openCells checkOpen = checkOpenCells(poppedCfg);
