@@ -3,7 +3,7 @@
 
 using namespace std;
 
-
+// "Definition checked against [extern] declaration"
 int maze[N][N] = 
 {{14, 13, 12, 11, 10, 9, 8, 7, 7, 8, 9, 10, 11, 12, 13, 14},
  {13, 12, 11, 10,  9, 8, 7, 6, 6, 7, 8,  9, 10, 11, 12, 13},
@@ -22,21 +22,33 @@ int maze[N][N] =
  {13, 12, 11, 10,  9, 8, 7, 6, 6, 7, 8,  9, 10, 11, 12, 13},  
  {14, 13, 12, 11, 10, 9, 8, 7, 7, 8, 9, 10, 11, 12, 13, 14}};
  
-
 std::stack<configuration> cellStack;
 openCells walls[N][N];
 configuration currentCfg;
-    // global struct for keeping track of current pos/orientation
-
 configuration poppedCfg;
 
-// if minimum distance of neighboring open cells is not presentCellValue - 1
-// replace present cell's distance with minimum + 1
+
+
+void initialize() {
+    // set current configuration to (0, 0) facing N
+    currentCfg.x = 0;
+    currentCfg.y = 0;
+    currentCfg.dir = 'N';
+
+    // set borders for walls array
+    for(int i = 0; i < 16; i++) {
+        walls[i][0].openS = false; // move along south wall
+        walls[i][15].openN = false; // move along north wall
+        walls[0][i].openW = false; // move along west wall
+        walls[15][i].openE = false; // move along east wall
+    }
+}
+
+
 
 // open cells = no wall, includes cell that we came from
-
-// push all neighbor locations onto the stack except the goal locations (since these should stay 0)
-
+// use sensors/API to check if there's a wall to the front, left, right
+// -> make a decision based on current orientation to update walls array
 openCells checkOpenCells(configuration currentCfg) {
     openCells temp;
     temp.openN = false;
@@ -48,9 +60,6 @@ openCells checkOpenCells(configuration currentCfg) {
     int y = currentCfg.y;
     char dir = currentCfg.dir;
 
-    API::wallFront();
-    API::wallLeft();
-    API::wallRight();
 
     switch(dir) {
         case 'N':
@@ -80,7 +89,7 @@ openCells checkOpenCells(configuration currentCfg) {
     }
 
 
-    //update walls array as we move
+    //update walls array
     walls[x][y].openN = temp.openN;
     walls[x][y].openS = temp.openS;
     walls[x][y].openE = temp.openE;
@@ -89,24 +98,22 @@ openCells checkOpenCells(configuration currentCfg) {
     return temp;
 }
 
-void flowElevation(configuration* currentCfg) {
+
+
+void flowElevation() {
     // given the maze, configuration, and wall checks, move to lower elevation until we hit 0
-    // prioritize movements without turns if possible
+    // prioritize movements without turns if possible (TODO)
 
-    int x = currentCfg->x; // up and down on the array = EW, first term
-    int y = currentCfg->y; // left and right on the array = NS, second term
-    char dir = currentCfg->dir;
-
-
-    // if the front cell is valid, lower, and there's no wall, move forward
+    int x = currentCfg.x; // up and down on the array = EW, first term
+    int y = currentCfg.y; // left and right on the array = NS, second term
+    char dir = currentCfg.dir;
 
 
-    // static bool wallFront();
-    // static bool wallRight();
-    // static bool wallLeft();
+    // check if surrounding cells are valid, 
+    // pick the lowest out of the open cells,
+    // and move forward
 
-
-    openCells checkOpen = checkOpenCells(*currentCfg);
+    openCells checkOpen = checkOpenCells(currentCfg);
     bool openN = checkOpen.openN;
     bool openS = checkOpen.openS;
     bool openE = checkOpen.openE;
@@ -133,28 +140,34 @@ void flowElevation(configuration* currentCfg) {
     std::sort(arraySort, arraySort + 4);
     int min = arraySort[0];
     std::cerr << "Min Cell Calculated: " << min << std::endl;
+    
+    // move to minimum of open cells (usually presentCellValue - 1)
+    // prefer to move forward without spinning (TODO)
 
-    // if minimum distance of neighboring open cells is presentCellValue - 1
-    // prefer to move forward without spinning
-    // TODO
     /*
+    // extra parameters for move
     if(N == min && maze[x][y] == min + 1 && openN) move(currentCfg, 'N');
     if(S == min && maze[x][y] == min + 1 && openS) move(currentCfg, 'S');
     if(E == min && maze[x][y] == min + 1 && openE) move(currentCfg, 'E');
     if(W == min && maze[x][y] == min + 1 && openW) move(currentCfg, 'W');
     */
-    if(N == min && openN) move(currentCfg, 'N');
-    if(S == min && openS) move(currentCfg, 'S');
-    if(E == min && openE) move(currentCfg, 'E');
-    if(W == min && openW) move(currentCfg, 'W');
+    if(N == min) move('N');
+    if(S == min) move('S');
+    if(E == min) move('E');
+    if(W == min) move('W');
 
     //update wall array after moving too
-    checkOpenCells(*currentCfg);
+    checkOpenCells(currentCfg);
 
     return;
 }
 
 
+
+// if minimum distance of neighboring OPEN cells is not presentCellValue - 1
+// ->  replace present cell's distance with minimum + 1
+// -> push all neighbor locations onto the stack except the goal locations 
+//    (since these should stay 0)
 void checkNeigboringOpen(configuration poppedCfg) {
     
     /*
@@ -168,7 +181,6 @@ void checkNeigboringOpen(configuration poppedCfg) {
     // For the popped configuration, refer to the global 
     // walls array instead of checking from the API
     */
-
 
     int x = poppedCfg.x;
     int y = poppedCfg.y;
@@ -242,6 +254,7 @@ void checkNeigboringOpen(configuration poppedCfg) {
 }
 
 
+
 /*
     // check for walls to the front, right, or left
     static bool wallFront();
@@ -257,13 +270,9 @@ void checkNeigboringOpen(configuration poppedCfg) {
     API::wallLeft();
     API:turnLeft();
 */
+void move(char direction) {
 
-
-
-
-void move(configuration* currentCfg, char direction) {
-
-    char facing = currentCfg->dir;
+    char facing = currentCfg.dir;
 
     // if facing and direction are the same, go straight
     if(facing == direction) {
@@ -303,7 +312,6 @@ void move(configuration* currentCfg, char direction) {
             break;
             }
         }
-
 
         if(facing == 'E') {
             switch(direction) {
@@ -345,24 +353,24 @@ void move(configuration* currentCfg, char direction) {
     //E = +x
     //W = -x
 
-    currentCfg->dir = direction;
+    currentCfg.dir = direction;
 
     switch(direction) {
 
         case 'N':
-            currentCfg->y++;
+            currentCfg.y++;
         break;
 
         case 'S':
-            currentCfg->y--;
+            currentCfg.y--;
         break;
 
         case 'E':
-            currentCfg->x++;
+            currentCfg.x++;
         break;
 
         case 'W':
-            currentCfg->x--;
+            currentCfg.x--;
         break;
     }
 
