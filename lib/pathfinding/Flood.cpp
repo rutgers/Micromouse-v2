@@ -232,7 +232,7 @@ void checkNeigboringOpen(configuration poppedCfg) {
     if(min != maze[x][y] - 1) {
         std::cerr << "min check failed";
         // replace present cell's distance with minimum + 1
-        maze[x][y] = min + 1;
+            maze[x][y] = min + 1;
 
         // push all neighbor locations onto the stack except the goal locations
 
@@ -392,4 +392,56 @@ void move(char direction) {
     }
 
     return;
+}
+
+
+void invertMaze(char goal) {
+    
+    int endCell;
+    // if the goal is to go back to the start
+    if(goal == 's') {
+        endCell = maze[0][0];
+    }
+    // if the goal is to get back to the center
+    else if(goal == 'c') {
+        // use minimum of the 4 center squares as the endCell
+        int arraySort[4] = {maze[7][7], maze[7][8], maze[8][7], maze[8][8]};
+        std::sort(arraySort, arraySort + 4);
+        endCell = arraySort[0];
+    }
+    
+    // deadend marker, set values greater than the end goal as large negatives
+    // these will become large positives during next operation
+    
+    for(int i = 0; i < 16; i++) {
+        for(int j = 0; j < 16; j++) {
+            if(maze[i][j] > endCell)
+                maze[i][j] = -1337;
+        }
+    }
+
+
+    //invert the maze by doing endCell - maze[i][j]
+    // -> endCell will become 0 (goal)
+    for(int i = 0; i < 16; i++) {
+        for(int j = 0; j < 16; j++) {
+            maze[i][j] = endCell - maze[i][j];
+        }
+    }
+
+    return;
+}
+
+void mazePrintout() {
+    // printout maze
+        std::cerr << std::endl;
+        for(int i = 0; i < N; i++) {
+            for(int j = 0; j < N; j++) {
+                if(maze[i][j] < 10) std::cerr << " " << maze[i][j] << ", ";
+                else std::cerr << maze[i][j] << ", ";
+            }
+            std::cerr << std::endl;
+
+        }
+        std::cerr << std::endl;        
 }

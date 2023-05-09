@@ -43,3 +43,5 @@ void flowElevation();
 openCells checkOpenCells(configuration currentCfg);
 void checkNeigboringOpen(configuration poppedCfg);
 void move(char direction);
+void invertMaze(char goal);
+void mazePrintout();
