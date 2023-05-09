@@ -12,23 +12,29 @@
 #include <cmath>
 #include <algorithm>
 
-// A* 
-
-const int N = 16;
+const int N = 16;   // maze size
 int curX = 0;
 int curY = 0;
-char curD = 'N';
+char curD = 'N';    // current direction
 
 
-
+// idk why i have this, it can stay for funzzys
 std::vector<std::vector<bool>> maze(N, std::vector<bool>(N,false));
+
 // ---
 std::vector<std::vector<bool>> hWall(N, std::vector<bool>(N-1,false));
 
 // ||||
 std::vector<std::vector<bool>> vWall(N-1, std::vector<bool>(N,false));
 
+// used for tree structure, honesty g and h are not that useful? but why not
+struct Node {
+  int x, y;
+  float g, h;
+  Node* parent;
+};
 
+// move 1 block towards given abs direction.
 void move( char movD ){
   if (movD == curD){
     // nothing
@@ -43,16 +49,37 @@ void move( char movD ){
   curD = movD;
 }
 
+
+
+
 void update(){
   // call for sensor and update hWall& vWall;
 }
 
-struct Node {
-  int x, y;
-  float g, h;
-  Node* parent;
+std::vector<Node*> find_path(const Node* s, const Node* e){
+  // int start_x = s->x, start_y = s->y, end_x = g->x, end_y = g->y;
+  Node* s_ = s;
+  Node* e_ = e;
+  std::vector<Node*> sv;
+  std::vector<Node*> ev;
+  while( (s_->x != e_->x) || (s_->y!=e_->y) ){
+    if(s_->g < e_->g ){
+      sv.push_back(s_);
+      s_ = s_->parent;
+    }else if(s_->g > e_->g){
+      ev.push_back(e_);
+      e_ = e_->parent;
+    }else{
+      sv.push_back(s_);
+      ev.push_back(e_);
+      s_ = s_->parent;
+      e_ = e_->parent;
+    }
+  }
+  ev = std::reverse(ev.begin, ev.end);
+  return vector1.insert( sv.end(), ev.begin(), ev.end() );
+}
 
-};
 
 struct Compare {
     bool operator()(const Node* a, const Node* b) {
