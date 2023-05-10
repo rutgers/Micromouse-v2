@@ -4,46 +4,46 @@
 #include "lib\tof.h"
 
 // #include<Adafruit_NeoPixel.h>
+#include "lib\IMU.h"
+#include "lib\PIDRotate.h"
+#include "lib\PIDStraight.h"
 
 Motors* motors;
-tof* timeofflight;
-
-// Adafruit_NeoPixel strip = Adafruit_NeoPixel(60, 12, NEO_GRB + NEO_KHZ800);
-
-// #define red 0xff0000
-// #define green 0x00ff00
-// #define blue 0x0000ff
-
-
 
 void setup() {
-  // put your setup code here, to run once:
-  // motors = new Motors();
-  // motors->enableMotors();
-
-
-  timeofflight = new tof();
-  timeofflight->checkAddresses();  
-  // Serial.println(timeofflight->readDistance().left);
-
-  Serial.println("hello world");
-  // strip.begin();
+  Serial.begin(9600);
 
 }
 
 void loop() {
-  // put your main code here, to run repeatedly:
-  // motors->setLeftMotorDirection(true);
-  // motors->setRightMotorDirection(true);
 
-  // motors->setLeftMotorSpeed(64); 
-  // motors->setRightMotorSpeed(64);
-  // strip.setPixelColor(5, red);
-  // strip.show();
+  //Serial.println("looping");
+  // int x;
+  // x = pidrotate_instance->InputToMotor(90.0);
+  // motors_instance->setLeftMotorSpeed(x);
+  // motors_instance->setRightMotorSpeed(x);
+     //Serial.println("instance A");
+     //Serial.print("\tout:   ");
+     //Serial.print(encoder_instanceA.read()); //right
+     //Serial.println("instance B");
+     //Serial.print("\tout:   ");
+     //Serial.println(encoder_instanceB.read()); //left
+    
+    //pidrotate_instance->InputToMotor(90);
+    pidstraight_instance->InputToMotor(0,500); //10 cm. 
+    pidrotate_instance->InputToMotor(90);
+    pidrotate_instance->InputToMotor(-180);
+    pidrotate_instance->InputToMotor(180);
+    pidrotate_instance->InputToMotor(-180);
+    pidrotate_instance->InputToMotor(-90);
+    pidstraight_instance->InputToMotor(0,-500); //10 cm. 
 
-  timeofflight->readDistance();
+
+
+
+  timeofflight_instance->readDistance();
   Serial.print("\n");
-  timeofflight->checkAddresses();
+  timeofflight_instance->checkAddresses();
 
   delay(500);
 
