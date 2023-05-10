@@ -142,15 +142,29 @@ void flowElevation() {
     std::cerr << "Min Cell Calculated: " << min << std::endl;
     
     // move to minimum of open cells (usually presentCellValue - 1)
-    // prefer to move forward without spinning (TODO)
+    // prefer to move forward without spinning if there are 2 cells with the same value (TODO)
 
-    /*
+    
     // extra parameters for move
-    if(N == min && maze[x][y] == min + 1 && openN) move(currentCfg, 'N');
-    if(S == min && maze[x][y] == min + 1 && openS) move(currentCfg, 'S');
-    if(E == min && maze[x][y] == min + 1 && openE) move(currentCfg, 'E');
-    if(W == min && maze[x][y] == min + 1 && openW) move(currentCfg, 'W');
-    */
+    // don't move to higher elevations ever, wait for cell update before moving 
+    if(N == min && maze[x][y] == min + 1 && openN) {
+        move('N');
+        return;    
+    }
+    if(S == min && maze[x][y] == min + 1 && openS) {
+        move('S');
+        return;    
+    }
+    if(E == min && maze[x][y] == min + 1 && openE) {
+        move('E');
+        return;    
+    }
+    if(W == min && maze[x][y] == min + 1 && openW) {
+        move('W');
+        return;    
+    }
+    
+   /*
     if(N == min && openN) {
         move('N');
         return;
@@ -167,6 +181,7 @@ void flowElevation() {
         move('W');
         return;
     }
+    */
 
     //update wall array after moving too
     checkOpenCells(currentCfg);
@@ -432,13 +447,22 @@ void invertMaze(char goal) {
     return;
 }
 
+// printout maze with bot starting at bottom left
 void mazePrintout() {
     // printout maze
         std::cerr << std::endl;
-        for(int i = 0; i < N; i++) {
-            for(int j = 0; j < N; j++) {
-                if(maze[i][j] < 10) std::cerr << " " << maze[i][j] << ", ";
-                else std::cerr << maze[i][j] << ", ";
+        for(int j = 15; j >= 0; j--) {
+            for(int i = 0; i < 16; i++) {
+               
+                if(currentCfg.x == i && currentCfg.y == j) {
+                    if(maze[i][j] < 10) std::cerr << "[" << maze[i][j] << "], ";
+                    else std::cerr << "[" << maze[i][j] << "], ";
+                } else {
+                    if(maze[i][j] < 10) std::cerr << " " << maze[i][j] << ", ";
+                    else std::cerr << maze[i][j] << ", ";
+                }
+
+                
             }
             std::cerr << std::endl;
 

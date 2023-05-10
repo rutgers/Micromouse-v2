@@ -103,6 +103,9 @@ int main(int argc, char* argv[]) {
     }
 
     //// STEP 2: RETURN PATH
+    // invertMaze doesn't seem to be the best implementation, especially for
+    // pathing back to center in STEP 3, since multiple cells could have equal 
+    // distance from the center -> sinks of 0's
     invertMaze('s');
 
     while(true) {
@@ -134,11 +137,15 @@ int main(int argc, char* argv[]) {
         mazePrintout();
 
     }
+    
 
     //// STEP 3: FAST RUN, same code as STEP 1, but with invert maze
+    
     invertMaze('c');
 
     mazePrintout();
+
+    /*
     while(true) {
         // Micromouse moves from higher to lower elevations
         std::cerr << "[" << currentCfg.x << " " << currentCfg.y << " " << currentCfg.dir << "] -> " << maze[currentCfg.x][currentCfg.y] << std::endl;
@@ -167,11 +174,11 @@ int main(int argc, char* argv[]) {
 
             checkNeigboringOpen(poppedCfg);
         }
-
+        
         mazePrintout();
 
 
     }
-
-
+    */
+    
 }
