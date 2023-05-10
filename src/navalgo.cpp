@@ -1,11 +1,11 @@
 #include <Arduino.h>
 #include <SPI.h>
-#include "lib\Motors.h"
-#include "lib\PIDRotate.h"
-#include "lib\PIDStraight.h"
-#include "lib\PIDMagicStraight.h"
-#include "lib\tof.h"
-#include "lib\IMU.h"
+// #include "lib\Motors.h"
+// #include "lib\PIDRotate.h"
+// #include "lib\PIDStraight.h"
+// #include "lib\PIDMagicStraight.h"
+// #include "lib\tof.h"
+// #include "lib\IMU.h"
 #include <iostream>
 #include <vector>
 #include <queue>
@@ -13,12 +13,11 @@
 #include <algorithm>
 
 const int N = 16;   // maze size
-int curX = 0;
-int curY = 0;
+Node* cur;
 char curD = 'n';    // current direction
 
 // idk why i have this, it can stay for funzzys
-std::vector<std::vector<bool>> maze(N, std::vector<bool>(N,false));
+std::vector<std::vector<bool>> visited(N, std::vector<bool>(N,false));
 
 // ---
 std::vector<std::vector<bool>> hWall(N, std::vector<bool>(N-1,false));
@@ -47,45 +46,45 @@ int h(int x, int y){
 // update front/left/right walls info into vWall/hWall
 void update() {
   if (curD == 'n'){
-    if (/*front no wall*/&&(curY!=N-1)){
-      hWall[curX][curY] = true;
+    if (/*front no wall*/&&(cur->y!=N-1)){
+      hWall[cur->x][cur->y] = true;
     }
-    if (/*right no wall*/&&(curX!=N-1)){
-      vWall[curX][curY] = true;
+    if (/*right no wall*/&&(cur->x!=N-1)){
+      vWall[cur->x][cur->y] = true;
     }
-    if (/*left no wall*/&&(curX!=0)){
-      vWall[curX-1][curY] = true;
+    if (/*left no wall*/&&(cur->x!=0)){
+      vWall[cur->x-1][cur->y] = true;
     }
     
   }else if(curD == 's'){
-    if (/*front no wall*/&&(curY!=0)){
-      hWall[curX][curY-1] = true;
+    if (/*front no wall*/&&(cur->y!=0)){
+      hWall[cur->x][cur->y-1] = true;
     }
-    if (/*right no wall*/&&(curX!=0)){
-      vWall[curX-1][curY] = true;
+    if (/*right no wall*/&&(cur->x!=0)){
+      vWall[cur->x-1][cur->y] = true;
     }
-    if (/*left no wall*/&&(curX!=N-1)){
-      vWall[curX][curY] = true;
+    if (/*left no wall*/&&(cur->x!=N-1)){
+      vWall[cur->x][cur->y] = true;
     }
   }else if(curD == 'e'){
-    if (/*front no wall*/&&(curX!=N-1)){
-      vWall[curX][curY] = true;
+    if (/*front no wall*/&&(cur->x!=N-1)){
+      vWall[cur->x][cur->y] = true;
     }
-    if (/*right no wall*/&&(curX!=0)){
-      hWall[curX][curY-1] = true;
+    if (/*right no wall*/&&(cur->x!=0)){
+      hWall[cur->x][cur->y-1] = true;
     }
-    if (/*left no wall*/&&(curX!=N-1)){
-      hWall[curX][curY] = true;
+    if (/*left no wall*/&&(cur->x!=N-1)){
+      hWall[cur->x][cur->y] = true;
     }
   }else{
-    if (/*front no wall*/&&(curX!=0)){
-      vWall[curX-1][curY] = true;
+    if (/*front no wall*/&&(cur->x!=0)){
+      vWall[cur->x-1][cur->y] = true;
     }
-    if (/*right no wall*/&&(curX!=N-1)){
-      hWall[curX][curY] = true;
+    if (/*right no wall*/&&(cur->x!=N-1)){
+      hWall[cur->x][cur->y] = true;
     }
-    if (/*left no wall*/&&(curX!=0)){
-      hWall[curX][curY-1] = true;
+    if (/*left no wall*/&&(cur->x!=0)){
+      hWall[cur->x][cur->y-1] = true;
     }
   }
 }
@@ -111,7 +110,7 @@ void move( char movD ){
 }
 
 // give which direction to move (< 1 block)
-char block_move(int s_x, int s_y, int e_x, int e_y){
+char find_direction(int s_x, int s_y, int e_x, int e_y){
   if(s_x == e_x)
     if(s_y < e_y)
       return 'n';
@@ -146,8 +145,8 @@ std::vector<Node*> find_path(Node* s, Node* e) {
   }
   std::reverse(ev.begin(), ev.end());
   sv.insert(sv.end(), ev.begin(), ev.end());
-  curX = e->x;
-  curY = e->y;
+  cur->x = e->x;
+  cur->y = e->y;
   return sv;
 }
 
@@ -156,7 +155,7 @@ bool validIndex(int x, int y) {
   return (x >= 0) && (x < N) && (y >= 0) && (y < N);
 }
 
-std::vector<Node*> getNeighbors(Node* node, std::vector<std::vector<bool>>& maze) {
+std::vector<Node*> getNeighbors(Node* node) {
   std::vector<Node*> neighbors;
   int x = node->x, y = node->y;
   int nextX = x;
@@ -168,6 +167,7 @@ std::vector<Node*> getNeighbors(Node* node, std::vector<std::vector<bool>>& maze
     Node* newNode;
     newNode->x = nextX;
     newNode->y = nextY;
+    newNode->parent=node;
     neighbors.push_back(newNode);
   }
   nextY--;
@@ -178,6 +178,7 @@ std::vector<Node*> getNeighbors(Node* node, std::vector<std::vector<bool>>& maze
     Node* newNode;
     newNode->x = nextX;
     newNode->y = nextY;
+    newNode->parent=node;
     neighbors.push_back(newNode);
   }
   nextX--;
@@ -188,6 +189,7 @@ std::vector<Node*> getNeighbors(Node* node, std::vector<std::vector<bool>>& maze
     Node* newNode;
     newNode->x = nextX;
     newNode->y = nextY;
+    newNode->parent=node;
     neighbors.push_back(newNode);
   }
   nextY++;
@@ -198,6 +200,7 @@ std::vector<Node*> getNeighbors(Node* node, std::vector<std::vector<bool>>& maze
     Node* newNode;
     newNode->x = nextX;
     newNode->y = nextY;
+    newNode->parent=node;
     neighbors.push_back(newNode);
   }
   nextX++;
@@ -208,12 +211,32 @@ std::vector<Node*> getNeighbors(Node* node, std::vector<std::vector<bool>>& maze
 
 void loop() {
 
-  std::priority_queue<Node, std::vector<Node>, Compare> pq;
-
+  std::priority_queue<Node*, std::vector<Node*>, Compare> pq;
+  cur = new Node();
+  cur->x = 0;
+  cur->y = 0;
+  cur->g = 0;
+  pq.push(cur);
   while (!pq.empty()) {
     // pop top, and move there (how tf to move there when its far)
-
+    Node* goal = pq.top();
+    pq.pop();
+    
+    // move????
+    auto path = find_path(cur, goal);
+    auto prev = path[0];
+    for(int i=1; i<path.size(); i++){
+      char step_direction = find_direction( prev->x, prev->y, path[i]->x, path[i]->y);
+      move(step_direction);
+    }
+    cur = goal;
     // check front/left/right getNeighbor method-
     // enque them
+    auto list = getNeighbors(cur);
+    for(auto e : list){
+      if( visited[e->x][e->y]==false ){
+        pq.push(e);
+      }
+    }
   }
 }
