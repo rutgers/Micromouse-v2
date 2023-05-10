@@ -33,32 +33,18 @@ struct Node {
   Node* parent;
 };
 
+struct Compare {
+    bool operator() (Node* a, Node* b) {
+        return h(a->x, a->y) + a->g > b->g + h(a->x, a->y);
+    }
+};
+
 // heuristic function
 int h(int x, int y){
   return (int) (floor(abs(7.5-x)) + floor(abs(7.5-y)));
 }
 
-// move 1 block towards given abs direction.
-void move( char movD ){
-  if (movD == curD){
-    // nothing
-  } else if ((movD == 's' && curD == 'n') || (movD == 'n' && curD == 's') || (movD == 'e' && curD == 'w') || (movD == 'w' && curD == 'e')) {
-    // turn 180
-    pidrotate_instance->rotate_to_angle(imu_instance->getHeading()+180);
-  } else if ((movD == 'e' && curD == 'n') || (movD == 's' && curD == 'e') || (movD == 'w' && curD == 's') || (movD == 'n' && curD == 'w')) {
-    // turn right 90
-    pidrotate_instance->rotate_to_angle(imu_instance->getHeading()+90);
-  } else {
-    // turn left 90
-    pidrotate_instance->rotate_to_angle(imu_instance->getHeading()-90);
-  }
-  // move forward
-  pidstraight_instance->drive_to_position(7);
-
-  curD = movD;
-}
-
-// call for sensor and update hWall& vWall;
+// update front/left/right walls info into vWall/hWall
 void update() {
   if (curD == 'n'){
     if (/*front no wall*/&&(curY!=N-1)){
@@ -104,6 +90,40 @@ void update() {
   }
 }
 
+// move 1 block towards given abs direction.
+void move( char movD ){
+  if (movD == curD){
+    // nothing
+  } else if ((movD == 's' && curD == 'n') || (movD == 'n' && curD == 's') || (movD == 'e' && curD == 'w') || (movD == 'w' && curD == 'e')) {
+    // turn 180
+    pidrotate_instance->rotate_to_angle(imu_instance->getHeading()+180);
+  } else if ((movD == 'e' && curD == 'n') || (movD == 's' && curD == 'e') || (movD == 'w' && curD == 's') || (movD == 'n' && curD == 'w')) {
+    // turn right 90
+    pidrotate_instance->rotate_to_angle(imu_instance->getHeading()+90);
+  } else {
+    // turn left 90
+    pidrotate_instance->rotate_to_angle(imu_instance->getHeading()-90);
+  }
+  // move forward
+  pidstraight_instance->drive_to_position(7);
+
+  curD = movD;
+}
+
+// give which direction to move (< 1 block)
+char block_move(int s_x, int s_y, int e_x, int e_y){
+  if(s_x == e_x)
+    if(s_y < e_y)
+      return 'n';
+    else
+      return 's';
+  else
+    if(s_x < e_x)
+      return 'e';
+    else
+      return 'w';
+}
+
 std::vector<Node*> find_path(Node* s, Node* e) {
   // int start_x = s->x, start_y = s->y, end_x = g->x, end_y = g->y;
   Node* s_ = s;
@@ -111,10 +131,10 @@ std::vector<Node*> find_path(Node* s, Node* e) {
   std::vector<Node*> sv;
   std::vector<Node*> ev;
   while((s_->x != e_->x) || (s_->y!=e_->y)) {
-    if (s_->g < e_->g ) {
+    if (s_->g > e_->g ) {
       sv.push_back(s_);
       s_ = s_->parent;
-    } else if (s_->g > e_->g) {
+    } else if (s_->g < e_->g) {
       ev.push_back(e_);
       e_ = e_->parent;
     } else {
@@ -126,14 +146,11 @@ std::vector<Node*> find_path(Node* s, Node* e) {
   }
   std::reverse(ev.begin(), ev.end());
   sv.insert(sv.end(), ev.begin(), ev.end());
+  curX = e->x;
+  curY = e->y;
   return sv;
 }
 
-struct Compare {
-    bool operator() (const Node* a, const Node* b) {
-        return h(a->x, a->y) + a->g > b->g + h(a->x, a->y);
-    }
-};
 
 bool validIndex(int x, int y) {
   return (x >= 0) && (x < N) && (y >= 0) && (y < N);
