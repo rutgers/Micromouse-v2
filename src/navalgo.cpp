@@ -60,6 +60,7 @@ void move( char movD ){
 
 void update() {
   // call for sensor and update hWall& vWall;
+  
 }
 
 std::vector<Node*> find_path(Node* s, Node* e) {
