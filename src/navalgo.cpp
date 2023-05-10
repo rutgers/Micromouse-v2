@@ -33,6 +33,11 @@ struct Node {
   Node* parent;
 };
 
+// heuristic function
+int h(int x, int y){
+  return (int) (floor(abs(7.5-x)) + floor(abs(7.5-y)));
+}
+
 // move 1 block towards given abs direction.
 void move( char movD ){
   if (movD == curD){
@@ -57,7 +62,7 @@ void update() {
   // call for sensor and update hWall& vWall;
 }
 
-std::vector<Node*> find_path(const Node* s, const Node* e) {
+std::vector<Node*> find_path(Node* s, Node* e) {
   // int start_x = s->x, start_y = s->y, end_x = g->x, end_y = g->y;
   Node* s_ = s;
   Node* e_ = e;
@@ -77,8 +82,9 @@ std::vector<Node*> find_path(const Node* s, const Node* e) {
       e_ = e_->parent;
     }
   }
-  ev = std::reverse(ev.begin, ev.end);
-  return vector1.insert(sv.end(), ev.begin(), ev.end());
+  std::reverse(ev.begin(), ev.end());
+  sv.insert(sv.end(), ev.begin(), ev.end());
+  return sv;
 }
 
 struct Compare {
@@ -103,7 +109,7 @@ std::vector<Node*> getNeighbors(Node* node, std::vector<std::vector<bool>>& maze
     Node* newNode;
     newNode->x = nextX;
     newNode->y = nextY;
-    neighbors.pushback(newNode);
+    neighbors.push_back(newNode);
   }
   nextY--;
 
@@ -113,7 +119,7 @@ std::vector<Node*> getNeighbors(Node* node, std::vector<std::vector<bool>>& maze
     Node* newNode;
     newNode->x = nextX;
     newNode->y = nextY;
-    neighbors.pushback(newNode);
+    neighbors.push_back(newNode);
   }
   nextX--;
 
@@ -123,7 +129,7 @@ std::vector<Node*> getNeighbors(Node* node, std::vector<std::vector<bool>>& maze
     Node* newNode;
     newNode->x = nextX;
     newNode->y = nextY;
-    neighbors.pushback(newNode);
+    neighbors.push_back(newNode);
   }
   nextY++;
 
@@ -133,20 +139,19 @@ std::vector<Node*> getNeighbors(Node* node, std::vector<std::vector<bool>>& maze
     Node* newNode;
     newNode->x = nextX;
     newNode->y = nextY;
-    neighbors.pushback(newNode);
+    neighbors.push_back(newNode);
   }
   nextX++;
 
   return neighbors;
 }
 
-std::priority_queue<array<int>> openPQ;
 
 void loop() {
 
-  priority_queue<Node, vector<Node>, Compare> pq;
+  std::priority_queue<Node, std::vector<Node>, Compare> pq;
 
-  while (!pq.empty) {
+  while (!pq.empty()) {
     // pop top, and move there (how tf to move there when its far)
 
     // check front/left/right getNeighbor method-
