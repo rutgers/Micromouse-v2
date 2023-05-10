@@ -1,7 +1,7 @@
 #include <Arduino.h>
 #include <SPI.h>
 #include "lib\Motors.h"
-#include "..\lib\tof.cpp"
+#include "lib\tof.h"
 
 // #include<Adafruit_NeoPixel.h>
 
@@ -42,6 +42,9 @@ void loop() {
   // strip.show();
 
   timeofflight->readDistance();
-  delay(200);
+  Serial.print("\n");
+  timeofflight->checkAddresses();
+
+  delay(500);
 
 }
