@@ -15,7 +15,7 @@
 const int N = 16;   // maze size
 int curX = 0;
 int curY = 0;
-char curD = 'N';    // current direction
+char curD = 'n';    // current direction
 
 // idk why i have this, it can stay for funzzys
 std::vector<std::vector<bool>> maze(N, std::vector<bool>(N,false));
@@ -58,9 +58,50 @@ void move( char movD ){
   curD = movD;
 }
 
+// call for sensor and update hWall& vWall;
 void update() {
-  // call for sensor and update hWall& vWall;
-  
+  if (curD == 'n'){
+    if (/*front no wall*/&&(curY!=N-1)){
+      hWall[curX][curY] = true;
+    }
+    if (/*right no wall*/&&(curX!=N-1)){
+      vWall[curX][curY] = true;
+    }
+    if (/*left no wall*/&&(curX!=0)){
+      vWall[curX-1][curY] = true;
+    }
+    
+  }else if(curD == 's'){
+    if (/*front no wall*/&&(curY!=0)){
+      hWall[curX][curY-1] = true;
+    }
+    if (/*right no wall*/&&(curX!=0)){
+      vWall[curX-1][curY] = true;
+    }
+    if (/*left no wall*/&&(curX!=N-1)){
+      vWall[curX][curY] = true;
+    }
+  }else if(curD == 'e'){
+    if (/*front no wall*/&&(curX!=N-1)){
+      vWall[curX][curY] = true;
+    }
+    if (/*right no wall*/&&(curX!=0)){
+      hWall[curX][curY-1] = true;
+    }
+    if (/*left no wall*/&&(curX!=N-1)){
+      hWall[curX][curY] = true;
+    }
+  }else{
+    if (/*front no wall*/&&(curX!=0)){
+      vWall[curX-1][curY] = true;
+    }
+    if (/*right no wall*/&&(curX!=N-1)){
+      hWall[curX][curY] = true;
+    }
+    if (/*left no wall*/&&(curX!=0)){
+      hWall[curX][curY-1] = true;
+    }
+  }
 }
 
 std::vector<Node*> find_path(Node* s, Node* e) {
