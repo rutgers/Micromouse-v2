@@ -1,5 +1,13 @@
 #include <Arduino.h>
 #include "Motors.h"
+#include <Encoder.h>
+
+
+
+Encoder ENCA(2,3); 
+Encoder ENCB(10,11);
+
+
 
 
 void Motors::enableMotors() {
@@ -20,7 +28,7 @@ void Motors::disableMotors() {
  *  speed takes integer from 0 to 255
  */
 void Motors::setLeftMotorSpeed(int speed) {
-    digitalWrite(pin_PWMA, speed);
+    analogWrite(pin_PWMA, speed);
 }
 
 
@@ -29,7 +37,7 @@ void Motors::setLeftMotorSpeed(int speed) {
  *  speed takes integer from 0 to 255
  */
 void Motors::setRightMotorSpeed(int speed) {
-    digitalWrite(pin_PWMB, speed);
+    analogWrite(pin_PWMB, speed);
 }
 
 
@@ -53,6 +61,9 @@ void Motors::setLeftMotorDirection(bool forward) {
     if (forward) {
         digitalWrite(pin_AIN1, HIGH);
         digitalWrite(pin_AIN2, LOW);
+    } else {
+        digitalWrite(pin_AIN1, LOW);
+        digitalWrite(pin_AIN2, HIGH);
     }
 }
 
@@ -63,8 +74,11 @@ void Motors::setLeftMotorDirection(bool forward) {
  */
 void Motors::setRightMotorDirection(bool forward) {
     if (forward) {
-        digitalWrite(pin_AIN1, LOW);
-        digitalWrite(pin_AIN2, HIGH);
+        digitalWrite(pin_BIN1, HIGH);
+        digitalWrite(pin_BIN2, LOW);
+    } else {
+        digitalWrite(pin_BIN1, LOW);
+        digitalWrite(pin_BIN2, HIGH);
     }   
 }
 
@@ -77,3 +91,6 @@ void Motors::setMotorsDirection(bool forward) {
     setLeftMotorDirection(forward);
     setRightMotorDirection(forward);
 }
+Motors* motors_instance = new Motors();
+Encoder encoder_instanceA(2,3);
+Encoder encoder_instanceB(10,11);

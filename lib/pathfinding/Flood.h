@@ -25,6 +25,8 @@ extern std::stack<configuration> cellStack;
 extern configuration currentCfg; // global struct for keeping track of current pos/orientation
 extern configuration poppedCfg; // global struct for popped cell cause why not
 
+extern std::stack<configuration> pathTaken;
+
 struct openCells {
     bool openN = true; 
     bool openS = true;
@@ -44,3 +46,5 @@ void checkNeigboringOpen(configuration poppedCfg);
 void move(char direction);
 void invertMaze(char goal);
 void mazePrintout();
+void runMaze(char goal);
+void backTrack();

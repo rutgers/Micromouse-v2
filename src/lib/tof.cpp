@@ -199,3 +199,4 @@ addressCheck tof::checkAddresses() {
 
   return returnAddresses;
 }
+tof* timeofflight_instance = new tof();

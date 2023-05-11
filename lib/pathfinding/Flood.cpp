@@ -29,6 +29,8 @@ configuration poppedCfg;
 
 std::stack<configuration> deadendStack;
 
+std::stack<configuration> pathTaken;
+
 void initialize() {
     // set current configuration to (0, 0) facing N
     currentCfg.x = 0;
@@ -535,7 +537,67 @@ void mazePrintout() {
         std::cerr << std::endl;        
 }
 
-void runMaze() {
+void runMaze(char goal) {
 
+    int loopCondition = 1;
+
+    while(loopCondition) {
+            pathTaken.push(currentCfg);
     
+            // Micromouse moves from higher to lower elevations
+            std::cerr << "[" << currentCfg.x << " " << currentCfg.y << " " << currentCfg.dir << "] -> " << maze[currentCfg.x][currentCfg.y] << std::endl;
+            flowElevation();
+            
+            //end condition
+            if(goal == 'c') {
+                if((currentCfg.x == 7 || currentCfg.x == 8) && (currentCfg.y == 7 || currentCfg.y == 8)) {
+                    loopCondition = 0;
+                }
+            }
+
+            if(maze[currentCfg.x][currentCfg.y] == 0) {
+                break;
+            }
+
+            std::cerr << "Walls Array "<< walls[currentCfg.x][currentCfg.y].openN << walls[currentCfg.x][currentCfg.y].openS << walls[currentCfg.x][currentCfg.y].openE << walls[currentCfg.x][currentCfg.y].openW << std::endl;
+
+            //1) Push the current cell location onto the stack
+            cellStack.push(currentCfg);
+
+            //2) Repeat while stack is not empty        
+            while(!cellStack.empty()) {
+                //pull the cell location from the stack
+                poppedCfg = cellStack.top();
+                cellStack.pop();
+
+                // std::cerr << poppedCfg.x << " " << poppedCfg.y << " " << poppedCfg.dir << std::endl;
+
+                checkNeigboringOpen(poppedCfg);
+            }
+
+            mazePrintout();
+        }
+    
+}
+
+    //N = +y
+    //S = -y
+    //E = +x
+    //W = -x
+
+void backTrack() {
+    while(!pathTaken.empty()) {
+        int x = pathTaken.top().x;
+        int y = pathTaken.top().y;
+        pathTaken.pop();
+
+        int xDiff = x - currentCfg.x;
+        int yDiff = y - currentCfg.y;
+
+        if(yDiff == 1) move('N');
+        if(yDiff == -1) move('S');
+        if(xDiff == 1) move('E');
+        if(xDiff == -1) move('W');
+    }
+
 }

@@ -92,6 +92,7 @@ class tof {
 
 };
 
+extern tof* timeofflight_instance;
 
 
 #endif
