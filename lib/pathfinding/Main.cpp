@@ -1,3 +1,4 @@
+/*
 #include <iostream>
 #include <string>
 #include <stack>
@@ -18,38 +19,38 @@ using namespace std;
 
 //the actual loop function for maze-solving
 
-/*
-    // check for walls to the front, right, or left
-    static bool wallFront();
-    static bool wallRight();
-    static bool wallLeft();
 
-    //allow the mouse to move
-    static void moveForward(int distance = 1);
-    static void turnRight();
-    static void turnLeft();
+    // // check for walls to the front, right, or left
+    // static bool wallFront();
+    // static bool wallRight();
+    // static bool wallLeft();
 
-    //sample calls
-    API::wallLeft();
-    API:turnLeft();
+    // //allow the mouse to move
+    // static void moveForward(int distance = 1);
+    // static void turnRight();
+    // static void turnLeft();
 
-    //sample wall following algorithm
+    // //sample calls
+    // API::wallLeft();
+    // API:turnLeft();
+
+    // //sample wall following algorithm
     
-    if (!API::wallLeft()) {
-        API::turnLeft();
-    }
-    while (API::wallFront()) {
-        API::turnRight();
-    }
-    API::moveForward();
-*/
+    // if (!API::wallLeft()) {
+    //     API::turnLeft();
+    // }
+    // while (API::wallFront()) {
+    //     API::turnRight();
+    // }
+    // API::moveForward();
 
 
-/*
-Flood fill algorithm
-mouse tries to approach smaller values of the maze
-as the mouse explores, it updates the values along its path. 
-*/
+
+
+// Flood fill algorithm
+// mouse tries to approach smaller values of the maze
+// as the mouse explores, it updates the values along its path. 
+
 
 
 
@@ -69,9 +70,13 @@ int main(int argc, char* argv[]) {
 
     //// STEP 1: Initial Solve
     initialize();
-
+    runMaze('c');
+    backTrack();
+    runMaze('c');
+    backTrack();
     runMaze('c');
     backTrack();
     
-    
 }
+
+*/

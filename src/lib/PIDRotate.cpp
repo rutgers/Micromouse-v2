@@ -15,6 +15,9 @@ void PIDRotate::InputToMotor(double targetdegree){
 //    double currentDegree; moved to private in header
   //  double prevDegree; moved to private in header
 while(exitCounter < 10){
+    Serial.print("Exit counter:");
+    Serial.println(exitCounter);
+
     prevError = currentError; // the previous, currentDegree = current. 
     currentDegree = imu_instance->getHeading(); 
     currentError = targetdegree - currentDegree;//the e(t)
@@ -84,11 +87,11 @@ while(exitCounter < 10){
     //Serial.print("\tout:  ");
     //Serial.println(out);
 
-    Serial.print("error:  ");
-    Serial.print(currentError);
-    Serial.println();
-    Serial.print("out:  ");
-    Serial.println(out);
+    // Serial.print("error:  ");
+    // Serial.print(currentError);
+    // Serial.println();
+    // Serial.print("out:  ");
+    // Serial.println(out);
 
 
     motors_instance->setLeftMotorSpeed(motorInput);
@@ -98,4 +101,5 @@ while(exitCounter < 10){
 }
     motors_instance->setMotorsSpeed(0);
 }
+
 PIDRotate* pidrotate_instance = new PIDRotate();
