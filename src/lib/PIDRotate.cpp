@@ -10,14 +10,23 @@ void PIDRotate::InputToMotor(double targetdegree){
     double deltaTime = 0;
     double deriv = 0;
 
+    int exitCounter = 0;
+
 //    double currentDegree; moved to private in header
   //  double prevDegree; moved to private in header
-while(abs(currentError) > 2){
+while(exitCounter < 10){
     prevError = currentError; // the previous, currentDegree = current. 
     currentDegree = imu_instance->getHeading(); 
     currentError = targetdegree - currentDegree;//the e(t)
     deltaError = currentError - prevError; //change in error value, de
-    
+    currentError = fmod(currentError, 360.0);
+
+    if (currentError > 180.0) {
+        currentError -= 360.0;
+    } else if (currentError < -180.0) {
+        currentError += 360.0;
+    }
+
     //change in time. 
     prevTime = currentTime; //previous time
     currentTime = micros(); //current time 
@@ -27,8 +36,14 @@ while(abs(currentError) > 2){
 
     integral += currentError; //integra = summation of every degree over the entire time. awful.
 
+    if (abs(currentError) < 2) {
+        exitCounter++;
+    } else if (exitCounter > 0) {
+        exitCounter = 0;
+    }
+
     double out = Kp * currentError + Ki * integral + Kd * deriv; // -27 or -26.99
-    out *= 16; //or 25 for scaling, trial and error.
+    out *= 20; //or 25 for scaling, trial and error.
 
     //between x and 255
     
@@ -44,15 +59,15 @@ while(abs(currentError) > 2){
     if((out < 0)){
         //right
         //Serial.println("Right I think");
-        motors_instance->setRightMotorDirection(false); 
-        motors_instance->setLeftMotorDirection(true);
+        motors_instance->setRightMotorDirection(true); 
+        motors_instance->setLeftMotorDirection(false);
     }
 
     else if((out > 0)){
         //left
         //Serial.println("Left I think");
-        motors_instance->setRightMotorDirection(true); 
-        motors_instance->setLeftMotorDirection(false);
+        motors_instance->setRightMotorDirection(false); 
+        motors_instance->setLeftMotorDirection(true);
 
     }
 
@@ -64,16 +79,22 @@ while(abs(currentError) > 2){
     motorInput = abs((int) out); //return only positive values
 
     //Serial.println(out);
-    Serial.print("motor input:  ");
-    Serial.print(motorInput);
-    Serial.print("\tout:  ");
+    //Serial.print("motor input:  ");
+    //Serial.print(motorInput);
+    //Serial.print("\tout:  ");
+    //Serial.println(out);
+
+    Serial.print("error:  ");
+    Serial.print(currentError);
+    Serial.println();
+    Serial.print("out:  ");
     Serial.println(out);
 
 
     motors_instance->setLeftMotorSpeed(motorInput);
     motors_instance->setRightMotorSpeed(motorInput);
     
-    Serial.print(imu_instance->getHeading());
+    //Serial.print(imu_instance->getHeading());
 }
     motors_instance->setMotorsSpeed(0);
 }

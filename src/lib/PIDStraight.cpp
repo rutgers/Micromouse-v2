@@ -78,10 +78,10 @@ void PIDStraight::InputToMotor(double degree, double distance){
     //Serial.println(out);
     Serial.println(currentError);
     Serial.println();
-         Serial.print(encoder_instanceA.read()); //right
-          Serial.println("\n");
+    Serial.print(encoder_instanceA.read()); //right
+        Serial.println("\n");
      Serial.println(encoder_instanceB.read()); //left
-          Serial.println("\n");
+        Serial.println("\n");
 
     if(((int)currentTime)%5 == 0){ //every 5 micros, recorrect the angle. 
     PIDRotate(degree); //correct the degree. 
@@ -92,6 +92,8 @@ void PIDStraight::InputToMotor(double degree, double distance){
     }
 
     motors_instance->setMotorsSpeed(0);
+    encoder_instanceA.write(0);
+    encoder_instanceB.write(0);
 
 }
 PIDStraight* pidstraight_instance = new PIDStraight();
