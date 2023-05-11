@@ -1,11 +1,11 @@
 #include <Arduino.h>
 #include <SPI.h>
-// #include "lib\Motors.h"
-// #include "lib\PIDRotate.h"
-// #include "lib\PIDStraight.h"
-// #include "lib\PIDMagicStraight.h"
-// #include "lib\tof.h"
-// #include "lib\IMU.h"
+#include "lib\Motors.h"
+#include "lib\PIDRotate.h"
+#include "lib\PIDStraight.h"
+#include "lib\PIDMagicStraight.h"
+#include "lib\tof.h"
+#include "lib\IMU.h"
 #include <iostream>
 #include <vector>
 #include <queue>
