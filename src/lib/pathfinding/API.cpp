@@ -2,9 +2,6 @@
 #include <cstdlib>
 #include <iostream>
 
-#include "..\src\lib\tof.h"
-#include "..\src\lib\PIDRotate.h"
-#include "..\src\lib\PIDStraight.h"
 
 bool API::wallFront() {
     int distance = timeofflight_instance->readF();

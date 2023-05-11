@@ -8,8 +8,8 @@
 #include "lib\PIDRotate.h"
 #include "lib\PIDStraight.h"
 
-#include "..\lib\pathfinding\API.h"
-#include "..\lib\pathfinding\Flood.h"
+#include "lib\pathfinding\API.h"
+#include "lib\pathfinding\Flood.h"
 
 Motors* motors;
 
@@ -19,10 +19,10 @@ void setup() {
   Serial.begin(9600);
   API::moveForward();
   API::turnLeft();
-
+  API::moveForward();
 
 }
 
 void loop() {
-  
+
 }

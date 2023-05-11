@@ -108,7 +108,7 @@ void flowElevation() {
 
     int x = currentCfg.x; // up and down on the array = EW, first term
     int y = currentCfg.y; // left and right on the array = NS, second term
-    char dir = currentCfg.dir;
+    // char dir = currentCfg.dir;
 
 
     // check if surrounding cells are valid, 
@@ -213,7 +213,7 @@ void checkNeigboringOpen(configuration poppedCfg) {
 
     int x = poppedCfg.x;
     int y = poppedCfg.y;
-    char dir = poppedCfg.dir;
+    // char dir = poppedCfg.dir;
 
     bool openN = walls[x][y].openN;
     bool openS = walls[x][y].openS;
@@ -411,7 +411,7 @@ void move(char direction) {
     return;
 }
 
-
+/*
 void invertMaze(char goal) {
     std::cerr << "HELLO????";
 
@@ -513,6 +513,7 @@ void invertMaze(char goal) {
 
     return;
 }
+*/
 
 // printout maze with bot starting at bottom left
 void mazePrintout() {

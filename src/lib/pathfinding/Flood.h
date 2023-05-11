@@ -1,3 +1,8 @@
+#ifndef FLOOD_H
+#define FLOOD_H
+#pragma once
+
+
 #include "API.h"
 #include<stack>
 #include<algorithm>
@@ -48,3 +53,5 @@ void invertMaze(char goal);
 void mazePrintout();
 void runMaze(char goal);
 void backTrack();
+
+#endif

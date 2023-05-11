@@ -2,6 +2,11 @@
 #define API_H
 #pragma once
 
+
+#include "..\tof.h"
+#include "..\PIDRotate.h"
+#include "..\PIDStraight.h"
+
 #include <string>
 
 class API {
