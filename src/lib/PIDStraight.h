@@ -9,7 +9,7 @@ class PIDStraight {
 
     public:
         double kP = 0.1;
-        double kI = 0.0;//0.00001;
+        double kI = 0.00;//0.00001;
         double kD = 0.0;
 
         void drive_to_position(double target_position);

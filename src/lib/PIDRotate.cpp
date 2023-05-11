@@ -4,7 +4,7 @@
 #include "Motors.h"
 #include "IMU.h"
 
-void PIDRotate::rotate_to_angle(double target_angle) {
+void PIDRotate::rotate_to_angle(double target_angle, int boost, double threshold) {
 
     double current_angle = 0;
     int current_time = 0;
@@ -14,7 +14,9 @@ void PIDRotate::rotate_to_angle(double target_angle) {
     double total_error = 0.0;
     exited = false;
 
-    while (abs(error) > 2.0) {
+    int exitCount = 0;
+
+    while (true) {
         current_angle = imu_instance->getHeading();
 
         // handle cases of numbers above 360
@@ -43,6 +45,15 @@ void PIDRotate::rotate_to_angle(double target_angle) {
         Serial.print(current_angle);
         Serial.println();
 
+        if (abs(error) < 0.5) {
+            exitCount++;
+        }
+
+        if (exitCount > 10) {
+            Serial.println("breaking");
+            break;
+        }
+
         /*Serial.print("target angle: ");
         Serial.print(target_angle);
         Serial.println();*/
@@ -60,16 +71,16 @@ void PIDRotate::rotate_to_angle(double target_angle) {
         Serial.print(error);
         Serial.println();
 
-        double motor_output = (kP * error  + kD * (error-prev_error)/(current_time-prev_time) + kI * total_error)*25;
+        double motor_output = (kP * error  + kD * (error-prev_error)/(current_time-prev_time) + kI * total_error)*boost;
         
         if (error > 0.0) {
             motors_instance->setLeftMotorDirection(true);//false
             Serial.println("left false and right true");
-            motors_instance->setRightMotorDirection(false);//true
+            motors_instance->setRightMotorDirection(true);//true
         } else {
             motors_instance->setLeftMotorDirection(false);//true
             Serial.println("left true and right false");
-            motors_instance->setRightMotorDirection(true);//false
+            motors_instance->setRightMotorDirection(false);//false
             motor_output *= -1;
         }
 

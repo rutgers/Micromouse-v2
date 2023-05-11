@@ -14,7 +14,7 @@ class PIDRotate {
         bool exited = false;
 
 
-        void rotate_to_angle(double target_angle);
+        void rotate_to_angle(double target_angle, int boost, double threshold);
 
 };
 

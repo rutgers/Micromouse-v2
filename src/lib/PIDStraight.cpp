@@ -12,12 +12,33 @@ void PIDStraight::drive_to_position(double target_position) {
     double prev_error = 0.0;
     double total_error;
 
+    int adj_offset = 0;
+
     bool exited = false;
+
+    int curA = 0;
+    int curB = 0;
+    int prevA = 0;
+    int prevB = 0;
+
+    int ABdiff = 0;
         
     ENCA.write(0);
     ENCB.write(0);
 
+    int exitCount = 0;
+
     while (true) {
+
+        prevA = curA;
+        prevB = curB;
+        curA = ENCA.read();
+        curB = ENCA.read();
+        ABdiff = (curA-prevA) - (curB-prevB);
+
+        adj_offset = ABdiff * 1;
+
+
         //current_position = imu_instance->getHeading();
         current_position = (ENCA.read() + ENCB.read())/2;
 
@@ -27,9 +48,14 @@ void PIDStraight::drive_to_position(double target_position) {
         
 
         prev_error = error;
-        error = (target_position * 58.2124805) - current_position; //72.74463
+        //error = (target_position * 58.2124805) - current_position; //72.74463
+        error = (target_position * 72.74463) - current_position;
 
-         if (abs(error) < 10.0 ) {
+        if (abs(error) < 10.0) {
+            exitCount++;
+        }
+
+         if (exitCount > 1000) {
             Serial.println("breaking");
             break;
         }
@@ -62,28 +88,55 @@ void PIDStraight::drive_to_position(double target_position) {
         Serial.println();
 
         //double motor_output = (kP * error  + kD * (error-prev_error)/(current_time-prev_time) + kI * total_error)*25;
-        double motor_output = (kP * error)*25;
+        double motor_output_l = (kP * error + kI*total_error)*10;
+        double motor_output_r = (kP * error + kI*total_error)*10;
         
         if (error > 0.0) {
             motors_instance->setLeftMotorDirection(true);//false
             Serial.println("left false and right true");
-            motors_instance->setRightMotorDirection(true);//true
+            motors_instance->setRightMotorDirection(false);//true
         } else {
             motors_instance->setLeftMotorDirection(false);//true
             Serial.println("left true and right false");
-            motors_instance->setRightMotorDirection(false);//false
-            motor_output *= -1;
+            motors_instance->setRightMotorDirection(true);//false
+            motor_output_l *= -1;
+            motor_output_r *= -1;
         }
 
-        if (motor_output > 255.0) {
-            motor_output = 255.0;
+        if ((curA-prevA) > (curB-prevB)) {
+            motor_output_l += adj_offset;
+            motor_output_r -= adj_offset;
+        } else {
+            motor_output_l -= adj_offset;
+            motor_output_r += adj_offset;
         }
 
-        Serial.print("motor output: ");
-        Serial.print(motor_output);
+        if (motor_output_l > 255.0) {
+            motor_output_l = 255.0;
+        }
+
+        if (motor_output_r > 255.0) {
+            motor_output_r = 255.0;
+        }
+
+        Serial.print("motor output_l: ");
+        Serial.print(motor_output_l);
         Serial.println();
 
-        motors_instance->setMotorsSpeed(motor_output);
+        Serial.print("motor output_r: ");
+        Serial.print(motor_output_r);
+        Serial.println();
+
+        Serial.print("ENCA: ");
+        Serial.print(ENCA.read());
+        Serial.println();
+
+        Serial.print("ENCB: ");
+        Serial.print(ENCB.read());
+        Serial.println();
+
+        motors_instance->setLeftMotorSpeed(motor_output_l);
+        motors_instance->setRightMotorSpeed(motor_output_r);
     }
 
     exited = true;

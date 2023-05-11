@@ -41,13 +41,13 @@ void setup() {
     pidmagicstraight_instance->drive_straight_with_magic(10);
     }*/
 
-    if (tof_instance->readF() > 100) {
-        pidmagicstraight_instance->drive_straight_with_magic(10);
-    } else if (tof_instance->readL() > 100) {
-        pidrotate_instance->rotate_to_angle(-90);
-    } else if (tof_instance->readR() > 100) {
-        pidrotate_instance->rotate_to_angle(90);
-    }
+    // if (tof_instance->readF() > 100) {
+    //     pidmagicstraight_instance->drive_straight_with_magic(10);
+    // } else if (tof_instance->readL() > 100) {
+    //     pidrotate_instance->rotate_to_angle(-90);
+    // } else if (tof_instance->readR() > 100) {
+    //     pidrotate_instance->rotate_to_angle(90);
+    // }
 
 
     while (true) {
@@ -62,17 +62,16 @@ void setup() {
         Serial.println(tof_instance->getRightDistance());
         Serial.println(tof_instance->readR());*/
 
-
         if (tof_instance->readF() > 100) {
-            pidstraight_instance->drive_to_position(7);
+            pidstraight_instance->drive_to_position(8);
         } else if (tof_instance->readL() > 100) {
-            pidrotate_instance->rotate_to_angle(imu_instance->getHeading()-90);
+            pidrotate_instance->rotate_to_angle(imu_instance->getHeading()-90, 15, 5.0);
         } else if (tof_instance->readR() > 100) {
-            pidrotate_instance->rotate_to_angle(imu_instance->getHeading()+90);
+            pidrotate_instance->rotate_to_angle(imu_instance->getHeading()+90, 15, 5.0);
         }
 
         delay(500);
-        pidrotate_instance->rotate_to_angle(round(imu_instance->getHeading()/90.0)*90.0);
+        pidrotate_instance->rotate_to_angle(round(imu_instance->getHeading()/90.0)*90.0, 10, 0.5);
         delay(500);
 
     }
