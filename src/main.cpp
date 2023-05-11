@@ -24,27 +24,32 @@ void loop() {
   // motors_instance->setRightMotorSpeed(x);
      //Serial.println("instance A");
      //Serial.print("\tout:   ");
-     //Serial.print(encoder_instanceA.read()); //right
+
+
      //Serial.println("instance B");
      //Serial.print("\tout:   ");
-     //Serial.println(encoder_instanceB.read()); //left
-    
+
+
     //pidrotate_instance->InputToMotor(90);
-    pidstraight_instance->InputToMotor(0,500); //10 cm. 
-    pidrotate_instance->InputToMotor(90);
-    pidrotate_instance->InputToMotor(-180);
-    pidrotate_instance->InputToMotor(180);
-    pidrotate_instance->InputToMotor(-180);
-    pidrotate_instance->InputToMotor(-90);
-    pidstraight_instance->InputToMotor(0,-500); //10 cm. 
+    //pidstraight_instance->InputToMotor(0,500); //10 cm. 
+    //pidrotate_instance->InputToMotor(90);
+    //pidrotate_instance->InputToMotor(-180);
+    //pidrotate_instance->InputToMotor(180);
+    //pidrotate_instance->InputToMotor(-180);
+    //pidrotate_instance->InputToMotor(-90);
+    //pidstraight_instance->InputToMotor(0,-500); //10 cm. 
+delay(500);
+    pidstraight_instance->InputToMotor(0,11); //go 11 cm. works fine
+    //pidrotate_instance->InputToMotor(90); //left 90?
 
 
 
 
-  timeofflight_instance->readDistance();
-  Serial.print("\n");
-  timeofflight_instance->checkAddresses();
+ // timeofflight_instance->readDistance();
+//  Serial.print("\n");
+ // timeofflight_instance->checkAddresses();
 
-  delay(500);
+
+  
 
 }

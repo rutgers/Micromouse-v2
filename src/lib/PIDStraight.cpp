@@ -20,12 +20,12 @@ void PIDStraight::InputToMotor(double degree, double distance){
     // circumference of the wheel D = 4 cm piD;
     double distTraveled = 0;  //sub for current degree. 
     prevError = currentError;
-    distTraveled = encoder_instanceA.read();//)/360) * (M_PI); //in centimeters
+    distTraveled = encoder_instanceB.read();//)/360) * (M_PI); //in centimeters
     Serial.print("distTraveled: ");
     Serial.print(distTraveled);
 
 
-    currentError = ((distance * 360) / (M_PI * 5)) - distTraveled;
+    currentError = ((distance * 360) / (M_PI * 4)) - distTraveled;
     deltaError = currentError - prevError;
 
     prevTime = currentTime;
@@ -54,17 +54,20 @@ void PIDStraight::InputToMotor(double degree, double distance){
 
     }
 
-    Serial.println(out);
+    //Serial.println(out);
     Serial.println(currentError);
     Serial.println();
-
+         Serial.print(encoder_instanceA.read()); //right
+          Serial.println("\n");
+     Serial.println(encoder_instanceB.read()); //left
+          Serial.println("\n");
 
     if(((int)currentTime)%5 == 0){ //every 5 micros, recorrect the angle. 
     PIDRotate(degree); //correct the degree. 
-    }
+   }
     motorInput = abs((int)out);
-    motors_instance->setLeftMotorSpeed(motorInput);
-    motors_instance->setRightMotorSpeed(motorInput);
+    motors_instance->setLeftMotorSpeed(motorInput-10);
+    motors_instance->setRightMotorSpeed(motorInput-10);
     }
 
 }

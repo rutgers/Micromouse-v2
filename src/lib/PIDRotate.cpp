@@ -12,7 +12,7 @@ void PIDRotate::InputToMotor(double targetdegree){
 
 //    double currentDegree; moved to private in header
   //  double prevDegree; moved to private in header
-while(abs(currentError) > 3){
+while(abs(currentError) > 2){
     prevError = currentError; // the previous, currentDegree = current. 
     currentDegree = imu_instance->getHeading(); 
     currentError = targetdegree - currentDegree;//the e(t)
