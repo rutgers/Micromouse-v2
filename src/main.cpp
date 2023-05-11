@@ -17,10 +17,59 @@ int a = false;
 
 void setup() {
   Serial.begin(9600);
-  API::moveForward();
-  API::turnLeft();
-  API::moveForward();
 
+  API::moveForward();
+  delay(500);
+  API::turnLeft();
+  delay(500);
+
+  API::moveForward();
+  delay(500);
+  API::turnRight();
+  delay(500);
+
+  API::moveForward();
+  delay(500);
+  API::moveForward();
+  delay(500);
+  
+  API::turnLeft();
+  delay(500);
+  API::moveForward();
+  delay(500);
+
+  API::turnRight();
+  delay(500);
+  API::moveForward();
+  delay(500);
+
+  API::turnLeft();
+  delay(500);
+  API::moveForward();
+  delay(500);
+
+  API::turnLeft();
+  delay(500);
+  API::moveForward();
+  delay(500);
+
+  API::moveForward();
+  delay(500);
+  API::moveForward();
+  delay(500);
+
+  API::turnLeft();
+  delay(500);
+  API::moveForward();
+  delay(500);
+
+  API::turnLeft();
+  delay(500);
+  API::moveForward();
+  delay(500);
+
+  
+  
 }
 
 void loop() {

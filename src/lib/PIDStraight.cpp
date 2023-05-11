@@ -15,9 +15,11 @@ void PIDStraight::InputToMotor(double degree, double distance){
     int curB = 0;
     int prevA = 0;
     int prevB = 0;
-
+    double distTraveled = 0;
 
     while(currentError > 1){
+    Serial.print("currenterror");
+    Serial.println (currentError);
     int motorInput = 0;
 
     double deltaError = 0;
@@ -25,7 +27,7 @@ void PIDStraight::InputToMotor(double degree, double distance){
     double deriv = 0;
     //360 ticks per 1 rotation. 
     // circumference of the wheel D = 4 cm piD;
-    double distTraveled = 0;  //sub for current degree. 
+    distTraveled = 0;  //sub for current degree. 
     prevError = currentError;
     distTraveled = encoder_instanceB.read();//)/360) * (M_PI); //in centimeters
     Serial.print("distTraveled: ");
@@ -94,6 +96,12 @@ void PIDStraight::InputToMotor(double degree, double distance){
     motors_instance->setMotorsSpeed(0);
     encoder_instanceA.write(0);
     encoder_instanceB.write(0);
-
+    
+    currentDegree = 0;
+    currentError = 30;
+    prevError = 0;
+    currentTime = 0;
+    prevTime = 0;
+    integral = 0;
 }
 PIDStraight* pidstraight_instance = new PIDStraight();

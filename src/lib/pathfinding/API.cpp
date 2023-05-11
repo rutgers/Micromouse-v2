@@ -41,11 +41,11 @@ void API::moveForward() {
 }
 
 void API::turnRight() {
-    pidrotate_instance->InputToMotor(90); //right 90
+    pidrotate_instance->InputToMotor(imu_instance->getHeading()+90); //right 90
     return;
 }
 
 void API::turnLeft() {
-    pidrotate_instance->InputToMotor(-90); //left 90
+    pidrotate_instance->InputToMotor(imu_instance->getHeading()-90); //left 90
     return;
 }

@@ -6,6 +6,7 @@
 #include "..\tof.h"
 #include "..\PIDRotate.h"
 #include "..\PIDStraight.h"
+#include "..\IMU.h"
 
 #include <string>
 

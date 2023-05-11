@@ -75,8 +75,8 @@ while(exitCounter < 10){
     }
 
 
-    //Serial.print("HEWWO "); testing if current degree prints
-    //Serial.println(currentDegree);
+    // Serial.print("HEWWO "); //testing if current degree prints
+    // Serial.println(currentDegree);
 
 
     motorInput = abs((int) out); //return only positive values
@@ -100,6 +100,13 @@ while(exitCounter < 10){
     //Serial.print(imu_instance->getHeading());
 }
     motors_instance->setMotorsSpeed(0);
+    currentDegree = 0;
+    currentError = 5;
+    prevError = 0;
+    currentTime = 0;
+    prevTime = 0;
+    integral  = 0;
+
 }
 
 PIDRotate* pidrotate_instance = new PIDRotate();
