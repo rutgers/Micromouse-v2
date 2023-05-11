@@ -39,8 +39,8 @@ void loop() {
     //pidrotate_instance->InputToMotor(-90);
     //pidstraight_instance->InputToMotor(0,-500); //10 cm. 
 delay(500);
-    pidstraight_instance->InputToMotor(0,11); //go 11 cm. works fine
-    //pidrotate_instance->InputToMotor(90); //left 90?
+    pidstraight_instance->InputToMotor(0,10); //go 11 cm. works fine
+    pidrotate_instance->InputToMotor(90); //left 90?
 
 
 

@@ -10,6 +10,13 @@
 void PIDStraight::InputToMotor(double degree, double distance){
     encoder_instanceA.write(0);
     encoder_instanceB.write(0);
+
+    int curA = 0;
+    int curB = 0;
+    int prevA = 0;
+    int prevB = 0;
+
+
     while(currentError > 1){
     int motorInput = 0;
 
@@ -24,7 +31,6 @@ void PIDStraight::InputToMotor(double degree, double distance){
     Serial.print("distTraveled: ");
     Serial.print(distTraveled);
 
-
     currentError = ((distance * 360) / (M_PI * 4)) - distTraveled;
     deltaError = currentError - prevError;
 
@@ -36,21 +42,36 @@ void PIDStraight::InputToMotor(double degree, double distance){
 
     integral += currentError;
 
+    prevA = curA;
+    prevB = curB;
+    curA = encoder_instanceA.read();
+    curB = encoder_instanceB.read();
+
+    int offset = 0;
+
+    if ((curA - prevA) > (curB - prevB)) {
+        offset = 10;
+    } else {
+        offset = -10;
+    }
+
+    //if ()
+
     double out = Kp * currentError + Ki * integral + Kd * deriv;
     out *= 100;
 
     if(out < 0){
         //backwards
         Serial.println("Backwards I think");
-        motors_instance->setRightMotorDirection(false); 
-        motors_instance->setLeftMotorDirection(false);
+        motors_instance->setRightMotorDirection(true); 
+        motors_instance->setLeftMotorDirection(true);
     }
 
     else if(out > 0){
         //forwards
         Serial.println("Forwards I think");
-        motors_instance->setRightMotorDirection(true); 
-        motors_instance->setLeftMotorDirection(true);
+        motors_instance->setRightMotorDirection(false); 
+        motors_instance->setLeftMotorDirection(false);
 
     }
 
@@ -66,9 +87,11 @@ void PIDStraight::InputToMotor(double degree, double distance){
     PIDRotate(degree); //correct the degree. 
    }
     motorInput = abs((int)out);
-    motors_instance->setLeftMotorSpeed(motorInput-10);
-    motors_instance->setRightMotorSpeed(motorInput-10);
+    motors_instance->setLeftMotorSpeed(motorInput-10+offset);
+    motors_instance->setRightMotorSpeed(motorInput-10+offset);
     }
+
+    motors_instance->setMotorsSpeed(0);
 
 }
 PIDStraight* pidstraight_instance = new PIDStraight();

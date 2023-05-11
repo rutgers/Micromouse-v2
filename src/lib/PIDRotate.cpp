@@ -75,5 +75,6 @@ while(abs(currentError) > 2){
     
     Serial.print(imu_instance->getHeading());
 }
+    motors_instance->setMotorsSpeed(0);
 }
 PIDRotate* pidrotate_instance = new PIDRotate();

@@ -4,8 +4,8 @@
 
 
 
-Encoder ENCA(10,11); //swapped 2, 3
-Encoder ENCB(2,3); //swapped 10, 11
+Encoder ENCA(2,3); 
+Encoder ENCB(10,11);
 
 
 
