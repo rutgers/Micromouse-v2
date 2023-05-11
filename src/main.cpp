@@ -62,16 +62,19 @@ void setup() {
         Serial.println(tof_instance->getRightDistance());
         Serial.println(tof_instance->readR());*/
 
+
+       // pidrotate_instance->rotate_to_angle(90, 10, 5.0);
+
         if (tof_instance->readF() > 100) {
             pidstraight_instance->drive_to_position(8);
         } else if (tof_instance->readL() > 100) {
-            pidrotate_instance->rotate_to_angle(imu_instance->getHeading()-90, 15, 5.0);
+            pidrotate_instance->rotate_to_angle(imu_instance->getHeading()-90, 1.25, 5.0, 0.0001);
         } else if (tof_instance->readR() > 100) {
-            pidrotate_instance->rotate_to_angle(imu_instance->getHeading()+90, 15, 5.0);
+            pidrotate_instance->rotate_to_angle(imu_instance->getHeading()+90, 1.25, 5.0, 0.0001);
         }
 
         delay(500);
-        pidrotate_instance->rotate_to_angle(round(imu_instance->getHeading()/90.0)*90.0, 10, 0.5);
+        pidrotate_instance->rotate_to_angle(round(imu_instance->getHeading()/90.0)*90.0, 1.25, 1.0, 0.01);
         delay(500);
 
     }

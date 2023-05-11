@@ -40,7 +40,7 @@ void PIDStraight::drive_to_position(double target_position) {
 
 
         //current_position = imu_instance->getHeading();
-        current_position = (ENCA.read() + ENCB.read())/2;
+        current_position = ENCA.read();//(ENCA.read() + ENCB.read())/2;
 
         // handle cases of numbers above 360
 
