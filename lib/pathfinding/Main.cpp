@@ -145,7 +145,7 @@ int main(int argc, char* argv[]) {
 
     mazePrintout();
 
-    /*
+    
     while(true) {
         // Micromouse moves from higher to lower elevations
         std::cerr << "[" << currentCfg.x << " " << currentCfg.y << " " << currentCfg.dir << "] -> " << maze[currentCfg.x][currentCfg.y] << std::endl;
@@ -179,6 +179,6 @@ int main(int argc, char* argv[]) {
 
 
     }
-    */
+    
     
 }

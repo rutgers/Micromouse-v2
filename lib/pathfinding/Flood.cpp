@@ -27,7 +27,7 @@ openCells walls[N][N];
 configuration currentCfg;
 configuration poppedCfg;
 
-
+std::stack<configuration> deadendStack;
 
 void initialize() {
     // set current configuration to (0, 0) facing N
@@ -411,7 +411,8 @@ void move(char direction) {
 
 
 void invertMaze(char goal) {
-    
+    std::cerr << "HELLO????";
+
     int endCell;
     // if the goal is to go back to the start
     if(goal == 's') {
@@ -425,16 +426,80 @@ void invertMaze(char goal) {
         endCell = arraySort[0];
     }
     
-    // deadend marker, set values greater than the end goal as large negatives
-    // these will become large positives during next operation
-    
+    // deadend filler, if cell has value greater than value of the startpoint
+    // set the cell as a closed cell with openN, openS, openE, openW = false
+     
+    // also if a cell next to a dead end cell only has 1 other open cell
+    // it is a closed cell as well 
+    std::stack<configuration> deadendStack;
+    configuration pushCfg;
+
     for(int i = 0; i < 16; i++) {
         for(int j = 0; j < 16; j++) {
-            if(maze[i][j] > endCell)
-                maze[i][j] = -1337;
+            if(maze[i][j] > goal) {
+                pushCfg.x = i;
+                pushCfg.y = j;
+                // don't need dir
+                deadendStack.push(pushCfg);
+            }
         }
     }
 
+    //N = +y
+    //S = -y
+    //E = +x
+    //W = -x
+
+    while(!deadendStack.empty()) {
+        poppedCfg = deadendStack.top();
+        deadendStack.pop();
+
+        int x = poppedCfg.x;
+        int y = poppedCfg.y;
+        // don't need dir
+
+        // first push open neigbors to stack
+        openCells neigboringOpen;
+        neigboringOpen.openN = walls[x][y].openN;
+        neigboringOpen.openS = walls[x][y].openS;
+        neigboringOpen.openE = walls[x][y].openE;
+        neigboringOpen.openW = walls[x][y].openW;
+
+        pushCfg = poppedCfg;
+        if(neigboringOpen.openN) {
+            pushCfg.y++; 
+            deadendStack.push(pushCfg);
+            pushCfg.y--;
+        }
+        if(neigboringOpen.openS) {
+            pushCfg.y--; 
+            deadendStack.push(pushCfg);
+            pushCfg.y++;
+        }
+        if(neigboringOpen.openE) {
+            pushCfg.x++; 
+            deadendStack.push(pushCfg);
+            pushCfg.x--;
+        }
+        if(neigboringOpen.openW) {
+            pushCfg.x--; 
+            deadendStack.push(pushCfg);
+            pushCfg.x++;
+        }
+
+        // conditions for being a deadend cell:
+        // - value greater than start node (we already did this)
+        // - is closed off on 3 sides
+        // - is next to a deadend cell (adding to stack sorts these) and only has 2 open side
+        //   (one side that leads into the dead end and one that leads out)
+        int numOpen = neigboringOpen.openN + neigboringOpen.openS + neigboringOpen.openE + neigboringOpen.openW;
+        if((maze[x][y] > goal) || (numOpen <= 2)) {
+            walls[x][y].openN = false;
+            walls[x][y].openS = false;
+            walls[x][y].openE = false;
+            walls[x][y].openW = false;
+        }
+    }
 
     //invert the maze by doing endCell - maze[i][j]
     // -> endCell will become 0 (goal)
@@ -468,4 +533,9 @@ void mazePrintout() {
 
         }
         std::cerr << std::endl;        
+}
+
+void runMaze() {
+
+    
 }

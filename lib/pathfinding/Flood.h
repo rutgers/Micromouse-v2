@@ -25,7 +25,6 @@ extern std::stack<configuration> cellStack;
 extern configuration currentCfg; // global struct for keeping track of current pos/orientation
 extern configuration poppedCfg; // global struct for popped cell cause why not
 
-
 struct openCells {
     bool openN = true; 
     bool openS = true;
