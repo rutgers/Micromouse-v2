@@ -13,34 +13,25 @@
 
 Motors* motors;
 
-// int a = false;
-
 void setup() {
   Serial.begin(9600);
 
-  // delay(5000);
-  // API::moveForward();
-  // API::turnLeft();
-  // API::turnLeft();
-  API::turnRight();
-  // API::turnRight();
+  delay(4000);
   
-  /*
-  Serial.print("Start");
-  initialize();
-  runMaze('c');
-
-  Serial.print("Done");
-  backTrack();
-  runMaze('c');
+  // initialize();
+  // runMaze('c');
   // backTrack();
   // runMaze('c');
   // backTrack();
-  */
-  
+  // runMaze('c');
+  // backTrack();
+  API::moveForward();
+  API::moveForward();
+  API::moveForward();
+  API::moveForward();
+  API::moveForward();
 }
 
 void loop() {
-  Serial.println(imu_instance->getHeading());
-  delay(300);
+  
 }

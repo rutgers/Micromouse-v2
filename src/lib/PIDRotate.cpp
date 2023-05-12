@@ -19,19 +19,17 @@ void PIDRotate::InputToMotor(double targetDegreeChange){
     currentDegree = imu_instance->getHeading();
 
     currentError = targetDegree - currentDegree;
-
     //converts possible overflow within the 0 to 360 range to positive difference
     if (currentError > 180.0) {
         currentError -= 360.0;
     } else if (currentError < -180.0) {
         currentError += 360.0;
     }
-    currentError = abs(currentError);
 
     double maxError = abs(currentError);
 
 
-    while(currentError > 0.5) {
+    while(abs(currentError) > 1) {
         currentDegree = imu_instance->getHeading(); 
 
         // derivative
@@ -41,20 +39,23 @@ void PIDRotate::InputToMotor(double targetDegreeChange){
         prevTime = micros();; //previous time
         deriv = deltaError/deltaTime;
 
-
         integral += currentError; //integra = summation of every degree over the entire time. awful.
 
         double out = Kp * currentError + Ki * integral + Kd * deriv; // -27 or -26.99
-        out = map(out, 0, maxError, 60, 200);
+        Serial.println(Kd * deriv);
+        Serial.print(out);
+        Serial.print(", ");
+        out = map(out, 0, maxError, 30, 68);
+        Serial.println(out);
 
-        if((targetDegreeChange < 0)){
+        if((currentError < 0)){
             //right
             //Serial.println("Right I think");
             motors_instance->setRightMotorDirection(true); 
             motors_instance->setLeftMotorDirection(false);
         }
 
-        else if((targetDegreeChange > 0)){
+        else if((currentError > 0)){
             //left
             //Serial.println("Left I think");
             motors_instance->setRightMotorDirection(false); 
@@ -74,7 +75,7 @@ void PIDRotate::InputToMotor(double targetDegreeChange){
         } else if (currentError < -180.0) {
             currentError += 360.0;
         }
-        currentError = abs(currentError);
+        currentError = currentError;
         currentTime = micros(); //current time 
     }
 

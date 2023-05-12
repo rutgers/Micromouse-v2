@@ -140,9 +140,9 @@ void flowElevation() {
     //E = +x
     //W = -x
 
-    if(y+1 <= 4 && openN) N = maze[x][y+1];
+    if(y+1 < 5 && openN) N = maze[x][y+1];
     if(y-1 >= 0 && openS) S = maze[x][y-1];
-    if(x+1 <= 4 && openE) E = maze[x+1][y];
+    if(x+1 < 5 && openE) E = maze[x+1][y];
     if(x-1 >= 0 && openW) W = maze[x-1][y];
 
     // find the min using arraysort
@@ -246,9 +246,9 @@ void checkNeigboringOpen(configuration poppedCfg) {
     //E = +x
     //W = -x
 
-    if(y+1 <= 4 && openN) N = maze[x][y+1];
+    if(y+1 < 5 && openN) N = maze[x][y+1];
     if(y-1 >= 0 && openS) S = maze[x][y-1];
-    if(x+1 <= 4 && openE) E = maze[x+1][y];
+    if(x+1 < 5 && openE) E = maze[x+1][y];
     if(x-1 >= 0 && openW) W = maze[x-1][y];
 
 
@@ -271,7 +271,7 @@ void checkNeigboringOpen(configuration poppedCfg) {
         configuration pushCfg = poppedCfg;
 
 
-        if(x+1 <= 4 && !((x+1==2 && y==2) || (x+1==7 && y==8) || (x+1==8 && y==7) || (x+1==8 && y==8))) {
+        if(x+1 < 5 && !((x+1==2 && y==2) || (x+1==7 && y==8) || (x+1==8 && y==7) || (x+1==8 && y==8))) {
             pushCfg.x += 1;
             cellStack.push(pushCfg);
             // std::cerr << "Pushed (" << pushCfg.x << ", " << pushCfg.y << ")";
@@ -283,7 +283,7 @@ void checkNeigboringOpen(configuration poppedCfg) {
             // std::cerr << "Pushed (" << pushCfg.x << ", " << pushCfg.y << ")";
             pushCfg.x += 1;
         }
-        if(y+1 <= 4 && !((x==2 && y+1==2) || (x==7 && y+1==8) || (x==8 && y+1==7) || (x==8 && y+1==8))) {
+        if(y+1 < 5 && !((x==2 && y+1==2) || (x==7 && y+1==8) || (x==8 && y+1==7) || (x==8 && y+1==8))) {
             pushCfg.y += 1;
             cellStack.push(pushCfg);
             // std::cerr << "Pushed (" << pushCfg.x << ", " << pushCfg.y << ")";
@@ -320,7 +320,7 @@ void checkNeigboringOpen(configuration poppedCfg) {
     API:turnLeft();
 */
 void move(char direction) {
-    /*
+    
     char facing = currentCfg.dir;
     
     // if facing and direction are the same, go straight
@@ -396,7 +396,7 @@ void move(char direction) {
             }
         }
     }
-    */
+    
     //N = +y
     //S = -y
     //E = +x
