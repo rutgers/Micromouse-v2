@@ -44,7 +44,7 @@ void PIDStraight::InputToMotor(double degree, double distance){
 
     integral += currentError;
 
-    prevA = curA;
+    prevA = curA;    //exit counter
     prevB = curB;
     curA = encoder_instanceA.read();
     curB = encoder_instanceB.read();
@@ -55,7 +55,7 @@ void PIDStraight::InputToMotor(double degree, double distance){
         offset = 10;
     } else {
         offset = -10;
-    }
+    } //end of exit counter
 
     //if ()
 
@@ -89,8 +89,8 @@ void PIDStraight::InputToMotor(double degree, double distance){
     PIDRotate(degree); //correct the degree. 
    }
     motorInput = abs((int)out);
-    motors_instance->setLeftMotorSpeed(motorInput-10+offset);
-    motors_instance->setRightMotorSpeed(motorInput-10+offset);
+    motors_instance->setLeftMotorSpeed((motorInput-10+offset)/5);
+    motors_instance->setRightMotorSpeed((motorInput-10+offset)/8);
     }
 
     motors_instance->setMotorsSpeed(0);

@@ -12,7 +12,6 @@
 
 class API {
 
-#define blockLength 10
 
 public:
     static bool wallFront();

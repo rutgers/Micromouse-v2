@@ -28,7 +28,7 @@ void Motors::disableMotors() {
  *  speed takes integer from 0 to 255
  */
 void Motors::setLeftMotorSpeed(int speed) {
-    analogWrite(pin_PWMA, speed);
+    analogWrite(pin_PWMA, speed/20);
 }
 
 
@@ -37,7 +37,7 @@ void Motors::setLeftMotorSpeed(int speed) {
  *  speed takes integer from 0 to 255
  */
 void Motors::setRightMotorSpeed(int speed) {
-    analogWrite(pin_PWMB, speed);
+    analogWrite(pin_PWMB, speed/15);
 }
 
 

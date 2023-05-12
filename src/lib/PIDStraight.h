@@ -11,12 +11,12 @@ class PIDStraight {
         void InputToMotor(double degree, double distance);
 
         const double Kp = 0.1;
-        const double Ki = 0;
-        const double Kd = 0;
+        const double Ki = 0.1;
+        const double Kd = 0.1;
 
     private:
         double currentDegree = 0;
-        double currentError = 30;
+        double currentError = 10;
         double prevError = 0;
         double currentTime = 0;
         double prevTime = 0;

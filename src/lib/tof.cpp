@@ -106,11 +106,17 @@ if (vl6180xtof[3].timeoutOccurred()) { Serial.print(" TIMEOUT"); }
 if (vl6180xtof[4].timeoutOccurred()) { Serial.print(" TIMEOUT"); }
 
 Serial.println();
+Serial.print("Left: ");
 Serial.println(returnStruct.left);
+Serial.print("FrontLeft: ");
 Serial.println(returnStruct.frontLeft);
+Serial.print("Front: ");
 Serial.println(returnStruct.front);
+Serial.print("FrontRight: ");
 Serial.println(returnStruct.frontRight);
+Serial.print("Right: ");
 Serial.println(returnStruct.right);
+
 
   return returnStruct;
 }

@@ -2,10 +2,11 @@
 #include <cstdlib>
 #include <iostream>
 
+double blockLength = 12.3;
 
 bool API::wallFront() {
     int distance = timeofflight_instance->readF();
-    if(distance < 100) {
+    if(distance < 150) {
         return true;
     } else {
         return false;
@@ -14,7 +15,7 @@ bool API::wallFront() {
 
 bool API::wallRight() {
     int distance = timeofflight_instance->readR();
-    if(distance < 100) {
+    if(distance < 150) {
         return true;
     } else {
         return false;
@@ -23,7 +24,7 @@ bool API::wallRight() {
 
 bool API::wallLeft() {
     int distance = timeofflight_instance->readL();
-    if(distance < 100) {
+    if(distance < 150) {
         return true;
     } else {
         return false;
@@ -36,7 +37,7 @@ bool API::wallLeft() {
 
 
 void API::moveForward() {
-    pidstraight_instance->InputToMotor(0,blockLength); //go 11 cm. works fine
+    pidstraight_instance->InputToMotor(5,blockLength); //go 11 cm. works fine
     return;
 }
 

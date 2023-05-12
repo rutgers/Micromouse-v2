@@ -14,7 +14,7 @@ void PIDRotate::InputToMotor(double targetdegree){
 
 //    double currentDegree; moved to private in header
   //  double prevDegree; moved to private in header
-while(exitCounter < 10){
+while(exitCounter < 20){ // exit counter, how many times does it need to correct. 
     // Serial.print("Exit counter:");
     // Serial.println(exitCounter);
 
@@ -22,12 +22,13 @@ while(exitCounter < 10){
     currentDegree = imu_instance->getHeading(); 
     currentError = targetdegree - currentDegree;//the e(t)
     deltaError = currentError - prevError; //change in error value, de
-    currentError = fmod(currentError, 360.0);
+
+    currentError = fmod(currentError, 360.0); //should be fine. 
 
     if (currentError > 180.0) {
-        currentError -= 360.0;
+        currentError -= 360.0; //fine
     } else if (currentError < -180.0) {
-        currentError += 360.0;
+        currentError += 360.0; //fine
     }
 
     //change in time. 
@@ -39,7 +40,7 @@ while(exitCounter < 10){
 
     integral += currentError; //integra = summation of every degree over the entire time. awful.
 
-    if (abs(currentError) < 2) {
+    if (abs(currentError) < 3) {
         exitCounter++;
     } else if (exitCounter > 0) {
         exitCounter = 0;
@@ -94,7 +95,7 @@ while(exitCounter < 10){
     // Serial.println(out);
 
 
-    motors_instance->setLeftMotorSpeed(motorInput);
+    motors_instance->setLeftMotorSpeed(motorInput/1.2);
     motors_instance->setRightMotorSpeed(motorInput);
     
     //Serial.print(imu_instance->getHeading());
