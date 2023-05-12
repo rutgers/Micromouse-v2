@@ -423,6 +423,53 @@ void move(char direction) {
         break;
     }
 
+
+    
+        // Keep away from the walls!
+        int leftDist;
+        int rightDist;
+
+        leftDist = timeofflight_instance->readL();
+        rightDist = timeofflight_instance->readR();
+
+        
+        int closeLeftWall = 0;
+        int closeRightWall = 0;
+        //ideal is 40
+        // less than 40 is close
+
+
+        if(leftDist <= 40 && !(leftDist >= 250)) {
+            //Serial.println("Right I think");
+            motors_instance->setRightMotorDirection(true); 
+            motors_instance->setLeftMotorDirection(false);
+
+            motors_instance->setRightMotorDirection(false); 
+            motors_instance->setLeftMotorDirection(true);
+
+            motors_instance->setLeftMotorSpeed(50);
+            motors_instance->setRightMotorSpeed(0);
+            delay(30);
+            motors_instance->setMotorsSpeed(0);
+
+
+        } 
+        if(rightDist <= 40 && !(leftDist >= 250)) {
+            //Serial.println("Right I think");
+            motors_instance->setRightMotorDirection(false); 
+            motors_instance->setLeftMotorDirection(true);
+
+            motors_instance->setRightMotorDirection(true); 
+            motors_instance->setLeftMotorDirection(false);
+
+            motors_instance->setLeftMotorSpeed(0);
+            motors_instance->setRightMotorSpeed(50);
+            delay(30);
+            motors_instance->setMotorsSpeed(0);
+        }
+
+
+
     return;
 }
 

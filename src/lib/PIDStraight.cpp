@@ -104,7 +104,7 @@ void PIDStraight::InputToMotor(double distance){ //imu heading.
         Serial.println(angleDiff);
         
 
-        out = map(out, 0, maxError, 60, 180);
+        out = map(out, 0, maxError, 60, 100);
 
         // Serial.println(out);
 
@@ -121,36 +121,12 @@ void PIDStraight::InputToMotor(double distance){ //imu heading.
 
 
 
-        // Keep away from the walls!
-        int leftDist;
-        int rightDist;
-
-        leftDist = timeofflight_instance->readL();
-        rightDist = timeofflight_instance->readR();
-
-        
-        int closeLeftWall = 0;
-        int closeRightWall = 0;
-        //ideal is 40
-        // less than 40 is close
-
-        
-        if(leftDist <= 40 && !(leftDist >= 250)) {
-            closeLeftWall = 2;
-        } else {
-            closeLeftWall = 0;
-        }
-        if(rightDist <= 40 && !(leftDist >= 250)) {
-            closeRightWall = 2;
-        } else {
-            closeRightWall = 0;
-        }
 
 
 
 
-        motors_instance->setLeftMotorSpeed(out+3 + closeRightWall);
-        motors_instance->setRightMotorSpeed(out+angleDiff*8.1 + closeLeftWall); // this actually makes the left motor spin faster ._.
+        motors_instance->setLeftMotorSpeed(out+2);
+        motors_instance->setRightMotorSpeed(out+angleDiff*3.9); // this actually makes the left motor spin faster ._.
 
         currentError = ((distance * 360) / (M_PI * 4)) - distTraveled;
         currentTime = micros();

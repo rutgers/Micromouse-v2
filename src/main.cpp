@@ -18,13 +18,13 @@ void setup() {
   Serial.begin(9600);
     
 
-  delay(4000);
+  delay(5000);
   
   initialize();
   runMaze('c');
   backTrack();
 
-  // API::moveForward();
+  // API::turnLeft();
   // API::moveForward();
   // API::moveForward();
 
@@ -33,7 +33,7 @@ void setup() {
 
 void loop() {
   
-
+  // timeofflight_instance->readDistance();
   // Serial.println(imu_instance->getHeading());
 
 }
