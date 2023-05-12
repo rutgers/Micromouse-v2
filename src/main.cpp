@@ -15,21 +15,17 @@ Motors* motors;
 
 void setup() {
   Serial.begin(9600);
+    
 
   delay(4000);
   
-  // initialize();
-  // runMaze('c');
-  // backTrack();
-  // runMaze('c');
-  // backTrack();
-  // runMaze('c');
-  // backTrack();
-  API::moveForward();
-  API::moveForward();
-  API::moveForward();
-  API::moveForward();
-  API::moveForward();
+  initialize();
+  runMaze('c');
+  backTrack();
+
+  // API::moveForward();
+  // API::moveForward();
+  // API::moveForward();
 }
 
 void loop() {

@@ -29,7 +29,7 @@ void PIDRotate::InputToMotor(double targetDegreeChange){
     double maxError = abs(currentError);
 
 
-    while(abs(currentError) > 1) {
+    while(abs(currentError) > 9.8) {
         currentDegree = imu_instance->getHeading(); 
 
         // derivative
@@ -45,7 +45,7 @@ void PIDRotate::InputToMotor(double targetDegreeChange){
         Serial.println(Kd * deriv);
         Serial.print(out);
         Serial.print(", ");
-        out = map(out, 0, maxError, 30, 68);
+        out = map(out, 0, maxError, 38, 68);
         Serial.println(out);
 
         if((currentError < 0)){

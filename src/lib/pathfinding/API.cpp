@@ -33,13 +33,14 @@ bool API::wallLeft() {
 
 //  pidstraight_instance->InputToMotor(0,blocklength); //go 11 cm. works fine
 //   pidrotate_instance->InputToMotor(-90); //left 90
-double blockLength = 18.0;
+double blockLength = 16.9;
 
 void API::moveForward() {
     pidstraight_instance->InputToMotor(blockLength); //go 11 cm. works fine
     delay(200);
     return;
 }
+
 
 void API::turnRight() {
     pidrotate_instance->InputToMotor(90); //right 90
@@ -49,6 +50,12 @@ void API::turnRight() {
 
 void API::turnLeft() {
     pidrotate_instance->InputToMotor(-90); //left 90
+    delay(200);
+    return;
+}
+
+void API::turnAround() {
+    pidrotate_instance->InputToMotor(180); //180
     delay(200);
     return;
 }

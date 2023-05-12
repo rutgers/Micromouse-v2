@@ -5,8 +5,8 @@
 
 #define pin_PWMA 4 // right
 #define pin_PWMB 9 // left
-#define pin_AIN1 6 
-#define pin_AIN2 5 
+#define pin_AIN1 5 
+#define pin_AIN2 6 
 #define pin_BIN1 7
 #define pin_BIN2 8
 #define pin_STBY 14
