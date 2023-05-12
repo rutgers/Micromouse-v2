@@ -5,27 +5,27 @@ using namespace std;
 
 // "Definition checked against [extern] declaration"
 int maze[N][N] = 
-// {{14, 13, 12, 11, 10, 9, 8, 7, 7, 8, 9, 10, 11, 12, 13, 14},
-//  {13, 12, 11, 10,  9, 8, 7, 6, 6, 7, 8,  9, 10, 11, 12, 13},
-//  {12, 11, 10,  9,  8, 7, 6, 5, 5, 6, 7,  8,  9, 10, 11, 12},   
-//  {11, 10,  9,  8,  7, 6, 5, 4, 4, 5, 6,  7,  8,  9, 10, 11},   
-//  {10,  9,  8,  7,  6, 5, 4, 3, 3, 4, 5,  6,  7,  8,  9, 10},   
-//  {9,   8,  7,  6,  5, 4, 3, 2, 2, 3, 4,  5,  6,  7,  8,  9},   
-//  {8,   7,  6,  5,  4, 3, 2, 1, 1, 2, 3,  4,  5,  6,  7,  8},   
-//  {7,   6,  5,  4,  3, 2, 1, 0, 0, 1, 2,  3,  4,  5,  6,  7},   
-//  {7,   6,  5,  4,  3, 2, 1, 0, 0, 1, 2,  3,  4,  5,  6,  7},   
-//  {8,   7,  6,  5,  4, 3, 2, 1, 1, 2, 3,  4,  5,  6,  7,  8},   
-//  {9,   8,  7,  6,  5, 4, 3, 2, 2, 3, 4,  5,  6,  7,  8,  9},   
-//  {10,  9,  8,  7,  6, 5, 4, 3, 3, 4, 5,  6,  7,  8,  9, 10},   
-//  {11, 10,  9,  8,  7, 6, 5, 4, 4, 5, 6,  7,  8,  9, 10, 11},   
-//  {12, 11, 10,  9,  8, 7, 6, 5, 5, 6, 7,  8,  9, 10, 11, 12},   
-//  {13, 12, 11, 10,  9, 8, 7, 6, 6, 7, 8,  9, 10, 11, 12, 13},  
-//  {14, 13, 12, 11, 10, 9, 8, 7, 7, 8, 9, 10, 11, 12, 13, 14}};
-{{4, 3, 2, 3, 4},
- {3, 2, 1, 2, 3}, 
- {2, 1, 0, 1, 2},
- {3, 2, 1, 2, 3},
- {4, 3, 2, 3, 4 }};
+{{14, 13, 12, 11, 10, 9, 8, 7, 7, 8, 9, 10, 11, 12, 13, 14},
+ {13, 12, 11, 10,  9, 8, 7, 6, 6, 7, 8,  9, 10, 11, 12, 13},
+ {12, 11, 10,  9,  8, 7, 6, 5, 5, 6, 7,  8,  9, 10, 11, 12},   
+ {11, 10,  9,  8,  7, 6, 5, 4, 4, 5, 6,  7,  8,  9, 10, 11},   
+ {10,  9,  8,  7,  6, 5, 4, 3, 3, 4, 5,  6,  7,  8,  9, 10},   
+ {9,   8,  7,  6,  5, 4, 3, 2, 2, 3, 4,  5,  6,  7,  8,  9},   
+ {8,   7,  6,  5,  4, 3, 2, 1, 1, 2, 3,  4,  5,  6,  7,  8},   
+ {7,   6,  5,  4,  3, 2, 1, 0, 0, 1, 2,  3,  4,  5,  6,  7},   
+ {7,   6,  5,  4,  3, 2, 1, 0, 0, 1, 2,  3,  4,  5,  6,  7},   
+ {8,   7,  6,  5,  4, 3, 2, 1, 1, 2, 3,  4,  5,  6,  7,  8},   
+ {9,   8,  7,  6,  5, 4, 3, 2, 2, 3, 4,  5,  6,  7,  8,  9},   
+ {10,  9,  8,  7,  6, 5, 4, 3, 3, 4, 5,  6,  7,  8,  9, 10},   
+ {11, 10,  9,  8,  7, 6, 5, 4, 4, 5, 6,  7,  8,  9, 10, 11},   
+ {12, 11, 10,  9,  8, 7, 6, 5, 5, 6, 7,  8,  9, 10, 11, 12},   
+ {13, 12, 11, 10,  9, 8, 7, 6, 6, 7, 8,  9, 10, 11, 12, 13},  
+ {14, 13, 12, 11, 10, 9, 8, 7, 7, 8, 9, 10, 11, 12, 13, 14}};
+// {{4, 3, 2, 3, 4},
+//  {3, 2, 1, 2, 3}, 
+//  {2, 1, 0, 1, 2},
+//  {3, 2, 1, 2, 3},
+//  {4, 3, 2, 3, 4 }};
  
 std::stack<configuration> cellStack;
 openCells walls[N][N];
@@ -43,11 +43,11 @@ void initialize() {
     currentCfg.dir = 'N';
 
     // set borders for walls array
-    for(int i = 0; i < 5; i++) {
+    for(int i = 0; i < 16; i++) {
         walls[i][0].openS = false; // move along south wall
-        walls[i][4].openN = false; // move along north wall
+        walls[i][15].openN = false; // move along north wall
         walls[0][i].openW = false; // move along west wall
-        walls[4][i].openE = false; // move along east wall
+        walls[15][i].openE = false; // move along east wall
     }
 }
 
@@ -140,9 +140,9 @@ void flowElevation() {
     //E = +x
     //W = -x
 
-    if(y+1 < 5 && openN) N = maze[x][y+1];
+    if(y+1 <= 15 && openN) N = maze[x][y+1];
     if(y-1 >= 0 && openS) S = maze[x][y-1];
-    if(x+1 < 5 && openE) E = maze[x+1][y];
+    if(x+1 <= 15 && openE) E = maze[x+1][y];
     if(x-1 >= 0 && openW) W = maze[x-1][y];
 
     // find the min using arraysort
@@ -246,9 +246,9 @@ void checkNeigboringOpen(configuration poppedCfg) {
     //E = +x
     //W = -x
 
-    if(y+1 < 5 && openN) N = maze[x][y+1];
+    if(y+1 <= 15 && openN) N = maze[x][y+1];
     if(y-1 >= 0 && openS) S = maze[x][y-1];
-    if(x+1 < 5 && openE) E = maze[x+1][y];
+    if(x+1 <= 15 && openE) E = maze[x+1][y];
     if(x-1 >= 0 && openW) W = maze[x-1][y];
 
 
@@ -271,25 +271,25 @@ void checkNeigboringOpen(configuration poppedCfg) {
         configuration pushCfg = poppedCfg;
 
 
-        if(x+1 < 5 && !((x+1==2 && y==2) || (x+1==7 && y==8) || (x+1==8 && y==7) || (x+1==8 && y==8))) {
+        if(x+1 <= 15 && !((x+1==7 && y==7) || (x+1==7 && y==8) || (x+1==8 && y==7) || (x+1==8 && y==8))) {
             pushCfg.x += 1;
             cellStack.push(pushCfg);
             // std::cerr << "Pushed (" << pushCfg.x << ", " << pushCfg.y << ")";
             pushCfg.x -= 1;
         }
-        if(x-1 >= 0 && !((x-1==2 && y==2) || (x-1==7 && y==8) || (x-1==8 && y==7) || (x-1==8 && y==8))) {
+        if(x-1 >= 0 && !((x-1==7 && y==7) || (x-1==7 && y==8) || (x-1==8 && y==7) || (x-1==8 && y==8))) {
             pushCfg.x -= 1;
             cellStack.push(pushCfg);
             // std::cerr << "Pushed (" << pushCfg.x << ", " << pushCfg.y << ")";
             pushCfg.x += 1;
         }
-        if(y+1 < 5 && !((x==2 && y+1==2) || (x==7 && y+1==8) || (x==8 && y+1==7) || (x==8 && y+1==8))) {
+        if(y+1 <= 15 && !((x==7 && y+1==7) || (x==7 && y+1==8) || (x==8 && y+1==7) || (x==8 && y+1==8))) {
             pushCfg.y += 1;
             cellStack.push(pushCfg);
             // std::cerr << "Pushed (" << pushCfg.x << ", " << pushCfg.y << ")";
             pushCfg.y -= 1;
         }
-        if(y-1 >= 0 && !((x==2 && y-1==2) || (x==7 && y-1==8) || (x==8 && y-1==7) || (x==8 && y-1==8))) {
+        if(y-1 >= 0 && !((x==7 && y-1==7) || (x==7 && y-1==8) || (x==8 && y-1==7) || (x==8 && y-1==8))) {
             pushCfg.y -= 1;
             cellStack.push(pushCfg);
             // std::cerr << "Pushed (" << pushCfg.x << ", " << pushCfg.y << ")";
@@ -592,7 +592,7 @@ void runMaze(char goal) {
             Serial.println("After flow"); 
             //end condition
             if(goal == 'c') {
-                if((currentCfg.x == 2 || currentCfg.x == 8) && (currentCfg.y == 2 || currentCfg.y == 8)) {
+                if((currentCfg.x == 7 || currentCfg.x == 8) && (currentCfg.y == 7 || currentCfg.y == 8)) {
                     loopCondition = 0;
                 }
             }

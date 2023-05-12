@@ -9,7 +9,7 @@
 
 
 //// variable declarations
-const int N = 5; 
+const int N = 16; 
 
 // global array for the maze, tells the robot how to move
 extern int maze[N][N];

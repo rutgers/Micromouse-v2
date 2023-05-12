@@ -12,7 +12,7 @@ tof::tof() {
 
     // digitalWrite(13, LOW);
 
-  while (!Serial) {}
+  // while (!Serial) {}
   Serial.begin(9600);
   Wire.begin();
   Wire.setClock(400000); // use 400 kHz I2C

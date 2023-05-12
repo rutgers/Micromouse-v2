@@ -28,5 +28,6 @@ class PIDStraight {
 };
 
 extern PIDStraight* pidstraight_instance;
+extern double trueNorth; 
 
 #endif
