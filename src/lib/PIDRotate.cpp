@@ -91,10 +91,10 @@ void PIDRotate::rotate_to_angle(double target_angle, int boost, double threshold
 
         double cappedIntegral = kI * total_error;
 
-        if (cappedIntegral > 50.0) {
-            cappedIntegral = 50.0;
-        } else if (cappedIntegral < -50.0) {
-            cappedIntegral = -50.0;
+        if (cappedIntegral > 60.0) {
+            cappedIntegral = 60.0;
+        } else if (cappedIntegral < -60.0) {
+            cappedIntegral = -60.0;
         }
 
         kP *= boost;
