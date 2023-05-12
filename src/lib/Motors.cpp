@@ -7,9 +7,6 @@
 Encoder ENCA(2,3); 
 Encoder ENCB(10,11);
 
-
-
-
 void Motors::enableMotors() {
 
     digitalWrite(pin_STBY, HIGH);
@@ -28,7 +25,7 @@ void Motors::disableMotors() {
  *  speed takes integer from 0 to 255
  */
 void Motors::setLeftMotorSpeed(int speed) {
-    analogWrite(pin_PWMA, speed/20);
+    analogWrite(pin_PWMA, speed);
 }
 
 
@@ -37,7 +34,7 @@ void Motors::setLeftMotorSpeed(int speed) {
  *  speed takes integer from 0 to 255
  */
 void Motors::setRightMotorSpeed(int speed) {
-    analogWrite(pin_PWMB, speed/15);
+    analogWrite(pin_PWMB, speed);
 }
 
 

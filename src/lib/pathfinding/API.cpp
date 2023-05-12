@@ -2,11 +2,10 @@
 #include <cstdlib>
 #include <iostream>
 
-double blockLength = 12.3;
 
 bool API::wallFront() {
     int distance = timeofflight_instance->readF();
-    if(distance < 150) {
+    if(distance < 100) {
         return true;
     } else {
         return false;
@@ -15,7 +14,7 @@ bool API::wallFront() {
 
 bool API::wallRight() {
     int distance = timeofflight_instance->readR();
-    if(distance < 150) {
+    if(distance < 100) {
         return true;
     } else {
         return false;
@@ -24,7 +23,7 @@ bool API::wallRight() {
 
 bool API::wallLeft() {
     int distance = timeofflight_instance->readL();
-    if(distance < 150) {
+    if(distance < 100) {
         return true;
     } else {
         return false;
@@ -34,19 +33,22 @@ bool API::wallLeft() {
 
 //  pidstraight_instance->InputToMotor(0,blocklength); //go 11 cm. works fine
 //   pidrotate_instance->InputToMotor(-90); //left 90
-
+double blockLength = 18.0;
 
 void API::moveForward() {
-    pidstraight_instance->InputToMotor(5,blockLength); //go 11 cm. works fine
+    pidstraight_instance->InputToMotor(blockLength); //go 11 cm. works fine
+    delay(200);
     return;
 }
 
 void API::turnRight() {
-    pidrotate_instance->InputToMotor(imu_instance->getHeading()+90); //right 90
+    pidrotate_instance->InputToMotor(90); //right 90
+    delay(200);
     return;
 }
 
 void API::turnLeft() {
-    pidrotate_instance->InputToMotor(imu_instance->getHeading()-90); //left 90
+    pidrotate_instance->InputToMotor(-90); //left 90
+    delay(200);
     return;
 }

@@ -18,8 +18,14 @@ Motors* motors;
 void setup() {
   Serial.begin(9600);
 
-  delay(1000);
+  // delay(5000);
   // API::moveForward();
+  // API::turnLeft();
+  // API::turnLeft();
+  API::turnRight();
+  // API::turnRight();
+  
+  /*
   Serial.print("Start");
   initialize();
   runMaze('c');
@@ -30,37 +36,11 @@ void setup() {
   // backTrack();
   // runMaze('c');
   // backTrack();
+  */
   
-  // delay(500);
-  // API::turnLeft();
-  // delay(500);
-
-  // Serial.print("Hello");
-
-  // API::moveForward();
-  // delay(500);
-  // API::turnRight();
-  // delay(500);
-
-  // API::moveForward();
-  // delay(500);
-  // API::moveForward();
-  // delay(500);
-
-  // API::turnRight();
-  // delay(500);
-  // API::moveForward();
-  // delay(500);
-
-  // API::turnRight();
-  // delay(500);
-  // API::moveForward();
-  // delay(500); 
- 
 }
 
 void loop() {
-  // timeofflight_instance->readDistance();
-  // Serial.println("");
-  // delay(500);
+  Serial.println(imu_instance->getHeading());
+  delay(300);
 }
