@@ -23,6 +23,10 @@ void PIDStraight::InputToMotor(double distance){ //imu heading.
     
     double maxError = ((distance * 360) / (M_PI * 4));
 
+
+    double keepAngle = imu_instance->getHeading();
+    double current = imu_instance->getHeading();
+    double angleDiff;
     
     while(currentError > 1){
         // Serial.print("currenterror");
@@ -90,12 +94,18 @@ void PIDStraight::InputToMotor(double distance){ //imu heading.
         // Serial.println(encoder_instanceB.read()); //left
         //     Serial.println("\n");
 
-        if(((int)currentTime)%5 == 0){ //every 5 micros, recorrect the angle. 
-        // PIDRotate(degree); //correct the degree. 
-        }
+        //keep angle for straight
+        current = imu_instance->getHeading();
+        angleDiff = keepAngle - current;
+        // + means we are veering left
+        // -> add more power to the left motor
+        angleDiff = angleDiff * 1;        
+
+
+
         motorInput = abs((int)out);
-        motors_instance->setLeftMotorSpeed((motorInput-10+offset));
-        motors_instance->setRightMotorSpeed((motorInput-10+offset));
+        motors_instance->setLeftMotorSpeed((motorInput-10+offset) + angleDiff/2);
+        motors_instance->setRightMotorSpeed((motorInput-10+offset) - angleDiff/2);
 
         currentError = ((distance * 360) / (M_PI * 4)) - distTraveled;
         currentTime = micros();
