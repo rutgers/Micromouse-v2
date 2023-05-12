@@ -122,8 +122,8 @@ void PIDStraight::InputToMotor(double distance){ //imu heading.
         //     Serial.println("\n");
 
         
-        motors_instance->setLeftMotorSpeed(out);
-        motors_instance->setRightMotorSpeed(out+angleDiff*8.2); // this actually makes the left motor spin faster ._.
+        motors_instance->setLeftMotorSpeed(out+2);
+        motors_instance->setRightMotorSpeed(out+angleDiff*8.1); // this actually makes the left motor spin faster ._.
 
         currentError = ((distance * 360) / (M_PI * 4)) - distTraveled;
         currentTime = micros();

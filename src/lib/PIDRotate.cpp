@@ -29,7 +29,7 @@ void PIDRotate::InputToMotor(double targetDegreeChange){
     double maxError = abs(currentError);
 
 
-    while(abs(currentError) > 9.8) {
+    while(abs(currentError) > 9.62) {
         currentDegree = imu_instance->getHeading(); 
 
         // derivative

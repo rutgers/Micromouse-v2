@@ -332,7 +332,7 @@ void move(char direction) {
             switch(direction) {
 
             case 'S': // turn around
-            API::turnRight(); API::turnRight(); API::moveForward();
+            API::turnLeft(); API::turnLeft(); API::moveForward();
             break;
 
             case 'W': // turnLeft
@@ -349,7 +349,7 @@ void move(char direction) {
             switch(direction) {
 
             case 'N': // turn around
-            API::turnRight(); API::turnRight(); API::moveForward();
+            API::turnLeft(); API::turnLeft(); API::moveForward();
             break;
 
             case 'E': // turnLeft
@@ -366,7 +366,7 @@ void move(char direction) {
             switch(direction) {
 
             case 'W': // turn around
-            API::turnRight(); API::turnRight(); API::moveForward();
+            API::turnLeft(); API::turnLeft(); API::moveForward();
             break;
 
             case 'N': // turnLeft
@@ -383,7 +383,7 @@ void move(char direction) {
             switch(direction) {
 
             case 'E': // turn around
-            API::turnRight(); API::turnRight(); API::moveForward();
+            API::turnLeft(); API::turnLeft(); API::moveForward();
             break;
 
             case 'S': // turnLeft
