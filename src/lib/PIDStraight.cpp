@@ -34,6 +34,11 @@ void PIDStraight::InputToMotor(double distance){ //imu heading.
         // Serial.print("currenterror");
         // Serial.println (currentError);
 
+
+        // if(timeofflight_instance->readF() <= 20) {
+        //     break;
+        // }
+
         double deltaError = 0;
         double deltaTime = 0;
         double deriv = 0;
