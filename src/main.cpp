@@ -16,24 +16,27 @@ Motors* motors;
 
 void setup() {
   Serial.begin(9600);
-    
 
-  delay(5000);
-  
+  digitalWrite(LED_BUILTIN, HIGH);
+  delay(1000);
+
   initialize();
   runMaze('c');
-  backTrack();
+  // backTrack();
 
-  // API::turnLeft();
-  // API::moveForward();
-  // API::moveForward();
-
+  digitalWrite(LED_BUILTIN, LOW);
 
 }
 
 void loop() {
-  
-  // timeofflight_instance->readDistance();
-  // Serial.println(imu_instance->getHeading());
 
+  Serial.println("============");
+  Serial.println(timeofflight_instance->readL());
+  // Serial.println(timeofflight_instance->readFL());
+  // Serial.println(timeofflight_instance->readF());
+  // Serial.println(timeofflight_instance->readFR());
+  Serial.println(timeofflight_instance->readR());
+
+  delay(500);
+  
 }

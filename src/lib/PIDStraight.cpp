@@ -8,141 +8,105 @@
 #include <math.h>
 #include "tof.h"
 
-void PIDStraight::InputToMotor(double distance){ //imu heading. 
+void PIDStraight::InputToMotor(double desiredDistance) {
+    //initialize current values
+
+    // ===== distance =====
     
+    // circumference = pi*d
+    // number of circumferences = desiredDistance / circumference
+    // 360 ticks/circumference 
+    double desiredTicksDistance = ((desiredDistance * 360) / (M_PI * wheelDiameter));
     encoder_instanceA.write(0);
     encoder_instanceB.write(0);
-    // int keepAngle = imu_instance->getHeading();
-
-    int curA = 0;
-    int curB = 0;
-    int prevA = 0;
-    int prevB = 0;
-    double distTraveled = 0;
-    int motorInput;
-    prevTime = micros();
-    currentError = ((distance * 360) / (M_PI * wheelDiameter)) - distTraveled;
     
-    double maxError = ((distance * 360) / (M_PI * 4));
+    // ===== angle =====
+    // double keepAngle = imu_instance->getCardinal();
+    // double currentAngle = imu_instance->getHeading();
+    // double angleDiff = keepAngle - currentAngle;
+
+    // // angle wrap
+    //      if (angleDiff >  180.0) { angleDiff -= 360.0; }
+    // else if (angleDiff < -180.0) { angleDiff += 360.0; }      
+    // // if angleDiff is -, we are too far to the right
+
+    // ===== wall distance =====
+    double leftDist = timeofflight_instance->readL();
+    double rightDist = timeofflight_instance->readR();
+
+    // valid wall checking ranges from 20 to 60
+    if(leftDist > 60) leftDist = 38;
+    if(rightDist > 60) rightDist = 38;
 
 
-    double keepAngle = imu_instance->getHeading();
-    double current = imu_instance->getHeading();
-    double angleDiff;
     
-    while(currentError > 1){
-        // Serial.print("currenterror");
-        // Serial.println (currentError);
+    // ===== front wall distance ====
+    // distance to front wall should always be greater than 20 (wall), with 255 (no wall)
+    double frontDist = timeofflight_instance->readF();
 
 
-        // if(timeofflight_instance->readF() <= 20) {
-        //     break;
-        // }
+    //initialize old values
+    // int prevEnc = currEnc;
+    // double oldError = currentError;
 
-        double deltaError = 0;
-        double deltaTime = 0;
-        double deriv = 0;
-        //360 ticks per 1 rotation. 
-        // circumference of the wheel D = 4 cm piD;
+
+    int curA, curB, currEnc;
+    double currentErrorA = desiredTicksDistance;
+    double currentErrorB = desiredTicksDistance;
+    double currentError = desiredTicksDistance;
+    
+    while(currentError > 5 && frontDist > 50) {
+    // while(currentError > 10) {
+
+        double outDistA = Kp * currentErrorA;// + Ki * integral + Kd * deriv;
+        double outDistB = Kp * currentErrorB;// + Ki * integral + Kd * deriv;
+
+        double closeLeft = 0.5*(38-leftDist);
+        double closeRight = 0.5*(38-rightDist);
         
-        distTraveled = encoder_instanceA.read();//)/360) * (M_PI); //in centimeters
-        // Serial.print("distTraveled: ");
-        // Serial.print(distTraveled);
+        motors_instance->setRightMotorSpeed(outDistA + closeRight);
+        motors_instance->setLeftMotorSpeed(outDistB*1.1 + closeLeft);
 
-        deltaError = currentError - prevError;
-        deltaTime = currentTime - prevTime;
-        prevError = currentError;
-        prevTime = micros();        
-        deriv = deltaError/deltaTime;
+        // motors_instance->setRightMotorSpeed(outDistA);        
+        // motors_instance->setLeftMotorSpeed(outDistB);
 
-        integral += currentError;
+        // set old values
 
-        prevA = curA;    //exit counter
-        prevB = curB;
+        // ------------ get new values ------------
+        // ===== distance =====
         curA = encoder_instanceA.read();
         curB = encoder_instanceB.read();
+        currEnc = (curA + curB) / 2;
 
-        /*
-        int offset = 0;
+        currentError = desiredTicksDistance - currEnc;
+        currentErrorA = desiredTicksDistance - curA;
+        currentErrorB = desiredTicksDistance - curB;
 
-        if ((curA - prevA) > (curB - prevB)) {
-            offset = 2;
-        } else {
-            offset = -2;
-        } //end of exit counter
-        */
+        //  ===== angle =====
+        // currentAngle = imu_instance->getHeading();
+        // // angle wrap
+        //      if (angleDiff >  180.0) { angleDiff -= 360.0; }
+        // else if (angleDiff < -180.0) { angleDiff += 360.0; }   
 
-        //if ()
+        // ===== wall distance =====
+         leftDist = timeofflight_instance->readL();
+         rightDist = timeofflight_instance->readR();
 
-        double out = Kp * currentError + Ki * integral + Kd * deriv;
-        // out *= 100;
-        //map out to a value from 60 to 255 for motor thresholds
-        if(out < 0){
-            //backwards
-            // Serial.println("Backwards ????I think");
-            motors_instance->setRightMotorDirection(true); 
-            motors_instance->setLeftMotorDirection(true);
-        }
-
-        else if(out > 0){
-            //forwards
-            // Serial.println("Forwards? I think");
-            motors_instance->setRightMotorDirection(false); 
-            motors_instance->setLeftMotorDirection(false);
-
-        }
-
+        // valid wall checking ranges from 20 to 60
+        if(leftDist > 60) leftDist = 38;
+        if(rightDist > 60) rightDist = 38;
         
-        //keep angle for straight
-        current = imu_instance->getHeading();
-        angleDiff = keepAngle - current;
-        // + means we are veering left
-        // -> add more power to the left motor
-        angleDiff = angleDiff;
-        
-        // angle wrap
-        if (angleDiff > 180.0) {
-            angleDiff -= 360.0;
-        } else if (angleDiff < -180.0) {
-            angleDiff += 360.0;
-        }      
-        Serial.println(angleDiff);
-        
+        // ===== front wall distance ====
+        // distance to front wall should either be 255 (no wall) or 20 (wall)
+         frontDist = timeofflight_instance->readF();
 
-        out = map(out, 0, maxError, 60, 100);
-
-        // Serial.println(out);
-
-        
-
-        //Serial.println(out);
-        // Serial.println(currentError);
-        // Serial.println();
-        // Serial.print(encoder_instanceA.read()); //right
-        //     Serial.println("\n");
-        // Serial.println(encoder_instanceB.read()); //left
-        //     Serial.println("\n");
-
-
-
-
-
-
-
-
-        motors_instance->setLeftMotorSpeed(out+2);
-        motors_instance->setRightMotorSpeed(out+angleDiff*3.9); // this actually makes the left motor spin faster ._.
-
-        currentError = ((distance * 360) / (M_PI * 4)) - distTraveled;
-        currentTime = micros();
     }
-
-
-        
-
 
     motors_instance->setMotorsSpeed(0);
     encoder_instanceA.write(0);
     encoder_instanceB.write(0);
+
+    
 }
+
 PIDStraight* pidstraight_instance = new PIDStraight();

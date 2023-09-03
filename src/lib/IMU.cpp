@@ -27,7 +27,7 @@ IMU::IMU() {
 
 /**
  *  Returns the heading of the IMU
- *  returns a value between ?? actually not sure //TODO: document this
+ *  returns a value between 0 and 360
  */
 double IMU::getHeading() {
     sensors_event_t orientationData , linearAccelData;
@@ -35,5 +35,33 @@ double IMU::getHeading() {
 
     return orientationData.orientation.x;
 }
+
+// rounds the imu value to nearest 0, 90, 180, 270
+double IMU::getCardinal() {
+
+    double currAngle = imu_instance->getHeading();
+    currAngle /= 90;
+    int cardinalDir = round(currAngle);
+ 
+
+    switch(cardinalDir) {
+        //north = 0
+        case 0:
+            return 0;
+        case 4:
+            return 0;    
+        //east
+        case 1:
+            return 90;
+        case 2:
+            return 180;
+        case 3:
+            return 270;
+    }
+
+
+
+}
+
 
 IMU* imu_instance = new IMU();

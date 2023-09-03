@@ -9,17 +9,11 @@ class PIDRotate {
         void InputToMotor(double targetdegree);
 
         //below section is used for tuning, will return to it later. 
-        const double Kp = 0.00005; //proportional
+        const double Kp = 1.4; //proportional
         const double Ki = 0; //integral 
-        const double Kd = 50; //derivative
+        const double Kd = 0; //derivative
     
     private: 
-        double currentDegree = 0;
-        double currentError = 5;
-        double prevError = 0;
-        double currentTime = 0;
-        double prevTime = 0;
-        double integral  = 0;
 };
 
 extern PIDRotate* pidrotate_instance;

@@ -15,6 +15,7 @@ class IMU {
     public:
         IMU();
         double getHeading();
+        double getCardinal();
 };
 
 extern IMU* imu_instance;

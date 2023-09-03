@@ -22,8 +22,6 @@ class Motors {
         void setMotorsSpeed(int speed);
         void setLeftMotorDirection(bool forward);
         void setRightMotorDirection(bool forward);
-        void setMotorsDirection(bool forward);
-
 };
 
 extern Motors* motors_instance;
