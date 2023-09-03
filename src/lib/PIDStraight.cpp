@@ -61,8 +61,8 @@ void PIDStraight::InputToMotor(double desiredDistance) {
         double outDistA = Kp * currentErrorA;// + Ki * integral + Kd * deriv;
         double outDistB = Kp * currentErrorB;// + Ki * integral + Kd * deriv;
 
-        double closeLeft = 0.5*(38-leftDist);
-        double closeRight = 0.5*(38-rightDist);
+        double closeLeft = 0.7*(38-leftDist);
+        double closeRight = 0.7*(38-rightDist);
         
         motors_instance->setRightMotorSpeed(outDistA + closeRight);
         motors_instance->setLeftMotorSpeed(outDistB*1.1 + closeLeft);

@@ -18,7 +18,7 @@ void setup() {
   Serial.begin(9600);
 
   digitalWrite(LED_BUILTIN, HIGH);
-  delay(1000);
+  delay(500);
 
   initialize();
   runMaze('c');
@@ -30,12 +30,12 @@ void setup() {
 
 void loop() {
 
-  Serial.println("============");
-  Serial.println(timeofflight_instance->readL());
+  // Serial.println("============");
+  // Serial.println(timeofflight_instance->readL());
   // Serial.println(timeofflight_instance->readFL());
   // Serial.println(timeofflight_instance->readF());
   // Serial.println(timeofflight_instance->readFR());
-  Serial.println(timeofflight_instance->readR());
+  // Serial.println(timeofflight_instance->readR());
 
   delay(500);
   
