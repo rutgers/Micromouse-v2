@@ -1,4 +1,4 @@
-/*
+
 #include <iostream>
 #include <string>
 #include <stack>
@@ -72,11 +72,11 @@ int main(int argc, char* argv[]) {
     initialize();
     runMaze('c');
     backTrack();
-    runMaze('c');
-    backTrack();
-    runMaze('c');
-    backTrack();
+//    runMaze('c');
+//    backTrack();
+//    runMaze('c');
+//    backTrack();
     
 }
 
-*/
+

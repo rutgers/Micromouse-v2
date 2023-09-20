@@ -21,11 +21,6 @@ int maze[N][N] =
  {12, 11, 10,  9,  8, 7, 6, 5, 5, 6, 7,  8,  9, 10, 11, 12},   
  {13, 12, 11, 10,  9, 8, 7, 6, 6, 7, 8,  9, 10, 11, 12, 13},  
  {14, 13, 12, 11, 10, 9, 8, 7, 7, 8, 9, 10, 11, 12, 13, 14}};
-// {{4, 3, 2, 3, 4},
-//  {3, 2, 1, 2, 3}, 
-//  {2, 1, 0, 1, 2},
-//  {3, 2, 1, 2, 3},
-//  {4, 3, 2, 3, 4 }};
  
 std::stack<configuration> cellStack;
 openCells walls[N][N];
@@ -111,7 +106,7 @@ void flowElevation() {
     // given the maze, configuration, and wall checks, move to lower elevation until we hit 0
     // prioritize movements without turns if possible (TODO)
 
-    Serial.println("Begin flow");
+//    Serial.println("Begin flow");
     int x = currentCfg.x; // up and down on the array = EW, first term
     int y = currentCfg.y; // left and right on the array = NS, second term
     // char dir = currentCfg.dir;
@@ -159,26 +154,18 @@ void flowElevation() {
     // don't move to higher elevations ever, wait for cell update before moving 
     if(N == min && maze[x][y] == min + 1 && openN) {
         move('N');
-        Serial.println("Move North");
-        delay(500);
         return;
     }
     if(S == min && maze[x][y] == min + 1 && openS) {
         move('S');
-        Serial.println("Move South");
-        delay(500);
         return;
     }
     if(E == min && maze[x][y] == min + 1 && openE) {
         move('E');
-        Serial.println("Move East");
-        delay(500);
         return;
     }
     if(W == min && maze[x][y] == min + 1 && openW) {
         move('W');
-        Serial.println("Move West");
-        delay(500);
         return;
     }
     
@@ -424,54 +411,6 @@ void move(char direction) {
     }
 
 
-    
-        // Keep away from the walls!
-        int leftDist;
-        int rightDist;
-
-        leftDist = timeofflight_instance->readL();
-        rightDist = timeofflight_instance->readR();
-
-        
-        // int closeLeftWall = 0;
-        // int closeRightWall = 0;
-        //ideal is 40
-        // less than 40 is close
-
-
-        if(leftDist <= 40 && !(leftDist >= 250)) {
-            //Serial.println("Right I think");
-            motors_instance->setRightMotorDirection(true); 
-            motors_instance->setLeftMotorDirection(false);
-
-            motors_instance->setRightMotorDirection(false); 
-            motors_instance->setLeftMotorDirection(true);
-
-            motors_instance->setLeftMotorSpeed(50);
-            motors_instance->setRightMotorSpeed(0);
-            delay((40-leftDist)*10);
-            motors_instance->setMotorsSpeed(0);
-
-
-        } 
-        if(rightDist <= 40 && !(rightDist >= 250)) {
-            //Serial.println("Right I think");
-            motors_instance->setRightMotorDirection(false); 
-            motors_instance->setLeftMotorDirection(true);
-
-            motors_instance->setRightMotorDirection(true); 
-            motors_instance->setLeftMotorDirection(false);
-
-            motors_instance->setLeftMotorSpeed(0);
-            motors_instance->setRightMotorSpeed(50);
-            delay((40-rightDist)*10);
-            motors_instance->setMotorsSpeed(0);
-        }
-
-
-        // int f?
-
-
     return;
 }
 
@@ -580,65 +519,40 @@ void invertMaze(char goal) {
 */
 
 // printout maze with bot starting at bottom left
-// void mazePrintout() {
-//     // printout maze
-//         std::cerr << std::endl;
-//         for(int j = 15; j >= 0; j--) {
-//             for(int i = 0; i < 16; i++) {
-               
-//                 if(currentCfg.x == i && currentCfg.y == j) {
-//                     if(maze[i][j] < 10) std::cerr << "[" << maze[i][j] << "], ";
-//                     else std::cerr << "[" << maze[i][j] << "], ";
-//                 } else {
-//                     if(maze[i][j] < 10) std::cerr << " " << maze[i][j] << ", ";
-//                     else std::cerr << maze[i][j] << ", ";
-//                 }
-
-                
-//             }
-//             std::cerr << std::endl;
-
-//         }
-//         std::cerr << std::endl;        
-// }
-
 void mazePrintout() {
     // printout maze
-        for(int j = 4; j >= 0; j--) {
-            for(int i = 0; i < 5; i++) {
-               
+        std::cerr << std::endl;
+        for(int j = 15; j >= 0; j--) {
+            for(int i = 0; i < 16; i++) {
+            
                 if(currentCfg.x == i && currentCfg.y == j) {
-                    Serial.print("[");
-                    Serial.print(maze[i][j]);
-                    Serial.print("], ");
+                    if(maze[i][j] < 10) std::cerr << "[" << maze[i][j] << "], ";
+                    else std::cerr << "[" << maze[i][j] << "], ";
                 } else {
-                    Serial.print(" ");
-                    Serial.print(maze[i][j]);
-                    Serial.print(", ");
+                    if(maze[i][j] < 10) std::cerr << " " << maze[i][j] << ", ";
+                    else std::cerr << maze[i][j] << ", ";
                 }
 
-                
+             
             }
-        Serial.println();
+            std::cerr << std::endl;
+
         }
-        Serial.println();      
+        std::cerr << std::endl;        
 }
 
 void runMaze(char goal) {
-    Serial.print("Start 2");
+    //Serial.print("Start 2");
 
     int loopCondition = 1;
 
     while(loopCondition) {
-            Serial.print("Loop");
 
             pathTaken.push(currentCfg);
-            Serial.print(pathTaken.top().x);
 
             // Micromouse moves from higher to lower elevations
             // std::cerr << "[" << currentCfg.x << " " << currentCfg.y << " " << currentCfg.dir << "] -> " << maze[currentCfg.x][currentCfg.y] << std::endl;
             flowElevation();
-            Serial.println("After flow"); 
             //end condition
             if(goal == 'c') {
                 if((currentCfg.x == 7 || currentCfg.x == 8) && (currentCfg.y == 7 || currentCfg.y == 8)) {
@@ -646,9 +560,6 @@ void runMaze(char goal) {
                 }
             }
 
-            // if(maze[currentCfg.x][currentCfg.y] == 0) {
-            //     break;
-            // }
 
             // std::cerr << "Walls Array "<< walls[currentCfg.x][currentCfg.y].openN << walls[currentCfg.x][currentCfg.y].openS << walls[currentCfg.x][currentCfg.y].openE << walls[currentCfg.x][currentCfg.y].openW << std::endl;
 
@@ -687,22 +598,15 @@ void backTrack() {
 
         if(yDiff == 1) {
             move('N');
-            Serial.println("Move North");
         }
         if(yDiff == -1) {
             move('S');
-            Serial.println("Move South");
         }
         if(xDiff == 1) {
             move('E');
-            Serial.println("Move East");
         }
         if(xDiff == -1) {
             move('W');
-            Serial.println("Move West");
         }
-
-        delay(500);
     }
-
 }

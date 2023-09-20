@@ -1,4 +1,4 @@
-/*
+
 #include "API.h"
 
 #include <cstdlib>
@@ -111,4 +111,4 @@ void API::ackReset() {
     std::string ack;
     std::cin >> ack;
 }
-*/
+
