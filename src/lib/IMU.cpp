@@ -30,7 +30,7 @@ IMU::IMU() {
  *  returns a value between 0 and 360
  */
 double IMU::getHeading() {
-    sensors_event_t orientationData , linearAccelData;
+    sensors_event_t orientationData;
     bno.getEvent(&orientationData, Adafruit_BNO055::VECTOR_EULER);
 
     return orientationData.orientation.x;
@@ -60,7 +60,7 @@ double IMU::getCardinal() {
     }
 
 
-
+    return 404;
 }
 
 

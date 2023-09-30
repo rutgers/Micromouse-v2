@@ -1,7 +1,7 @@
 #ifndef tof_h
 #define tof_h
 #include <Wire.h>
-// #include <VL53L1X.h>
+#include <VL53L1X.h>
 #include <VL6180X.h>
 
 #define V3
@@ -28,22 +28,23 @@
 
 // short range sensors vl6180x on the diagonals
 
-/*
+
 // The number of sensors in your system.
-const uint8_t vl53l1xCount = 0;
+const uint8_t vl53l1xCount = 3;
 
 // The Arduino pin connected to the XSHUT pin of each sensor.
-const uint8_t xshutPins[vl53l1xCount] = { };
+// long Range sensors
+const uint8_t xshutPins[vl53l1xCount] = { xshutW, xshutN, xshutE };
 //vl53l1x is named xshut, while vl6180x is named gpio/CE
-*/
+
 // The number of sensors in your system.
-const uint8_t vl6180xCount = 5;
+const uint8_t vl6180xCount = 2;
 
 
 // The Arduino pin connected to the XSHUT pin of each sensor.
-const uint8_t gpioPins[vl6180xCount] = { xshutW, xshutNW, xshutN, xshutNE,xshutE };
+const uint8_t gpioPins[vl6180xCount] = { xshutNW, xshutNE };
 
-// VL53L1X vl53l1xtof[vl53l1xCount];
+static VL53L1X vl53l1xtof[vl53l1xCount];
 
 static VL6180X vl6180xtof[vl6180xCount];
 

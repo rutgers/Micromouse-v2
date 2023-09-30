@@ -21,6 +21,9 @@ void setup() {
   delay(500);
 
   initialize();
+
+
+  // API::moveForward();
   runMaze('c');
   // backTrack();
 
@@ -29,6 +32,9 @@ void setup() {
 }
 
 void loop() {
+
+  // Serial.println(API::wallFront());
+
 
   // Serial.println("============");
   // Serial.println(timeofflight_instance->readL());

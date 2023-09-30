@@ -6,18 +6,12 @@
 
 //constructor
 tof::tof() {
-    //led test code
-    // digitalWrite(13, HIGH);
-    // delay(2000);
-
-    // digitalWrite(13, LOW);
-
-  // while (!Serial) {}
   Serial.begin(9600);
+
   Wire.begin();
   Wire.setClock(400000); // use 400 kHz I2C
 
-/*
+
 
   // Disable/reset all vl53l1xtof by driving their XSHUT pins low.
   for (uint8_t i = 0; i < vl53l1xCount; i++)
@@ -56,7 +50,7 @@ tof::tof() {
 
     vl53l1xtof[i].startContinuous(50);
   }
-*/
+
 
   for (uint8_t i = 0; i < vl6180xCount; i++)
   {
@@ -81,7 +75,7 @@ tof::tof() {
 
     vl6180xtof[i].stopContinuous();
     delay(300);
-    vl6180xtof[i].setAddress(0x2A+i);
+    vl6180xtof[i].setAddress(0x2A+i+vl53l1xCount);
 
     vl6180xtof[i].startInterleavedContinuous(100);
     
@@ -93,17 +87,17 @@ sensorReadings tof::readDistance() {
   
   sensorReadings returnStruct;
 
-  returnStruct.left = vl6180xtof[0].readRangeContinuousMillimeters();
-  returnStruct.frontLeft = vl6180xtof[1].readRangeContinuousMillimeters();
-  returnStruct.front = vl6180xtof[2].readRangeContinuousMillimeters();
-  returnStruct.frontRight = vl6180xtof[3].readRangeContinuousMillimeters();
-  returnStruct.right = vl6180xtof[4].readRangeContinuousMillimeters();
+  returnStruct.left = vl53l1xtof[0].read();
+  returnStruct.frontLeft = vl6180xtof[0].readRangeContinuousMillimeters();
+  returnStruct.front = vl53l1xtof[1].read();
+  returnStruct.frontRight = vl6180xtof[1].readRangeContinuousMillimeters();
+  returnStruct.right = vl53l1xtof[2].read();
 
 if (vl6180xtof[0].timeoutOccurred()) { Serial.print(" TIMEOUT"); }
 if (vl6180xtof[1].timeoutOccurred()) { Serial.print(" TIMEOUT"); }
-if (vl6180xtof[2].timeoutOccurred()) { Serial.print(" TIMEOUT"); }
-if (vl6180xtof[3].timeoutOccurred()) { Serial.print(" TIMEOUT"); }
-if (vl6180xtof[4].timeoutOccurred()) { Serial.print(" TIMEOUT"); }
+if (vl53l1xtof[0].timeoutOccurred()) { Serial.print(" TIMEOUT"); }
+if (vl53l1xtof[1].timeoutOccurred()) { Serial.print(" TIMEOUT"); }
+if (vl53l1xtof[2].timeoutOccurred()) { Serial.print(" TIMEOUT"); }
 
 Serial.println();
 Serial.print("Left: ");
@@ -122,39 +116,39 @@ Serial.println(returnStruct.right);
 }
 
 int tof::readL() {
-  return vl6180xtof[0].readRangeContinuousMillimeters();
-  if (vl6180xtof[0].timeoutOccurred()) { Serial.print(" TIMEOUT"); }
+  return vl53l1xtof[0].read();;
+  if (vl53l1xtof[0].timeoutOccurred()) { Serial.print(" TIMEOUT"); }
 }
 
 
 int tof::readFL() {
+  return vl6180xtof[0].readRangeContinuousMillimeters();
+  if (vl6180xtof[0].timeoutOccurred()) { Serial.print(" TIMEOUT"); }
+}
+
+int tof::readF() {
+  return vl53l1xtof[1].read();;
+  if (vl53l1xtof[1].timeoutOccurred()) { Serial.print(" TIMEOUT"); }
+}
+
+int tof::readFR() {
   return vl6180xtof[1].readRangeContinuousMillimeters();
   if (vl6180xtof[1].timeoutOccurred()) { Serial.print(" TIMEOUT"); }
 }
 
-int tof::readF() {
-  return vl6180xtof[2].readRangeContinuousMillimeters();
-  if (vl6180xtof[2].timeoutOccurred()) { Serial.print(" TIMEOUT"); }
-}
-
-int tof::readFR() {
-  return vl6180xtof[3].readRangeContinuousMillimeters();
-  if (vl6180xtof[3].timeoutOccurred()) { Serial.print(" TIMEOUT"); }
-}
-
 int tof::readR() {
-  return vl6180xtof[4].readRangeContinuousMillimeters();
-  if (vl6180xtof[4].timeoutOccurred()) { Serial.print(" TIMEOUT"); }
+  return vl53l1xtof[2].read();;
+  if (vl53l1xtof[2].timeoutOccurred()) { Serial.print(" TIMEOUT"); }
 }
 
 
 
 addressCheck tof::checkAddresses() {
+  Serial.println(vl53l1xtof[0].getAddress());
   Serial.println(vl6180xtof[0].getAddress());
+  Serial.println(vl53l1xtof[1].getAddress());
   Serial.println(vl6180xtof[1].getAddress());
-  Serial.println(vl6180xtof[2].getAddress());
-  Serial.println(vl6180xtof[3].getAddress());
-  Serial.println(vl6180xtof[4].getAddress());
+  Serial.println(vl53l1xtof[2].getAddress());
 
   addressCheck returnAddresses;
 
@@ -164,8 +158,8 @@ addressCheck tof::checkAddresses() {
   returnAddresses.frontRight = false;
   returnAddresses.right = false;
 
-  if(vl6180xtof[0].getAddress() == 0x2A) returnAddresses.left = true;
-  if(vl6180xtof[1].getAddress() == 0x2B) returnAddresses.frontLeft = true;
+  if(vl53l1xtof[0].getAddress() == 0x2A) returnAddresses.left = true;
+  if(vl53l1xtof[1].getAddress() == 0x2B) returnAddresses.front = true;
 // @@@@@@@@@@@@@@@@@@@@@ &&%%%%%%&&...&&   .,#%%%%%%%%%%%@     .....%@@@@@@@@@@@@@@
 // @@@@@@@@@@@@@@@@@@&&@&(,**..,     /....  ....(%%%%%%%%%%, ........@@@@@@@@@@@@@@
 // @@@@@@@@@@@@@@@@@@&,,,,(.../       %   . , ..... &%%%%%%%%# .......*@@@@@@@@@@@@
@@ -199,9 +193,9 @@ addressCheck tof::checkAddresses() {
 // /*###########%&&&&&&&&&&&%&#&&&%&&&%%%&&&&&%%%%%%%%%%%%%%%%####(/&###%%%%%%%%%&&
 // */##%%%%%%%%##%%%%%%%%%@&&&&&##&&&&&%%%%&&&&&%%&%%%%&%%%%%%%%%##&//##%%%%%%%%&&&
 
-  if(vl6180xtof[2].getAddress() == 0x2C) returnAddresses.front = true;
-  if(vl6180xtof[3].getAddress() == 0x2D) returnAddresses.frontRight = true;
-  if(vl6180xtof[4].getAddress() == 0x2E) returnAddresses.right = true;
+  if(vl53l1xtof[2].getAddress() == 0x2C) returnAddresses.right = true;
+  if(vl6180xtof[0].getAddress() == 0x2D) returnAddresses.frontLeft = true;
+  if(vl6180xtof[1].getAddress() == 0x2E) returnAddresses.frontRight = true;
 
   return returnAddresses;
 }

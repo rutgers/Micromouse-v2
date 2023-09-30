@@ -185,25 +185,25 @@ void flowElevation() {
     if(N == min && maze[x][y] == min + 1 && openN) {
         move('N');
         Serial.println("Move North");
-        delay(500);
+        delay(200);
         return;
     }
     if(S == min && maze[x][y] == min + 1 && openS) {
         move('S');
         Serial.println("Move South");
-        delay(500);
+        delay(200);
         return;
     }
     if(E == min && maze[x][y] == min + 1 && openE) {
         move('E');
         Serial.println("Move East");
-        delay(500);
+        delay(200);
         return;
     }
     if(W == min && maze[x][y] == min + 1 && openW) {
         move('W');
         Serial.println("Move West");
-        delay(500);
+        delay(200);
         return;
     }
     
