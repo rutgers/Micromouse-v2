@@ -58,9 +58,6 @@ void PIDStraight::InputToMotor(double desiredDistance) {
     double currentError = (currentErrorA + currentErrorB) / 2;
     
     while(currentError > 10) {
-        if(millis() % 100 == 0 && timeofflight_instance->readF() < 10) {
-            break;
-        }
     // while(currentError > 10) {
 
         Serial.println(angleDiff);
