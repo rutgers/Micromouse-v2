@@ -1,17 +1,17 @@
 #include <Arduino.h>
 #include "Motors.h"
 
-#ifdef V3
+// #ifdef V3
 
-Encoder ENCA(2,3);
-Encoder ENCB(10,11);
+// Encoder ENCA(2,3);
+// Encoder ENCB(10,11);
 
-#else
+// #else
 
-Encoder ENCA(2,1);  // these may be reversed
-Encoder ENCB(3,4);
+Encoder ENCB(2,1);  // these may be reversed
+Encoder ENCA(4,3); //3,4
 
-#endif
+// #endif
 
 
 void Motors::enableMotors() {
@@ -88,6 +88,22 @@ void Motors::setRightMotorDirection(bool forward) {
         digitalWrite(pin_BIN2, LOW);
     }
 }
+int Motors::getlefttick(){
+    return ENCA.read();
+}
+int Motors::getrighttick(){
+    return ENCB.read();
+}
+void Motors::setlefttick(int set){
+    ENCA.write(set);
+}
+void Motors::setrighttick(int set){
+    ENCB.write(set);
+}
+void Motors::setTick(int set){
+    setlefttick(set);
+    setrighttick(set);
+}
 
 
 /**
@@ -96,7 +112,6 @@ void Motors::setRightMotorDirection(bool forward) {
  */
 void Motors::setMotorsDirection(bool forward) {
     setLeftMotorDirection(forward);
-    setRightMotorDirection(forward);
+    setRightMotorDirection(!forward);
 }
-
 Motors* motors_instance = new Motors();

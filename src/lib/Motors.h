@@ -12,11 +12,11 @@
 #define pin_PWMB 5
 #define pin_AIN1 8
 #define pin_AIN2 7
-extern Encoder ENCA;
+extern Encoder ENCB;
 #define pin_BIN1 9
 #define pin_BIN2 10
 #define pin_STBY 11
-extern Encoder ENCB;
+extern Encoder ENCA;
 
 #endif
 #ifdef V3
@@ -46,6 +46,11 @@ class Motors {
         void setLeftMotorDirection(bool forward);
         void setRightMotorDirection(bool forward);
         void setMotorsDirection(bool forward);
+        int getlefttick();
+        void setlefttick(int set);
+        int getrighttick();
+        void setrighttick(int set);
+        void setTick(int set);
 
 };
 
