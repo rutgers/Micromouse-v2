@@ -87,9 +87,17 @@ void PIDStraight::drive_to_position(double target_position) {
         Serial.print(error);
         Serial.println();
 
+        double cappedIntegral = kI * total_error;
+
+        if (cappedIntegral > 60.0) {
+            cappedIntegral = 60.0;
+        } else if (cappedIntegral < -60.0) {
+            cappedIntegral = -60.0;
+        }
+
         //double motor_output = (kP * error  + kD * (error-prev_error)/(current_time-prev_time) + kI * total_error)*25;
-        double motor_output_l = (kP * error + kI*total_error)*10;
-        double motor_output_r = (kP * error + kI*total_error)*10;
+        double motor_output_l = (kP*10 * error + cappedIntegral);
+        double motor_output_r = (kP*10 * error + cappedIntegral);
         
         if (error > 0.0) {
             motors_instance->setLeftMotorDirection(true);//false
