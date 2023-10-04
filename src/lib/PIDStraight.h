@@ -9,12 +9,12 @@ class PIDStraight {
     public:
         void InputToMotor(double desiredDistance);
 
-        const double Kp = 0.1;
+        const double Kp = 0.09;
         const double Ki = 0;
         const double Kd = 0;
 
 
-        const double Kap = 5;
+        const double Kap = 2.3;
         const double Kai = 0;
         const double Kad = 0;
 

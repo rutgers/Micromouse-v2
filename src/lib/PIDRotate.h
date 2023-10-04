@@ -9,7 +9,8 @@ class PIDRotate {
         void InputToMotor(double targetdegree);
 
         //below section is used for tuning, will return to it later. 
-        const double Kp = 1.4; //proportional
+        const double Kp = 1.35;
+    
         const double Ki = 0; //integral 
         const double Kd = 0; //derivative
     
