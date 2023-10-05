@@ -263,6 +263,9 @@ void loop() {
             API::setText(i,j,std::to_string(mazetable[i][j]));
         }
     }*/
+    // while(1){
+    //     Serial.printf("left: %d\t right: %d\n",tof_instance->readL(),tof_instance->readR());
+    // }
 
     int direction = NORTH;
     while (true) {
@@ -366,7 +369,7 @@ void loop() {
                 //log("dist: " + std::to_string(mazetable[xpos][ypos]));
 
                 //API::moveForward();
-                pidstraight_instance->drive_to_position(6.25);
+                pidstraight_instance->drive_to_position(6);
                 updatePositions(direction, &xpos, &ypos);
                 continue;
             }
@@ -380,21 +383,18 @@ void loop() {
                 //API::turnLeft();
                 pidrotate_instance->rotate_to_angle(imu_instance->getHeading()-90, 1.25, 5.0, 0.0002);
                 //API::moveForward();
-                pidstraight_instance->drive_to_position(6.25);
+                pidstraight_instance->drive_to_position(6);
                 updatePositions(direction, &xpos, &ypos);
                 continue;
             }
             
             if (rMinVal == minValue) {
-                //log("x: " + std::to_string(xpos));
-                //log("y: " + std::to_string(ypos));
-                //log("dist: " + std::to_string(mazetable[xpos][ypos]));
 
                 changeDirectionRight(&direction);
                 //API::turnRight();
                 pidrotate_instance->rotate_to_angle(imu_instance->getHeading()+90, 1.25, 5.0, 0.0002);
                 //API::moveForward();
-                pidstraight_instance->drive_to_position(6.25);
+                pidstraight_instance->drive_to_position(6);
                 updatePositions(direction, &xpos, &ypos);
                 continue;
             }

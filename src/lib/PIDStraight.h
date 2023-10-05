@@ -23,7 +23,7 @@ class PIDstraight{
 
          const double Kp = 8;
         const double Ki = 0;
-        const int Kd = 5;
+        const int Kd = 10;
 };
 // PIDstraight* pidstraight_instance;
 #endif
