@@ -1,25 +1,30 @@
 #include "PIDStraight.h"
 #include<cstdlib>
 PIDstraight::PIDstraight(){
-    imu = new IMU();
+    // imu = new IMU();
     motors_instance->setTick(0);
-    tof_instance = new tof();
-    pidrotate_instance = new PIDRotate();
+    // tof_instance = new tof();
+    // pidrotate_instance = new PIDRotate();
     
 
     
 
 }
+
 PIDstraight::~PIDstraight(){
-    delete imu;
-    delete tof_instance;
-    delete pidrotate_instance;
+    // delete imu;
+    // delete tof_instance;
+    // delete pidrotate_instance;
    
 }
 /**
  * Allows the bot to go straight weeeee
+ * 4.82370523622 inches = 360 is circumference
 */
-void PIDstraight::goStraight(int distance){
+
+void PIDstraight::drive_to_position(double distance){
+    tof_instance->readL();
+    distance *= 74.6314259206;
     motors_instance->enableMotors();
     motors_instance->setMotorsDirection(true);
     motors_instance->setTick(0);
@@ -28,7 +33,7 @@ void PIDstraight::goStraight(int distance){
                              
 //(( abs(motors_instance->getlefttick())) + (abs(motors_instance->getrighttick()))/2) < distance
             
-        while(1){
+        while(((double)(((abs(motors_instance->getlefttick())) + (abs(motors_instance->getrighttick())))/2) < distance)){
             Proportion = ( abs(motors_instance->getlefttick())) - (abs(motors_instance->getrighttick()));
             Serial.printf("%d - %d = Proportion %d\n",motors_instance->getlefttick(),motors_instance->getrighttick(),Proportion);
             Integral += Proportion;
@@ -37,13 +42,13 @@ void PIDstraight::goStraight(int distance){
             leftpower -= total;
             rightpower += total;
             
-            leftpower = constrain(leftpower,0,60);
-            rightpower = constrain(rightpower,0,60);
+            leftpower = constrain(leftpower,0,100);
+            rightpower = constrain(rightpower,0,100);
             Serial.printf("Left: %d, right: %d\n",leftpower,rightpower);
             motors_instance->setLeftMotorSpeed(leftpower);
             motors_instance->setRightMotorSpeed(rightpower);
             lasterror = Proportion; 
-            delay(20);
+            // delay(20);
 
         }
         motors_instance->setMotorsSpeed(0);

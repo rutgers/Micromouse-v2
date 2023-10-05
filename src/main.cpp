@@ -9,7 +9,7 @@
 #include "lib\PIDMagicStraight.h"
 #include "lib\tof.h"
 #include "lib\IMU.h"
-
+PIDstraight* pidstraight_instance = new PIDstraight();
 //#include "API.h"
 
 /*void log(const std::string& text) {
@@ -345,11 +345,6 @@ void loop() {
             //log("can go right");
             changeDirectionRight(&direction);
             updatePositions(direction, &tempX, &tempY);
-            //log("tempY: " + std::to_string(tempY));
-            //log("Ypos: " + std::to_string(ypos));
-
-            //log("changeDist: " + std::to_string(mazetable[tempX][tempY]));
-            //log("origDist: " + std::to_string(mazetable[xpos][ypos]));
             rMinVal = mazetable[tempX][tempY];
             changeDirectionLeft(&direction);
             if (rMinVal < minValue) {
@@ -371,7 +366,7 @@ void loop() {
                 //log("dist: " + std::to_string(mazetable[xpos][ypos]));
 
                 //API::moveForward();
-                pidstraight_instance->drive_to_position(6);
+                pidstraight_instance->drive_to_position(6.25);
                 updatePositions(direction, &xpos, &ypos);
                 continue;
             }
@@ -385,7 +380,7 @@ void loop() {
                 //API::turnLeft();
                 pidrotate_instance->rotate_to_angle(imu_instance->getHeading()-90, 1.25, 5.0, 0.0002);
                 //API::moveForward();
-                pidstraight_instance->drive_to_position(6);
+                pidstraight_instance->drive_to_position(6.25);
                 updatePositions(direction, &xpos, &ypos);
                 continue;
             }
@@ -399,7 +394,7 @@ void loop() {
                 //API::turnRight();
                 pidrotate_instance->rotate_to_angle(imu_instance->getHeading()+90, 1.25, 5.0, 0.0002);
                 //API::moveForward();
-                pidstraight_instance->drive_to_position(6);
+                pidstraight_instance->drive_to_position(6.25);
                 updatePositions(direction, &xpos, &ypos);
                 continue;
             }

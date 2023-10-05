@@ -7,7 +7,7 @@
 #include "PidRotate.h"
 class PIDstraight{
     public:
-        void goStraight(int distance);
+        void drive_to_position(double distance);
         PIDstraight();
         ~PIDstraight();
     private:
@@ -23,7 +23,7 @@ class PIDstraight{
 
          const double Kp = 8;
         const double Ki = 0;
-        const int Kd = 4;
+        const int Kd = 5;
 };
-extern PIDstraight* pidstraight_instance = new PIDstraight();
+// PIDstraight* pidstraight_instance;
 #endif
