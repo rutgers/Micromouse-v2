@@ -14,7 +14,7 @@ bool API::wallFront() {
 
 bool API::wallRight() {
     int distance = timeofflight_instance->readR();
-    if(distance < 100) {
+    if(distance < 50) {
         return true;
     } else {
         return false;
@@ -23,7 +23,7 @@ bool API::wallRight() {
 
 bool API::wallLeft() {
     int distance = timeofflight_instance->readL();
-    if(distance < 100) {
+    if(distance < 50) {
         return true;
     } else {
         return false;
@@ -39,7 +39,7 @@ void API::moveForward() {
     pidstraight_instance->InputToMotor(blockLength); //go 11 cm. works fine
     delay(200);
     while(timeofflight_instance -> readF() > 15 && timeofflight_instance -> readF() < 100) {
-        pidstraight_instance->InputToMotor(blockLength/5);
+        pidstraight_instance->InputToMotor(blockLength/2);
     }
     return;
 }
@@ -47,7 +47,6 @@ void API::moveForward() {
 
 void API::turnRight() {
     double fieldAngle = imu_instance->getCardinal();
-
 
     pidrotate_instance->InputToMotor(fieldAngle+90); //right 90
     delay(200);
