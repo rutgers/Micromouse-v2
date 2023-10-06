@@ -33,11 +33,11 @@ bool API::wallLeft() {
 
 //  pidstraight_instance->InputToMotor(0,blocklength); //go 11 cm. works fine
 //   pidrotate_instance->InputToMotor(-90); //left 90
-double blockLength = 16.8;
+double blockLength = 15.4;
 
 void API::moveForward() {
     pidstraight_instance->InputToMotor(blockLength); //go 11 cm. works fine
-    delay(300);
+    delay(200);
     return;
 }
 
@@ -47,7 +47,7 @@ void API::turnRight() {
 
 
     pidrotate_instance->InputToMotor(fieldAngle+90); //right 90
-    delay(300);
+    delay(200);
     return;
 }
 
@@ -55,13 +55,13 @@ void API::turnLeft() {
     double fieldAngle = imu_instance->getCardinal();
     
     pidrotate_instance->InputToMotor(fieldAngle-90); //left 90
-    delay(300);
+    delay(200);
     return;
 }
 
 void API::turnAround() {
     double fieldAngle = imu_instance->getCardinal();
     pidrotate_instance->InputToMotor(fieldAngle+180); //180
-    delay(300);
+    delay(200);
     return;
 }

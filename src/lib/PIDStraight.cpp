@@ -11,7 +11,6 @@
 void PIDStraight::InputToMotor(double desiredDistance) {
     //initialize current values
 
-    // proportional
     // ===== distance =====
     
     // circumference = pi*d
@@ -21,11 +20,6 @@ void PIDStraight::InputToMotor(double desiredDistance) {
     encoder_instanceA.write(0);
     encoder_instanceB.write(0);
     
-    int curA, curB, currEnc;
-    double currentErrorA = desiredTicksDistance;
-    double currentErrorB = desiredTicksDistance;
-    double currentError = (currentErrorA + currentErrorB) / 2;
-
     // ===== angle =====
     double keepAngle = imu_instance->getCardinal();
     double currentAngle = imu_instance->getHeading();
@@ -36,36 +30,63 @@ void PIDStraight::InputToMotor(double desiredDistance) {
     else if (angleDiff < -180.0) { angleDiff += 360.0; }      
     // // if angleDiff is -, we are too far to the right
 
-    // derivative
-    // double oldAngleDiff = angleDiff;
-    // double oldTime = micros();
-    // double derivativeAngleDiff = (angleDiff - oldAngleDiff) / ((micros() - oldTime) / 1e6);
+    // ===== wall distance =====
+    // double leftDist = timeofflight_instance->readL();
+    // double rightDist = timeofflight_instance->readR();
+
+    /*
+    // valid wall checking ranges from 20 to 60
+    if(leftDist > 60) leftDist = 38;
+    if(rightDist > 60) rightDist = 38;
+
 
     
-    while(currentError > 5) {
+    // ===== front wall distance ====
+    // distance to front wall should always be greater than 20 (wall), with 255 (no wall)
+    double frontDist = timeofflight_instance->readF();
 
-        if(millis() % 20 == 0 && timeofflight_instance->readF() < 30) {
-            break;
-        }
+    */
+
+    //initialize old values
+    // int prevEnc = currEnc;
+    // double oldError = currentError;
+
+
+    int curA, curB, currEnc;
+    double currentErrorA = desiredTicksDistance;
+    double currentErrorB = desiredTicksDistance;
+    double currentError = (currentErrorA + currentErrorB) / 2;
+    
+    while(currentError > 10) {
+    // while(currentError > 10) {
+
+        Serial.println(angleDiff);
 
         double outDistA = Kp * currentErrorA;// + Ki * integral + Kd * deriv;
         double outDistB = Kp * currentErrorB;// + Ki * integral + Kd * deriv;
         
         double outAngle = Kap * angleDiff;
 
+        // double closeLeft = 0.7*(38-leftDist);
+        // double closeRight = 0.7*(38-rightDist);
+        
         motors_instance->setRightMotorSpeed(40 + outDistA - outAngle);
         motors_instance->setLeftMotorSpeed(40 + outDistB + outAngle);
 
-        // proportional
+        // motors_instance->setRightMotorSpeed(outDistA);        
+        // motors_instance->setLeftMotorSpeed(outDistB);
+
+        // set old values
+
         // ------------ get new values ------------
         // ===== distance =====
         curA = encoder_instanceA.read();
         curB = encoder_instanceB.read();
         currEnc = (curA + curB) / 2;
-        
-        currentErrorA = desiredTicksDistance - curA;
-        currentErrorB = desiredTicksDistance - curB;
+
         currentError = desiredTicksDistance - currEnc;
+        // currentErrorA = desiredTicksDistance - curA;
+        // currentErrorB = desiredTicksDistance - curB;
 
         //  ===== angle =====
         currentAngle = imu_instance->getHeading();
@@ -74,10 +95,17 @@ void PIDStraight::InputToMotor(double desiredDistance) {
              if (angleDiff >  180.0) { angleDiff -= 360.0; }
         else if (angleDiff < -180.0) { angleDiff += 360.0; }   
 
-        // derivative
-        // derivativeAngleDiff = (angleDiff - oldAngleDiff) / ((micros() - oldTime) / 1e6);
-        // oldAngleDiff = angleDiff;
-        // oldTime = micros();
+        // ===== wall distance =====
+        //  leftDist = timeofflight_instance->readL();
+        //  rightDist = timeofflight_instance->readR();
+
+        // valid wall checking ranges from 20 to 60
+        // if(leftDist > 60) leftDist = 38;
+        // if(rightDist > 60) rightDist = 38;
+        
+        // ===== front wall distance ====
+        // distance to front wall should either be 255 (no wall) or 20 (wall)
+        //  frontDist = timeofflight_instance->readF();
 
     }
 
