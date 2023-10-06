@@ -57,26 +57,20 @@ void PIDStraight::InputToMotor(double desiredDistance) {
     double currentErrorB = desiredTicksDistance;
     double currentError = (currentErrorA + currentErrorB) / 2;
     
-    while(currentError > 10) {
-    // while(currentError > 10) {
+    while(currentError > 5) {
 
-        Serial.println(angleDiff);
+        if(millis() % 50 == 0 && timeofflight_instance -> readF() < 50) {
+            break;
+        }
+
 
         double outDistA = Kp * currentErrorA;// + Ki * integral + Kd * deriv;
         double outDistB = Kp * currentErrorB;// + Ki * integral + Kd * deriv;
         
         double outAngle = Kap * angleDiff;
 
-        // double closeLeft = 0.7*(38-leftDist);
-        // double closeRight = 0.7*(38-rightDist);
-        
-        motors_instance->setRightMotorSpeed(40 + outDistA - outAngle);
-        motors_instance->setLeftMotorSpeed(40 + outDistB + outAngle);
-
-        // motors_instance->setRightMotorSpeed(outDistA);        
-        // motors_instance->setLeftMotorSpeed(outDistB);
-
-        // set old values
+        motors_instance->setRightMotorSpeed(20 + outDistA - outAngle);
+        motors_instance->setLeftMotorSpeed(20 + outDistB + outAngle);
 
         // ------------ get new values ------------
         // ===== distance =====
@@ -95,17 +89,6 @@ void PIDStraight::InputToMotor(double desiredDistance) {
              if (angleDiff >  180.0) { angleDiff -= 360.0; }
         else if (angleDiff < -180.0) { angleDiff += 360.0; }   
 
-        // ===== wall distance =====
-        //  leftDist = timeofflight_instance->readL();
-        //  rightDist = timeofflight_instance->readR();
-
-        // valid wall checking ranges from 20 to 60
-        // if(leftDist > 60) leftDist = 38;
-        // if(rightDist > 60) rightDist = 38;
-        
-        // ===== front wall distance ====
-        // distance to front wall should either be 255 (no wall) or 20 (wall)
-        //  frontDist = timeofflight_instance->readF();
 
     }
 

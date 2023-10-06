@@ -6,6 +6,8 @@
 //use absolute angle based on field 
 void PIDRotate::InputToMotor(double targetDegree){
      
+    double startTime = millis();
+
     double currentDegree = imu_instance->getHeading();
 
     double currentError = targetDegree - currentDegree;
@@ -18,6 +20,10 @@ void PIDRotate::InputToMotor(double targetDegree){
 
     while(abs(currentError) > 5) {
 
+        if(millis() - startTime > 2e3) {
+            break;
+
+        }
         double out = Kp * currentError;// + Ki * integral + Kd * deriv; // -27 or -26.99
        
         motors_instance->setLeftMotorSpeed(out);
