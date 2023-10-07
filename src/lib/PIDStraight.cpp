@@ -30,28 +30,6 @@ void PIDStraight::InputToMotor(double desiredDistance) {
     else if (angleDiff < -180.0) { angleDiff += 360.0; }      
     // // if angleDiff is -, we are too far to the right
 
-    // ===== wall distance =====
-    // double leftDist = timeofflight_instance->readL();
-    // double rightDist = timeofflight_instance->readR();
-
-    /*
-    // valid wall checking ranges from 20 to 60
-    if(leftDist > 60) leftDist = 38;
-    if(rightDist > 60) rightDist = 38;
-
-
-    
-    // ===== front wall distance ====
-    // distance to front wall should always be greater than 20 (wall), with 255 (no wall)
-    double frontDist = timeofflight_instance->readF();
-
-    */
-
-    //initialize old values
-    // int prevEnc = currEnc;
-    // double oldError = currentError;
-
-
     int curA, curB, currEnc;
     double currentErrorA = desiredTicksDistance;
     double currentErrorB = desiredTicksDistance;
@@ -59,7 +37,7 @@ void PIDStraight::InputToMotor(double desiredDistance) {
     
     while(currentError > 5) {
 
-        if(millis() % 30 == 0 && timeofflight_instance -> readF() < 55) {
+        if(millis() % 100 == 0 && timeofflight_instance -> readF() < 55) {
             break;
         }
 

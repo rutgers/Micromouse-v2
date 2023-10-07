@@ -19,6 +19,7 @@ void setup() {
 
   digitalWrite(LED_BUILTIN, HIGH);
   delay(500);
+  pidstraight_instance->InputToMotor(2);
 
   initialize();
 
@@ -35,12 +36,12 @@ void loop() {
 
   // Serial.println(API::wallFront());
   
-
+  
   // Serial.println("============");
   // Serial.println(timeofflight_instance->readL());
-  // // Serial.println(timeofflight_instance->readFL());
+  // // // Serial.println(timeofflight_instance->readFL());
   // Serial.println(timeofflight_instance->readF());
-  // // Serial.println(timeofflight_instance->readFR());
+  // // // Serial.println(timeofflight_instance->readFR());
   // Serial.println(timeofflight_instance->readR());
 
   delay(500);

@@ -5,7 +5,7 @@
 
 bool API::wallFront() {
     int distance = timeofflight_instance->readF();
-    if(distance < 50) {
+    if(distance < 80) {
         return true;
     } else {
         return false;
@@ -14,7 +14,7 @@ bool API::wallFront() {
 
 bool API::wallRight() {
     int distance = timeofflight_instance->readR();
-    if(distance < 50) {
+    if(distance < 80) {
         return true;
     } else {
         return false;
@@ -23,7 +23,7 @@ bool API::wallRight() {
 
 bool API::wallLeft() {
     int distance = timeofflight_instance->readL();
-    if(distance < 50) {
+    if(distance < 80) {
         return true;
     } else {
         return false;
@@ -33,14 +33,32 @@ bool API::wallLeft() {
 
 //  pidstraight_instance->InputToMotor(0,blocklength); //go 11 cm. works fine
 //   pidrotate_instance->InputToMotor(-90); //left 90
-double blockLength = 14.5;
+double blockLength = 16.0;
 
 void API::moveForward() {
     pidstraight_instance->InputToMotor(blockLength); //go 11 cm. works fine
     delay(200);
+    // while(timeofflight_instance -> readF() < 15) {
+    //     pidstraight_instance->InputToMotor(-blockLength/2);
+    // }
     while(timeofflight_instance -> readF() > 15 && timeofflight_instance -> readF() < 100) {
         pidstraight_instance->InputToMotor(blockLength/2);
     }
+    // if(timeofflight_instance -> readL() < 10) {
+    //     double fieldAngle = imu_instance->getHeadingFast();
+    //     pidrotate_instance->InputToMotor(fieldAngle + 10); //180
+    //     delay(100);
+
+    // }
+
+    // if(timeofflight_instance -> readR() < 10) {
+    //     double fieldAngle = imu_instance->getHeadingFast();
+    //     pidrotate_instance->InputToMotor(fieldAngle - 10); //180
+    //     delay(100);
+
+    // }
+    // alignForward();
+
     return;
 }
 
@@ -67,5 +85,14 @@ void API::turnAround() {
     delay(100);
     pidrotate_instance->InputToMotor(fieldAngle+180); //180
     delay(200);
+    return;
+}
+
+
+void API::alignForward() {
+    double fieldAngle = imu_instance->getCardinal();
+    pidrotate_instance->InputToMotor(fieldAngle); //180
+    delay(100);
+    
     return;
 }

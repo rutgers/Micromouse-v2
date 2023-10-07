@@ -22,5 +22,6 @@ public:
     static void turnRight();
     static void turnLeft();
     static void turnAround();
+    static void alignForward();
 };
 #endif
