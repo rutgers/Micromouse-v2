@@ -46,6 +46,9 @@ class Motors {
         void setLeftMotorDirection(bool forward);
         void setRightMotorDirection(bool forward);
         void setMotorsDirection(bool forward);
+        void setClockWise();
+        void setCClockWise();
+        void setStraight();
         int getlefttick();
         void setlefttick(int set);
         int getrighttick();

@@ -37,7 +37,80 @@ enum direction {
         log("WEST");
     }
 }*/
+void goC(){
+    motors_instance->setClockWise();
+    delay(20);
+    motors_instance->setLeftMotorSpeed(100);
+    motors_instance->setRightMotorSpeed(100);
+    delay(10);
+    motors_instance->setMotorsSpeed(0);
+}
+void goCC(){
+    motors_instance->setCClockWise();
+    delay(20);
+    motors_instance->setLeftMotorSpeed(100);
+    motors_instance->setRightMotorSpeed(100);
+    delay(10);
+    motors_instance->setMotorsSpeed(0);
+}
+double setdirection(){
+    if(tof_instance->readL() < 60 && tof_instance->readR() < 60){//LR walls exist
+    Serial.printf("Both walls detected\n");
+        if(tof_instance->readL() - tof_instance->readR() < 10){ //Skewed Towards left
+        Serial.printf("skewed left\n");
+        Serial.printf("Clockwise rotation\n");
+            goC();
+            delay(10);
+            
+        }
+        else if(tof_instance->readL() - tof_instance->readR() > 10){ //skewed towards right
+            Serial.printf("skewed right\n");
+            Serial.printf("Counter-Clockwise rotation\n");
+            goCC();
+            delay(10);
+            // goCC();
+        
+        }
+        motors_instance->setMotorsSpeed(0);
+    }
+    else if(tof_instance->readL() < 60){ //L wall, no R wall.
+    Serial.printf("Just left wall\n");
+        if(tof_instance->readL() < 30){
+            Serial.printf("skewed left\n");
+            Serial.printf("Clockwise rotation\n");
+            goC();
+            delay(10);
+            // goC();
+        }
+        else if(tof_instance->readL() >45){
+            Serial.printf("skewed right\n");
+            Serial.printf("Counter-Clockwise rotation\n");
+             goCC();
+             delay(10);
+            //  goCC();
+        }
+    }
+    else if(tof_instance->readR() < 60){ //no L wall, just R wall.
+        Serial.printf("Just right\n");
+        if(tof_instance->readR() < 40){ //skewed right
+        Serial.printf("skewed right\n");
+        Serial.printf("Counter-Clockwise rotation\n");
+            goCC();
+            delay(10);
+            // goCC();
+        }
+        else if(tof_instance->readR() > 45){ //Skewed left
+        Serial.printf("skewed left\n");
+        Serial.printf("Clockwise rotation\n");
+            goC();
+            delay(10);
+            // goC();
+        }
+    }
 
+    return 6.0;
+    
+}
 void changeDirectionRight(int* d) {
     if (*d == NORTH) {
         *d = EAST;
@@ -243,30 +316,13 @@ void updatePositions(int d, int* x, int* y) {
 void setup() {
     // put your setup code here, to run once:
     Serial.begin(9600);
-
-    //timeofflight = new tof();
-    //timeofflight->checkAddresses();  
-    // Serial.println(timeofflight->readDistance().left);
-    //Serial.println("hello world");
-    //delay(5000);
-    //Serial.print("left dist: ");
     motors_instance->enableMotors();
 }
-
+//830 / 12 feet
 void loop() {
-    //log("Running...");
-    //API::setColor(0, 0, 'G');
-    //API::setText(0, 0, "abc");
-
-    /*for (int i = 0; i < 16; i++) {
-        for (int j = 0; j < 16; j++) {
-            API::setText(i,j,std::to_string(mazetable[i][j]));
-        }
-    }*/
     // while(1){
-    //     Serial.printf("left: %d\t right: %d\n",tof_instance->readL(),tof_instance->readR());
+    //     Serial.printf("L:%d\tR:%d\n",(tof_instance->readL()),tof_instance->readR());
     // }
-
     int direction = NORTH;
     while (true) {
 
@@ -361,6 +417,7 @@ void loop() {
         log("fMinVal: " + std::to_string(fMinVal));
         log("lMinVal: " + std::to_string(lMinVal));
         log("rMinVal: " + std::to_string(rMinVal));*/
+        double ddirection;
 
         if (minValue < mazetable[xpos][ypos]) {
             if (fMinVal == minValue) {
@@ -369,7 +426,8 @@ void loop() {
                 //log("dist: " + std::to_string(mazetable[xpos][ypos]));
 
                 //API::moveForward();
-                pidstraight_instance->drive_to_position(6);
+                ddirection = setdirection();
+                pidstraight_instance->drive_to_position(ddirection);
                 updatePositions(direction, &xpos, &ypos);
                 continue;
             }
@@ -380,10 +438,10 @@ void loop() {
                 //log("dist: " + std::to_string(mazetable[xpos][ypos]));
 
                 changeDirectionLeft(&direction);
-                //API::turnLeft();
+
                 pidrotate_instance->rotate_to_angle(imu_instance->getHeading()-90, 1.25, 5.0, 0.0002);
-                //API::moveForward();
-                pidstraight_instance->drive_to_position(6);
+                ddirection = setdirection();
+                pidstraight_instance->drive_to_position(ddirection);
                 updatePositions(direction, &xpos, &ypos);
                 continue;
             }
@@ -394,7 +452,8 @@ void loop() {
                 //API::turnRight();
                 pidrotate_instance->rotate_to_angle(imu_instance->getHeading()+90, 1.25, 5.0, 0.0002);
                 //API::moveForward();
-                pidstraight_instance->drive_to_position(6);
+                ddirection = setdirection();
+                pidstraight_instance->drive_to_position(ddirection);
                 updatePositions(direction, &xpos, &ypos);
                 continue;
             }

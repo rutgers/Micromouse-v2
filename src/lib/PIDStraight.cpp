@@ -23,35 +23,47 @@ PIDstraight::~PIDstraight(){
 */
 
 void PIDstraight::drive_to_position(double distance){
-    tof_instance->readL();
-    distance *= 74.6314259206;
+    distance *= 82;
     motors_instance->enableMotors();
     motors_instance->setMotorsDirection(true);
     motors_instance->setTick(0);
     delay(100);
-    motors_instance->setMotorsSpeed(50);
-                             
-//(( abs(motors_instance->getlefttick())) + (abs(motors_instance->getrighttick()))/2) < distance
+    motors_instance->setMotorsSpeed(50); 
             
         while(((double)(((abs(motors_instance->getlefttick())) + (abs(motors_instance->getrighttick())))/2) < distance)){
             Proportion = ( abs(motors_instance->getlefttick())) - (abs(motors_instance->getrighttick()));
-            // Serial.printf("%d - %d = Proportion %d\n",motors_instance->getlefttick(),motors_instance->getrighttick(),Proportion);
             Integral += Proportion;
             Derivative = Proportion - lasterror;
             int total = (Kp * Proportion) + Ki * Integral + Kd * Derivative;
             leftpower -= total;
             rightpower += total;
             
-            leftpower = constrain(leftpower,0,200);
-            rightpower = constrain(rightpower,0,200);
-            Serial.printf("Left: %d, right: %d\n",leftpower,rightpower);
+            leftpower = constrain(leftpower,0,100);
+            rightpower = constrain(rightpower,0,100);
             motors_instance->setLeftMotorSpeed(leftpower);
             motors_instance->setRightMotorSpeed(rightpower);
             lasterror = Proportion; 
             // delay(20);
 
         }
+    
         motors_instance->setMotorsSpeed(0);
+        delay(10);
+        if(tof_instance->readF() < 150){
+            // gointowall();
+        }
+
+}
+void PIDstraight::gointowall(){
+
+    while(tof_instance->readF() > 50){
+          motors_instance->setMotorsSpeed(30);
+          delay(30);
+          motors_instance->setMotorsSpeed(0);
+          delay(50);
+
+    }
+   
 }
 double PIDstraight::map(double error){
     if (error > 180.0) {

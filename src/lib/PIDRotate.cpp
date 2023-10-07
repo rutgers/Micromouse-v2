@@ -59,16 +59,16 @@ void PIDRotate::rotate_to_angle(double target_angle, int boost, double threshold
 
         //int target_angle = current_angle + angle;
 
-        Serial.print("current angle: ");
-        Serial.print(current_angle);
-        Serial.println();
+        // Serial.print("current angle: ");
+        // Serial.print(current_angle);
+        // Serial.println();
 
         if (abs(error) < 0.5) {
             exitCount++;
         }
 
         if (exitCount > 10) {
-            Serial.println("breaking");
+            // Serial.println("breaking");
             break;
         }
 
@@ -85,9 +85,9 @@ void PIDRotate::rotate_to_angle(double target_angle, int boost, double threshold
             error += 180.0;
         }*/
 
-        Serial.print("error: ");
-        Serial.print(error);
-        Serial.println();
+        // Serial.print("error: ");
+        // Serial.print(error);
+        // Serial.println();
 
         double cappedIntegral = kI * total_error;
 
@@ -103,11 +103,11 @@ void PIDRotate::rotate_to_angle(double target_angle, int boost, double threshold
         
         if (error > 0.0) {
             motors_instance->setLeftMotorDirection(true);//false
-            Serial.println("left false and right true");
+            // Serial.println("left false and right true");
             motors_instance->setRightMotorDirection(true);//true
         } else {
             motors_instance->setLeftMotorDirection(false);//true
-            Serial.println("left true and right false");
+            // Serial.println("left true and right false");
             motors_instance->setRightMotorDirection(false);//false
         }
 
@@ -132,13 +132,13 @@ void PIDRotate::rotate_to_angle(double target_angle, int boost, double threshold
         }
 
         
-        Serial.print("capped integral: ");
-        Serial.print(cappedIntegral);
-        Serial.println();
+        // Serial.print("capped integral: ");
+        // Serial.print(cappedIntegral);
+        // Serial.println();
 
-        Serial.print("motor output: ");
-        Serial.print(motor_output);
-        Serial.println();
+        // Serial.print("motor output: ");
+        // Serial.print(motor_output);
+        // Serial.println();
 
         //return motor_output;
 
