@@ -40,30 +40,30 @@ enum direction {
 void goC(){
     motors_instance->setClockWise();
     delay(20);
-    motors_instance->setLeftMotorSpeed(100);
-    motors_instance->setRightMotorSpeed(100);
-    delay(10);
+    motors_instance->setLeftMotorSpeed(50);
+    motors_instance->setRightMotorSpeed(50);
+    delay(30);
     motors_instance->setMotorsSpeed(0);
 }
 void goCC(){
     motors_instance->setCClockWise();
     delay(20);
-    motors_instance->setLeftMotorSpeed(100);
-    motors_instance->setRightMotorSpeed(100);
-    delay(10);
+    motors_instance->setLeftMotorSpeed(50);
+    motors_instance->setRightMotorSpeed(50);
+    delay(30);
     motors_instance->setMotorsSpeed(0);
 }
 double setdirection(){
-    if(tof_instance->readL() < 60 && tof_instance->readR() < 60){//LR walls exist
+    if(tof_instance->readL() < 100 && tof_instance->readR() < 100){//LR walls exist
     Serial.printf("Both walls detected\n");
-        if(tof_instance->readL() - tof_instance->readR() < 10){ //Skewed Towards left
+        if(tof_instance->readL() - tof_instance->readR() < -5){ //Skewed Towards left
         Serial.printf("skewed left\n");
         Serial.printf("Clockwise rotation\n");
             goC();
             delay(10);
             
         }
-        else if(tof_instance->readL() - tof_instance->readR() > 10){ //skewed towards right
+        else if(tof_instance->readL() - tof_instance->readR() > 5){ //skewed towards right
             Serial.printf("skewed right\n");
             Serial.printf("Counter-Clockwise rotation\n");
             goCC();
@@ -73,7 +73,7 @@ double setdirection(){
         }
         motors_instance->setMotorsSpeed(0);
     }
-    else if(tof_instance->readL() < 60){ //L wall, no R wall.
+    else if(tof_instance->readL() < 100){ //L wall, no R wall.
     Serial.printf("Just left wall\n");
         if(tof_instance->readL() < 30){
             Serial.printf("skewed left\n");
@@ -82,7 +82,7 @@ double setdirection(){
             delay(10);
             // goC();
         }
-        else if(tof_instance->readL() >45){
+        else if(tof_instance->readL() >40){
             Serial.printf("skewed right\n");
             Serial.printf("Counter-Clockwise rotation\n");
              goCC();
@@ -90,7 +90,7 @@ double setdirection(){
             //  goCC();
         }
     }
-    else if(tof_instance->readR() < 60){ //no L wall, just R wall.
+    else if(tof_instance->readR() < 100){ //no L wall, just R wall.
         Serial.printf("Just right\n");
         if(tof_instance->readR() < 40){ //skewed right
         Serial.printf("skewed right\n");

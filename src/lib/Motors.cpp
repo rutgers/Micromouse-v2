@@ -71,11 +71,11 @@ void Motors::setLeftMotorDirection(bool forward) {
         digitalWrite(pin_AIN2, LOW);
     }
 }
-void Motors::setClockWise(){
+void Motors::setCClockWise(){
     setLeftMotorDirection(false);
     setRightMotorDirection(false);
 }
-void Motors::setCClockWise(){
+void Motors::setClockWise(){
     setLeftMotorDirection(true);
     setRightMotorDirection(true);
 }

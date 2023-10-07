@@ -49,19 +49,26 @@ void PIDstraight::drive_to_position(double distance){
     
         motors_instance->setMotorsSpeed(0);
         delay(10);
-        if(tof_instance->readF() < 150){
-            // gointowall();
+        if(tof_instance->readF() < 175){
+            gointowall();
         }
 
 }
 void PIDstraight::gointowall(){
-
-    while(tof_instance->readF() > 50){
-          motors_instance->setMotorsSpeed(30);
-          delay(30);
+    motors_instance->setMotorsDirection(true);
+    while(tof_instance->readF() > 30 && tof_instance->readF() < 175){
+          motors_instance->setMotorsSpeed(40);
+          delay(40);
           motors_instance->setMotorsSpeed(0);
-          delay(50);
+          delay(90);
 
+    }
+    motors_instance->setMotorsDirection(false);
+    while(tof_instance->readF() < 25){
+        motors_instance->setMotorsSpeed(40);
+          delay(40);
+          motors_instance->setMotorsSpeed(0);
+          delay(90);
     }
    
 }
