@@ -4,6 +4,8 @@
 #include <Arduino.h>
 #include <Adafruit_Sensor.h>
 #include <Adafruit_BNO055.h>
+#include <vector>
+#include <map>
 
 
 class IMU {
@@ -16,6 +18,10 @@ class IMU {
         IMU();
         double getHeading();
         double getCardinal();
+        double findMostProminentAngle(const std::vector<double>& angleReadings);
+        double getHeadingFast();
+
+
 };
 
 extern IMU* imu_instance;

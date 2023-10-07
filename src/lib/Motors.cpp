@@ -26,9 +26,9 @@ void Motors::disableMotors() {
  */
 void Motors::setLeftMotorSpeed(int pwm) {
     if(pwm < 0) {
-        setLeftMotorDirection(false);
-    } else {
         setLeftMotorDirection(true);
+    } else {
+        setLeftMotorDirection(false);
     }
 
     if(abs(pwm) > 255) {
@@ -46,9 +46,9 @@ void Motors::setLeftMotorSpeed(int pwm) {
  */
 void Motors::setRightMotorSpeed(int pwm) {
     if(pwm < 0) {
-        setRightMotorDirection(false);
-    } else {
         setRightMotorDirection(true);
+    } else {
+        setRightMotorDirection(false);
     }
 
 

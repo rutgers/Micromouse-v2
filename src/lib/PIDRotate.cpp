@@ -8,7 +8,7 @@ void PIDRotate::InputToMotor(double targetDegree){
      
     double startTime = millis();
 
-    double currentDegree = imu_instance->getHeading();
+    double currentDegree = imu_instance->getHeadingFast();
 
     double currentError = targetDegree - currentDegree;
     
@@ -20,12 +20,13 @@ void PIDRotate::InputToMotor(double targetDegree){
 
     while(abs(currentError) > 5) {
 
+
         if(millis() - startTime > 2e3) {
             break;
 
         }
         double out = Kp * currentError;// + Ki * integral + Kd * deriv; // -27 or -26.99
-       
+
         motors_instance->setLeftMotorSpeed(out);
         motors_instance->setRightMotorSpeed(-out);
         
@@ -43,7 +44,9 @@ void PIDRotate::InputToMotor(double targetDegree){
         // set old values
 
         // get new values
-        currentDegree = imu_instance->getHeading(); 
+        currentDegree = imu_instance->getHeadingFast(); 
+        Serial.println(currentDegree);
+
         currentError = targetDegree - currentDegree;
         // angle wrap
              if (currentError >  180.0) { currentError -= 360.0; }

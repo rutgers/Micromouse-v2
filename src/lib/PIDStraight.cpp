@@ -22,7 +22,7 @@ void PIDStraight::InputToMotor(double desiredDistance) {
     
     // ===== angle =====
     double keepAngle = imu_instance->getCardinal();
-    double currentAngle = imu_instance->getHeading();
+    double currentAngle = imu_instance->getHeadingFast();
     double angleDiff = keepAngle - currentAngle;
 
     // // angle wrap
@@ -59,7 +59,7 @@ void PIDStraight::InputToMotor(double desiredDistance) {
     
     while(currentError > 5) {
 
-        if(millis() % 50 == 0 && timeofflight_instance -> readF() < 50) {
+        if(millis() % 30 == 0 && timeofflight_instance -> readF() < 55) {
             break;
         }
 
@@ -83,7 +83,7 @@ void PIDStraight::InputToMotor(double desiredDistance) {
         // currentErrorB = desiredTicksDistance - curB;
 
         //  ===== angle =====
-        currentAngle = imu_instance->getHeading();
+        currentAngle = imu_instance->getHeadingFast();
         angleDiff = keepAngle - currentAngle;
         // angle wrap
              if (angleDiff >  180.0) { angleDiff -= 360.0; }

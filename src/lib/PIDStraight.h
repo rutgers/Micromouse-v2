@@ -14,7 +14,7 @@ class PIDStraight {
         const double Kd = 0;
 
 
-        const double Kap = 2.9;
+        const double Kap = 2.8;
         const double Kai = 0;
         const double Kad = 0;
 
