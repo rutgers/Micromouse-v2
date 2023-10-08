@@ -56,14 +56,14 @@ void goCC(){
 double setdirection(){
     if(tof_instance->readL() < 100 && tof_instance->readR() < 100){//LR walls exist
     Serial.printf("Both walls detected\n");
-        if(tof_instance->readL() - tof_instance->readR() < -5){ //Skewed Towards left
+        if(tof_instance->readL() - tof_instance->readR() < -10){ //Skewed Towards left
         Serial.printf("skewed left\n");
         Serial.printf("Clockwise rotation\n");
             goC();
             delay(10);
             
         }
-        else if(tof_instance->readL() - tof_instance->readR() > 5){ //skewed towards right
+        else if(tof_instance->readL() - tof_instance->readR() > 10){ //skewed towards right
             Serial.printf("skewed right\n");
             Serial.printf("Counter-Clockwise rotation\n");
             goCC();
@@ -75,7 +75,7 @@ double setdirection(){
     }
     else if(tof_instance->readL() < 100){ //L wall, no R wall.
     Serial.printf("Just left wall\n");
-        if(tof_instance->readL() < 30){
+        if(tof_instance->readL() < 25){
             Serial.printf("skewed left\n");
             Serial.printf("Clockwise rotation\n");
             goC();
@@ -92,7 +92,7 @@ double setdirection(){
     }
     else if(tof_instance->readR() < 100){ //no L wall, just R wall.
         Serial.printf("Just right\n");
-        if(tof_instance->readR() < 40){ //skewed right
+        if(tof_instance->readR() < 25){ //skewed right
         Serial.printf("skewed right\n");
         Serial.printf("Counter-Clockwise rotation\n");
             goCC();
