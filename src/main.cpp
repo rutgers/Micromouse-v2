@@ -1,4 +1,7 @@
-#include "lib\imu.h"
+#include "lib/imu.h"
+#include "lib/distance_sensor.h"
+
+#include "Arduino.h"
 
 void setup(void)
 {
@@ -8,5 +11,6 @@ void setup(void)
 
 void loop(void) {
   delay(500);
-  Serial.println(getHeading());
+  Serial.println(right());
+  // Serial.println(getHeading());
 }
