@@ -13,13 +13,17 @@ void setup(void)
 
 void loop(void) {
   delay(500);
-  Serial.println();
-  setRightPWM(75);
-  setLeftPWM(75);
+  Serial.println(encLeft.read());
+  Serial.println(encRight.read());
 
-  delay(3000);
-  setRightPWM(0);
-  setLeftPWM(0);
+
+
+  // setRightPWM(75);
+  // setLeftPWM(75);
+
+  // delay(3000);
+  // setRightPWM(0);
+  // setLeftPWM(0);
 
   // Serial.println(getHeading());
 }
