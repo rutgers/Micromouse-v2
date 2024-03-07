@@ -7,6 +7,6 @@
 #include <SPI.h>
 
 void imuSetup();
-double getHeading();
+double angle();
 
 #endif
