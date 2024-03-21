@@ -2,7 +2,8 @@
 #ifndef pid_h
 #define pid_h
 
-#include "./lib/imu.h"
+#include "imu.h"
+#include "motors.h"
 
 
 void turnTo(char direction);
