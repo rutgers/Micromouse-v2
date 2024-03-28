@@ -1,4 +1,4 @@
-#include "pid.h"
+#include "pidRotate.h"
 
 double p = 1.1;
 double d = 0;
@@ -21,7 +21,7 @@ void turnTo(char direction) {
             break;
     }
 
-    double error;
+    double error;   
 
     error = targetDirection - angle();
     
@@ -79,7 +79,7 @@ void turnTo(char direction) {
             pid = -150;
         }
         Serial.printf("P: %lf   d: %lf   i: %lf   pid: %lf\n",proportional,derivative,integral,-pid);
-        setLeftPWM(-pid);
+        setLeftPWM(pid);
         setRightPWM(-pid);
         // Serial.println(-pid);
         

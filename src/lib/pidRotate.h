@@ -1,6 +1,6 @@
 
-#ifndef pid_h
-#define pid_h
+#ifndef pidRotate_h
+#define pidRotate_h
 
 #include "imu.h"
 #include "motors.h"
